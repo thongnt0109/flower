@@ -1,1 +1,43 @@
-async function load(){const data=await fetch('data/flowers.json').then(r=>r.json());const cards=document.getElementById('cards');function render(q=''){cards.innerHTML='';data.filter(x=>JSON.stringify(x).toLowerCase().includes(q.toLowerCase())).forEach(f=>{cards.innerHTML+=`<div class="card"><h3>${f.name}</h3><p>Màu: ${f.color}</p><p>Cấp: ${f.level}</p><p>Chủ: ${f.owner}</p></div>`})}render();document.getElementById('search').oninput=e=>render(e.target.value)}load();
+async function load() {
+const data = await fetch('data/flowers.json').then(r => r.json());
+
+```
+const cards = document.getElementById('cards');
+
+function render(q = '') {
+    cards.innerHTML = '';
+
+    data
+        .filter(item =>
+            JSON.stringify(item)
+                .toLowerCase()
+                .includes(q.toLowerCase())
+        )
+        .forEach(flower => {
+
+            cards.innerHTML += `
+            <div class="card">
+                <img src="${flower.image || ''}" class="flower-img">
+
+                <div class="card-body">
+                    <h3>${flower.name}</h3>
+
+                    <p>🌸 Màu: ${flower.color}</p>
+                    <p>⭐ Cấp: ${flower.level}</p>
+                    <p>👤 Chủ: ${flower.owner}</p>
+                </div>
+            </div>
+            `;
+        });
+}
+
+render();
+
+document.getElementById('search').addEventListener('input', e => {
+    render(e.target.value);
+});
+```
+
+}
+
+load();
