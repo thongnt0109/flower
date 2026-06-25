@@ -1,43 +1,42 @@
 async function load() {
-const data = await fetch('data/flowers.json').then(r => r.json());
+    const data = await fetch('data/flowers.json').then(r => r.json());
 
-```
-const cards = document.getElementById('cards');
+    const cards = document.getElementById('cards');
 
-function render(q = '') {
-    cards.innerHTML = '';
+    function render(q = '') {
+        cards.innerHTML = '';
 
-    data
-        .filter(item =>
-            JSON.stringify(item)
-                .toLowerCase()
-                .includes(q.toLowerCase())
-        )
-        .forEach(flower => {
+        data
+            .filter(item =>
+                JSON.stringify(item)
+                    .toLowerCase()
+                    .includes(q.toLowerCase())
+            )
+            .forEach(flower => {
 
-            cards.innerHTML += `
-            <div class="card">
-                <img src="${flower.image || ''}" class="flower-img">
+                const image = flower.image
+                    ? `<img src="${flower.image}" class="flower-img">`
+                    : '';
 
-                <div class="card-body">
-                    <h3>${flower.name}</h3>
+                cards.innerHTML += `
+                    <div class="card">
+                        ${image}
+                        <div class="card-body">
+                            <h3>${flower.name}</h3>
+                            <p>🌸 Màu: ${flower.color}</p>
+                            <p>⭐ Cấp: ${flower.level}</p>
+                            <p>👤 Chủ: ${flower.owner}</p>
+                        </div>
+                    </div>
+                `;
+            });
+    }
 
-                    <p>🌸 Màu: ${flower.color}</p>
-                    <p>⭐ Cấp: ${flower.level}</p>
-                    <p>👤 Chủ: ${flower.owner}</p>
-                </div>
-            </div>
-            `;
-        });
-}
+    render();
 
-render();
-
-document.getElementById('search').addEventListener('input', e => {
-    render(e.target.value);
-});
-```
-
+    document.getElementById('search').addEventListener('input', function(e) {
+        render(e.target.value);
+    });
 }
 
 load();
