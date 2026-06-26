@@ -1,9 +1,13 @@
+```json
 [
   {
     "name": "Ngân Hà Chiếu Nhụy",
     "color": "Đỏ Hồng",
     "level": 28,
     "owner": "Thông Nguyễn",
-    "image": "images/nganha.jpg"
+    "image": "images/nganha.jpg",
+    "rarity": "★★★★★",
+    "date": "18/06/2026"
   }
 ]
+```
