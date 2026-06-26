@@ -1,172 +1,173 @@
 ```html
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flower - Hoa Viên Hội</title>
 
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>Flower - Hoa Viên Hội</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 </head>
 
 <body>
 
-<div class="background"></div>
+<div class="bg"></div>
 
 <header>
 
-    <div class="logo">
+<div class="logo">
 
-        🌺 FLOWER
+🌺 <span>FLOWER</span>
 
-        <span>Hoa Viên Hội</span>
+<p>Hoa Viên Hội</p>
 
-    </div>
+</div>
 
-    <div class="header-right">
+<div class="online">
 
-        <div class="online">
-            🟢 Online
-        </div>
+🟢 Online
 
-    </div>
+</div>
 
 </header>
 
 
 <section class="dashboard">
 
-    <div class="stat">
+<div class="box">
 
-        <span id="totalFlowers">0</span>
+<h2 id="totalFlowers">0</h2>
 
-        <small>Tổng Hoa</small>
+<p>Tổng Hoa</p>
 
-    </div>
+</div>
 
-    <div class="stat">
+<div class="box">
 
-        <span id="totalMembers">40</span>
+<h2 id="totalMembers">40</h2>
 
-        <small>Thành Viên</small>
+<p>Thành Viên</p>
 
-    </div>
+</div>
 
-    <div class="stat">
+<div class="box pink">
 
-        <span id="pinkCount">0</span>
+<h2 id="pinkCount">0</h2>
 
-        <small>Đỏ Hồng</small>
+<p>Đỏ Hồng</p>
 
-    </div>
+</div>
 
-    <div class="stat">
+<div class="box purple">
 
-        <span id="purpleCount">0</span>
+<h2 id="purpleCount">0</h2>
 
-        <small>Tím</small>
+<p>Tím</p>
 
-    </div>
+</div>
 
-    <div class="stat">
+<div class="box blue">
 
-        <span id="blueCount">0</span>
+<h2 id="blueCount">0</h2>
 
-        <small>Xanh Lam</small>
+<p>Xanh Lam</p>
 
-    </div>
+</div>
 
-    <div class="stat">
+<div class="box orange">
 
-        <span id="orangeCount">0</span>
+<h2 id="orangeCount">0</h2>
 
-        <small>Cam</small>
+<p>Cam</p>
 
-    </div>
+</div>
 
 </section>
+
 
 
 <section class="toolbar">
 
-    <div class="search-box">
+<input
 
-        <input
-            id="search"
-            type="text"
-            placeholder="🔍 Tìm tên hoa hoặc chủ sở hữu..."
-        >
+id="search"
 
-    </div>
+type="text"
+
+placeholder="🔍 Tìm tên hoa hoặc chủ sở hữu..."
+
+>
 
 
-    <div class="filters">
+<div class="filter">
 
-        <button class="active" data-color="all">
+<button class="active" data-color="all">
 
-            Tất Cả
+Tất Cả
 
-        </button>
+</button>
 
-        <button data-color="Đỏ Hồng">
+<button data-color="Đỏ Hồng">
 
-            ❤️ Đỏ Hồng
+❤️ Đỏ Hồng
 
-        </button>
+</button>
 
-        <button data-color="Tím">
+<button data-color="Tím">
 
-            💜 Tím
+💜 Tím
 
-        </button>
+</button>
 
-        <button data-color="Xanh Lam">
+<button data-color="Xanh Lam">
 
-            💙 Xanh Lam
+💙 Xanh Lam
 
-        </button>
+</button>
 
-        <button data-color="Cam">
+<button data-color="Cam">
 
-            🧡 Cam
+🧡 Cam
 
-        </button>
+</button>
 
-        <button data-color="Vàng">
+<button data-color="Vàng">
 
-            💛 Vàng
+💛 Vàng
 
-        </button>
+</button>
 
-    </div>
+</div>
 
 </section>
 
 
+
 <main>
 
-    <div
-        id="cards"
-        class="cards"
-    >
+<div id="cards" class="cards">
 
-    </div>
+</div>
 
 </main>
 
 
+
 <footer>
 
-    Flower Guild Manager © 2026
+Flower Guild Manager 2026
 
 </footer>
-
 
 <script src="script.js"></script>
 
