@@ -1,9 +1,6 @@
-```html
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,11 +8,10 @@
 
 <link rel="stylesheet" href="style.css">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 </head>
 
@@ -23,13 +19,123 @@
 
 <div class="bg"></div>
 
-<header>
+<div class="layout">
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
 
 <div class="logo">
 
-🌺 <span>FLOWER</span>
+<div class="flower-icon">🌸</div>
+
+<div>
+
+<h1>FLOWER</h1>
 
 <p>Hoa Viên Hội</p>
+
+</div>
+
+</div>
+
+<nav>
+
+<a href="#" class="active">
+
+<i class="fa-solid fa-house"></i>
+
+Trang chủ
+
+</a>
+
+<a href="#">
+
+<i class="fa-solid fa-seedling"></i>
+
+Danh sách hoa
+
+</a>
+
+<a href="#">
+
+<i class="fa-solid fa-users"></i>
+
+Thành viên
+
+</a>
+
+<a href="#">
+
+<i class="fa-solid fa-chart-column"></i>
+
+Thống kê
+
+</a>
+
+<a href="#">
+
+<i class="fa-solid fa-trophy"></i>
+
+Bảng xếp hạng
+
+</a>
+
+<a href="#">
+
+<i class="fa-regular fa-heart"></i>
+
+Yêu thích
+
+</a>
+
+<a href="#">
+
+<i class="fa-solid fa-gear"></i>
+
+Cài đặt
+
+</a>
+
+</nav>
+
+<div class="online-box">
+
+<div class="dot"></div>
+
+<div>
+
+<b>Online</b>
+
+<p>40 thành viên</p>
+
+</div>
+
+</div>
+
+</aside>
+
+<!-- ================= CONTENT ================= -->
+
+<div class="content">
+
+<header>
+
+<div>
+
+<h2>Chào mừng bạn đến với</h2>
+
+<h1>Hoa Viên Hội 🌿</h1>
+
+</div>
+
+<div class="status">
+
+<div class="bell">
+
+🔔
+
+<span>3</span>
 
 </div>
 
@@ -39,12 +145,17 @@
 
 </div>
 
+</div>
+
 </header>
 
+<!-- ===== Dashboard ===== -->
 
 <section class="dashboard">
 
-<div class="box">
+<div class="box pink">
+
+<div class="icon">🌸</div>
 
 <h2 id="totalFlowers">0</h2>
 
@@ -52,15 +163,19 @@
 
 </div>
 
-<div class="box">
+<div class="box green">
 
-<h2 id="totalMembers">40</h2>
+<div class="icon">👥</div>
 
-<p>Thành Viên</p>
+<h2>40</h2>
+
+<p>Thành viên</p>
 
 </div>
 
-<div class="box pink">
+<div class="box red">
+
+<div class="icon">💗</div>
 
 <h2 id="pinkCount">0</h2>
 
@@ -70,6 +185,8 @@
 
 <div class="box purple">
 
+<div class="icon">💜</div>
+
 <h2 id="purpleCount">0</h2>
 
 <p>Tím</p>
@@ -77,6 +194,8 @@
 </div>
 
 <div class="box blue">
+
+<div class="icon">💧</div>
 
 <h2 id="blueCount">0</h2>
 
@@ -86,6 +205,8 @@
 
 <div class="box orange">
 
+<div class="icon">🧡</div>
+
 <h2 id="orangeCount">0</h2>
 
 <p>Cam</p>
@@ -94,84 +215,52 @@
 
 </section>
 
+<!-- ===== Search ===== -->
 
+<div class="search-box">
 
-<section class="toolbar">
+<i class="fa-solid fa-magnifying-glass"></i>
 
 <input
-
 id="search"
-
 type="text"
-
-placeholder="🔍 Tìm tên hoa hoặc chủ sở hữu..."
-
->
-
-
-<div class="filter">
-
-<button class="active" data-color="all">
-
-Tất Cả
-
-</button>
-
-<button data-color="Đỏ Hồng">
-
-❤️ Đỏ Hồng
-
-</button>
-
-<button data-color="Tím">
-
-💜 Tím
-
-</button>
-
-<button data-color="Xanh Lam">
-
-💙 Xanh Lam
-
-</button>
-
-<button data-color="Cam">
-
-🧡 Cam
-
-</button>
-
-<button data-color="Vàng">
-
-💛 Vàng
-
-</button>
+placeholder="Tìm tên hoa hoặc chủ sở hữu...">
 
 </div>
 
-</section>
+<!-- ===== Filter ===== -->
 
+<div class="filters">
 
+<button class="active" data-filter="Tất cả">Tất cả</button>
 
-<main>
+<button data-filter="Đỏ Hồng">💗 Đỏ Hồng</button>
 
-<div id="cards" class="cards">
+<button data-filter="Tím">💜 Tím</button>
+
+<button data-filter="Xanh Lam">💧 Xanh Lam</button>
+
+<button data-filter="Cam">🧡 Cam</button>
+
+<button data-filter="Vàng">💛 Vàng</button>
 
 </div>
 
-</main>
+<!-- ===== Danh sách hoa ===== -->
 
-
+<div id="cards" class="cards"></div>
 
 <footer>
 
-Flower Guild Manager 2026
+Flower Guild Manager © 2026
 
 </footer>
+
+</div>
+
+</div>
 
 <script src="script.js"></script>
 
 </body>
-
 </html>
-```
