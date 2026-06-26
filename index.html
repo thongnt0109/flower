@@ -1,12 +1,176 @@
+```html
 <!DOCTYPE html>
-<html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Flower</title>
-<link rel="stylesheet" href="style.css"></head>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flower - Hoa Viên Hội</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+
 <body>
-<header><h1>🌺 FLOWER</h1><p>Hoa Viên Hội</p></header>
-<div class="container">
-<input id="search" placeholder="Tìm hoa hoặc chủ sở hữu...">
-<div id="cards" class="grid"></div>
-</div>
+
+<div class="background"></div>
+
+<header>
+
+    <div class="logo">
+
+        🌺 FLOWER
+
+        <span>Hoa Viên Hội</span>
+
+    </div>
+
+    <div class="header-right">
+
+        <div class="online">
+            🟢 Online
+        </div>
+
+    </div>
+
+</header>
+
+
+<section class="dashboard">
+
+    <div class="stat">
+
+        <span id="totalFlowers">0</span>
+
+        <small>Tổng Hoa</small>
+
+    </div>
+
+    <div class="stat">
+
+        <span id="totalMembers">40</span>
+
+        <small>Thành Viên</small>
+
+    </div>
+
+    <div class="stat">
+
+        <span id="pinkCount">0</span>
+
+        <small>Đỏ Hồng</small>
+
+    </div>
+
+    <div class="stat">
+
+        <span id="purpleCount">0</span>
+
+        <small>Tím</small>
+
+    </div>
+
+    <div class="stat">
+
+        <span id="blueCount">0</span>
+
+        <small>Xanh Lam</small>
+
+    </div>
+
+    <div class="stat">
+
+        <span id="orangeCount">0</span>
+
+        <small>Cam</small>
+
+    </div>
+
+</section>
+
+
+<section class="toolbar">
+
+    <div class="search-box">
+
+        <input
+            id="search"
+            type="text"
+            placeholder="🔍 Tìm tên hoa hoặc chủ sở hữu..."
+        >
+
+    </div>
+
+
+    <div class="filters">
+
+        <button class="active" data-color="all">
+
+            Tất Cả
+
+        </button>
+
+        <button data-color="Đỏ Hồng">
+
+            ❤️ Đỏ Hồng
+
+        </button>
+
+        <button data-color="Tím">
+
+            💜 Tím
+
+        </button>
+
+        <button data-color="Xanh Lam">
+
+            💙 Xanh Lam
+
+        </button>
+
+        <button data-color="Cam">
+
+            🧡 Cam
+
+        </button>
+
+        <button data-color="Vàng">
+
+            💛 Vàng
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<main>
+
+    <div
+        id="cards"
+        class="cards"
+    >
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    Flower Guild Manager © 2026
+
+</footer>
+
+
 <script src="script.js"></script>
-</body></html>
+
+</body>
+
+</html>
+```
