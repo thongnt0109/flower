@@ -557,3 +557,36 @@ align-items:start;
 margin-bottom:40px;
 
 }
+.owner-count{
+    margin-top:12px;
+    color:#16a34a;
+    font-weight:700;
+}
+
+.owners{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:15px;
+}
+
+.owner-chip{
+    background:#e8f7ee;
+    color:#15803d;
+    padding:7px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+    transition:.25s;
+}
+
+.owner-chip:hover{
+    background:#16a34a;
+    color:white;
+}
+
+.flower-color{
+    margin-top:10px;
+    color:#666;
+    font-weight:600;
+}
