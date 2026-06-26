@@ -1,101 +1,121 @@
-```javascript
 let flowers = [];
+
 let currentFilter = "Tất cả";
 
 async function loadFlowers() {
 
-    flowers = await fetch("data/flowers.json").then(r => r.json());
+    const res = await fetch("data/flowers.json");
+    flowers = await res.json();
+
+    updateDashboard();
 
     render();
-    updateDashboard();
+
+}
+
+function updateDashboard() {
+
+    document.getElementById("totalFlowers").textContent = flowers.length;
+
+    const members = new Set();
+
+    flowers.forEach(f => {
+
+        f.owners.forEach(o => members.add(o));
+
+    });
+
+    document.getElementById("totalMembers").textContent = members.size;
 
 }
 
 function render() {
 
     const cards = document.getElementById("cards");
-    const keyword = document.getElementById("search").value.toLowerCase();
+
+    const keyword = document
+        .getElementById("search")
+        .value
+        .toLowerCase();
 
     cards.innerHTML = "";
 
     const list = flowers.filter(f => {
 
-        const matchSearch =
-            f.name.toLowerCase().includes(keyword) ||
-            f.owner.toLowerCase().includes(keyword);
+        const searchMatch =
 
-        const matchColor =
-            currentFilter === "Tất cả" ||
+            f.name.toLowerCase().includes(keyword)
+
+            ||
+
+            f.owners.join(" ").toLowerCase().includes(keyword);
+
+        const colorMatch =
+
+            currentFilter === "Tất cả"
+
+            ||
+
             f.color === currentFilter;
 
-        return matchSearch && matchColor;
+        return searchMatch && colorMatch;
 
     });
 
     list.forEach(f => {
 
+        const owners = f.owners.map(owner =>
+
+            `<span class="owner-chip">${owner}</span>`
+
+        ).join("");
+
         cards.innerHTML += `
-        <div class="card">
 
-            <div class="image-box">
+<div class="card">
 
-                <img src="${f.image}" class="flower-img">
+<div class="image-box">
 
-                <div class="favorite">❤</div>
+<img src="${f.image}" class="flower-img">
 
-                <div class="level">+${f.level}</div>
+</div>
 
-            </div>
+<div class="card-body">
 
-            <div class="card-body">
+<h3>${f.name}</h3>
 
-                <h3>${f.name}</h3>
+<p class="flower-color">
 
-                <div class="info">
-                    <span>🌸 ${f.color}</span>
-                    <span>⭐ ${f.level}</span>
-                </div>
+🌸 ${f.color}
 
-                <div class="owner">
-                    👤 ${f.owner}
-                </div>
+</p>
 
-                <button class="view-btn">
-                    Xem chi tiết
-                </button>
+<p class="owner-count">
 
-            </div>
+👥 ${f.owners.length} người sở hữu
 
-        </div>
-        `;
+</p>
+
+<div class="owners">
+
+${owners}
+
+</div>
+
+</div>
+
+</div>
+
+`;
 
     });
 
 }
-
-function updateDashboard() {
-
-    document.getElementById("totalFlowers").innerText = flowers.length;
-
-    document.getElementById("pinkCount").innerText =
-        flowers.filter(f => f.color === "Đỏ Hồng").length;
-
-    document.getElementById("purpleCount").innerText =
-        flowers.filter(f => f.color === "Tím").length;
-
-    document.getElementById("blueCount").innerText =
-        flowers.filter(f => f.color === "Xanh Lam").length;
-
-    document.getElementById("orangeCount").innerText =
-        flowers.filter(f => f.color === "Cam").length;
-
-}
-
 document.getElementById("search").addEventListener("input", render);
 
 document.querySelectorAll(".filters button").forEach(btn => {
 
-    btn.onclick = () => {
+    btn.addEventListener("click", () => {
 
         document.querySelectorAll(".filters button")
             .forEach(b => b.classList.remove("active"));
@@ -106,9 +126,8 @@ document.querySelectorAll(".filters button").forEach(btn => {
 
         render();
 
-    }
+    });
 
 });
 
 loadFlowers();
-```
