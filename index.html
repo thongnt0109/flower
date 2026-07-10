@@ -784,45 +784,6 @@
 
     document.getElementById('searchInput').addEventListener('input', applyFilters);
 </script>
-<!-- NÚT MA THUẬT THÊM 15 HOA ĐỎ -->
-<button onclick="autoAddRedFlowers()" id="magicBtn" style="position:fixed; bottom:20px; left:20px; z-index:99999; padding:15px 25px; background:linear-gradient(135deg, #ff0844 0%, #ffb199 100%); color:white; border-radius:15px; font-weight:900; font-size: 1.1rem; border:none; cursor:pointer; box-shadow: 0 10px 20px rgba(255,8,68,0.3);">
-    🔮 BẤM ĐỂ THÊM 15 HOA ĐỎ
-</button>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyDBeKm7IEohpTi8exTi1ijvM-LHODMidj0",
-        authDomain: "flower-17430.firebaseapp.com",
-        databaseURL: "https://flower-17430-default-rtdb.firebaseio.com",
-        projectId: "flower-17430",
-        storageBucket: "flower-17430.firebasestorage.app",
-        messagingSenderId: "447458858978",
-        appId: "1:447458858978:web:2ae2ccd28d3e71e4b3d2e3"
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const flowerTypesRef = ref(db, 'hoavien_flower_types');
-
-    window.autoAddRedFlowers = function() {
-        const list = [
-            "Ngân Hà Chiếu Nhụy", "Chép Vàng Vượt Sóng", "Thiên Cung", "Thanh Loan Bích Vũ", "Cổ Rồng Ất Linh",
-            "Gia Nguyệt - Neo Thuyền Câu Cá", "Mai Nguyệt - Huyễn Âm", "Đinh Hoa Đêm Mộng", "Liễu Nguyệt - Én Hót Bên Đình",
-            "Hạnh Nguyệt - Nghỉ Dưới Bóng Hoa", "Trái Tim Mộng Ảo", "Sắc Xuân Núi Non", "Đào Nguyệt - Vẫn Tịch Chước Hoa",
-            "Hươu Thần Chín Màu", "Hoa Bay Như Mộng"
-        ];
-        
-        let count = 0;
-        list.forEach(name => {
-            push(flowerTypesRef, { name: name, quality: "Đỏ" });
-            count++;
-        });
-        
-        alert("✨ Thành công rực rỡ! Đã nạp tự động " + count + " loại hoa Đỏ vào hệ thống.");
-        document.getElementById('magicBtn').style.display = 'none'; // Ẩn nút đi sau khi bấm xong
-    }
-</script>
 </body>
 </html>
