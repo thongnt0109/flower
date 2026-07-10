@@ -80,34 +80,15 @@
         .btn-delete:hover { background-color: #ef5350; color: white;}
         
         /* CSS CHO THẺ NGƯỜI SỞ HỮU RÚT GỌN */
-        .owner-cell {
-            display: flex; flex-wrap: wrap; gap: 6px; align-items: center; max-width: 400px;
-        }
-        .owner-tag {
-            background: rgba(46, 204, 113, 0.1); color: var(--dark-green);
-            padding: 5px 12px; border-radius: 30px; font-size: 0.85rem; font-weight: 700;
-            display: inline-flex; align-items: center; border: 1px solid rgba(46, 204, 113, 0.3);
-            white-space: nowrap;
-        }
+        .owner-cell { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; max-width: 400px; }
+        .owner-tag { background: rgba(46, 204, 113, 0.1); color: var(--dark-green); padding: 5px 12px; border-radius: 30px; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; border: 1px solid rgba(46, 204, 113, 0.3); white-space: nowrap; }
         .owner-tag i { margin-right: 4px; color: var(--primary-green); }
-        .owner-tag-more {
-            background: #f1f2f6; color: #7f8c8d; border: 1px solid #dcdde1; cursor: help; transition: 0.3s;
-        }
-        .owner-tag-more:hover {
-            background: #dfe4ea; color: #2c3e50;
-        }
+        .owner-tag-more { background: #f1f2f6; color: #7f8c8d; border: 1px solid #dcdde1; cursor: pointer; transition: 0.3s; }
+        .owner-tag-more:hover { background: #dfe4ea; color: #2c3e50; transform: scale(1.05); }
 
-        .checkbox-list {
-            max-height: 180px; overflow-y: auto; border: 2px solid #ecf0f1;
-            border-radius: 12px; padding: 12px; background: #fff;
-        }
-        .checkbox-item {
-            display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
-            cursor: pointer; font-weight: 600; color: #2c3e50; font-size: 0.95rem;
-        }
-        .checkbox-item input[type="checkbox"] {
-            width: 18px; height: 18px; accent-color: var(--primary-green); cursor: pointer;
-        }
+        .checkbox-list { max-height: 180px; overflow-y: auto; border: 2px solid #ecf0f1; border-radius: 12px; padding: 12px; background: #fff; }
+        .checkbox-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; font-weight: 600; color: #2c3e50; font-size: 0.95rem; }
+        .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary-green); cursor: pointer; }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 32, 39, 0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background-color: white; padding: 40px; border-radius: 24px; width: 450px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); animation: fadeInUp 0.3s ease-out;}
@@ -149,7 +130,7 @@
             table { border-spacing: 0 8px; }
             th { font-size: 0.7rem; padding: 0 10px 5px 10px; white-space: nowrap; }
             td { padding: 12px 10px; font-size: 0.85rem; white-space: nowrap; }
-            td.owner-cell { white-space: normal; min-width: 250px; } /* Cho phép rớt dòng trên điện thoại */
+            td.owner-cell { white-space: normal; min-width: 200px; }
             .item-cell { font-size: 0.9rem; }
             .modal-content { width: 92%; padding: 20px; border-radius: 16px; }
             .modal-header h3 { font-size: 1.2rem; }
@@ -163,6 +144,9 @@
 <body>
 
 <div id="falling-elements"></div>
+
+<!-- KHUNG POPUP ĐỂ HIỆN DANH SÁCH ẨN (DÙNG ĐƯỢC MOBILE) -->
+<div id="ownerPopup" style="display:none; position:fixed; background:#fff; padding:15px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:9999; border:1px solid #eee; font-size:0.9rem; color:#2c3e50; line-height:1.6; max-width:250px; pointer-events:none;"></div>
 
 <aside class="sidebar">
     <div class="logo-section"><i class="fas fa-fan fa-spin" style="animation-duration: 10s;"></i> FLOWER HỘI</div>
@@ -392,7 +376,27 @@
     const membersRef = ref(db, 'hoavien_members'); 
     const flowerTypesRef = ref(db, 'hoavien_flower_types'); 
 
-    // Bảng tin
+    // Popup logic dùng được trên Mobile
+    const popup = document.getElementById('ownerPopup');
+    window.showMoreOwners = function(event, names) {
+        event.stopPropagation();
+        popup.innerHTML = "<strong>Danh sách đầy đủ:</strong><br>" + names.split(', ').join('<br>');
+        popup.style.display = 'block';
+        
+        // Tính toán vị trí hiển thị hợp lý
+        let x = event.clientX || (event.touches && event.touches[0].clientX) || 100;
+        let y = event.clientY || (event.touches && event.touches[0].clientY) || 100;
+        
+        // Né góc màn hình điện thoại
+        if(x > window.innerWidth - 180) x = window.innerWidth - 180;
+        
+        popup.style.left = x + 10 + 'px';
+        popup.style.top = y + 10 + 'px';
+    };
+    window.addEventListener('click', () => { popup.style.display = 'none'; });
+    window.addEventListener('touchend', () => { setTimeout(() => { popup.style.display = 'none'; }, 2000); }); // Tự ẩn sau 2s trên mobile
+
+    // Bảng tin Cache
     const bannerImg = document.getElementById('bannerImg');
     const imgPlaceholder = document.getElementById('imgPlaceholder');
     const homeText = document.getElementById('homeText');
@@ -498,7 +502,7 @@
     window.deleteFlowerTypeFirebase = function(id) { if (confirm('⚠️ Xóa loại hoa này khỏi danh sách chọn?')) remove(ref(db, `hoavien_flower_types/${id}`)); }
 
 
-    // --- QUẢN LÝ DANH SÁCH HOA CHUNG VÀ CƠ CHẾ RÚT GỌN THẺ THÔNG MINH ---
+    // Danh sách hoa chung
     let records = [];
     let currentFilter = 'all';
     const colorMap = {
@@ -555,19 +559,17 @@
             const colors = colorMap[record.quality] || { bg: '#eee', text: '#333', border: '#ccc' };
             const row = document.createElement('tr'); row.setAttribute('data-quality', record.quality);
             
-            // XỬ LÝ RÚT GỌN THẺ TÊN (Chỉ hiện tối đa 3 thẻ)
+            // Xử lý rút gọn thẻ tên
             const ownerArray = record.owner.split(',').filter(name => name.trim() !== '');
             let ownerTagsHTML = '';
             
             if (ownerArray.length > 3) {
                 const displayedOwners = ownerArray.slice(0, 3);
                 const hiddenCount = ownerArray.length - 3;
-                const hiddenNames = ownerArray.slice(3).join(', '); // Tên bị ẩn để đưa vào tooltip
+                const hiddenNames = ownerArray.slice(3).join(', ');
                 
-                // Vẽ 3 người đầu
                 ownerTagsHTML = displayedOwners.map(name => `<span class="owner-tag"><i class="fas fa-user-circle"></i> ${name.trim()}</span>`).join('');
-                // Vẽ thẻ "+X người"
-                ownerTagsHTML += `<span class="owner-tag owner-tag-more" title="${hiddenNames}">+${hiddenCount} người</span>`;
+                ownerTagsHTML += `<span class="owner-tag owner-tag-more" onclick="showMoreOwners(event, '${hiddenNames}')">+${hiddenCount} người</span>`;
             } else {
                 ownerTagsHTML = ownerArray.map(name => `<span class="owner-tag"><i class="fas fa-user-circle"></i> ${name.trim()}</span>`).join('');
             }
