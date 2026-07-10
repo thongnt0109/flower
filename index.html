@@ -784,56 +784,6 @@
 
     document.getElementById('searchInput').addEventListener('input', applyFilters);
 </script>
-<!-- NÚT MA THUẬT THÊM 88 HOA LAM -->
-<button onclick="autoAddBlueFlowers()" id="magicBtnBlue" style="position:fixed; bottom:20px; left:20px; z-index:99999; padding:15px 25px; background:linear-gradient(135deg, #3498db 0%, #2980b9 100%); color:white; border-radius:15px; font-weight:900; font-size: 1.1rem; border:none; cursor:pointer; box-shadow: 0 10px 20px rgba(52, 152, 219, 0.4); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
-    💧 BẤM ĐỂ THÊM 88 HOA LAM
-</button>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyDBeKm7IEohpTi8exTi1ijvM-LHODMidj0",
-        authDomain: "flower-17430.firebaseapp.com",
-        databaseURL: "https://flower-17430-default-rtdb.firebaseio.com",
-        projectId: "flower-17430",
-        storageBucket: "flower-17430.firebasestorage.app",
-        messagingSenderId: "447458858978",
-        appId: "1:447458858978:web:2ae2ccd28d3e71e4b3d2e3"
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const flowerTypesRef = ref(db, 'hoavien_flower_types');
-
-    window.autoAddBlueFlowers = function() {
-        const list = [
-            "Dạ Yến Thảo Hồng", "Dạ Yến Thảo Vàng", "Cúc Ping Pong Hồng", "Cúc Ping Pong Cam", "Cúc Ping Pong Trắng", "Hồng Môn Đỏ",
-            "Hồng Môn Trắng", "Hoa Ông Lão", "Hoa Ly", "Phong Lộc Hoa", "Nhài Mùa Đông", "Cúc Thược Dược Đỏ",
-            "Hoa Liên Kiều Vàng", "Địa Lan Hồng", "Lạc Tân Phụ Đỏ", "Trúc Đào Hồng Nhạt", "Lạc Tân Phụ Tím", "Lạc Tân Phụ Lam",
-            "Đỗ Quyên Hồng", "Thanh Cúc Tím", "Đậu Thơm Tím Oải", "Bà Bà Na Sao Xanh", "Bà Bà Na Trắng Sương", "Ghim Cài Vàng Mặt",
-            "Diên Vĩ Thung Lũng Hồng", "Cổ Thủy Tiên Hồng Non", "Nguyệt Quý Hồng", "Hoa Thỏ Li Xanh Biếc", "Hoa Thỏ Li Tím Tươi", "Lan Hoàng Thảo Xanh Trắng",
-            "Lan Hoàng Thảo Hồng Thẫm", "Yên Thảo Tím Khói", "Mẫu Đơn Hà Bao Tím", "Hoa Hồng Sa Mạc Hồng Nhạt", "Thục Quỳ Hồng", "Thục Quỳ Đỏ",
-            "Thục Quỳ Vàng", "Hoa Lồng Đèn Đỏ", "Mạch Môn Tím", "Hoa Sao Nhái Trắng", "Trúc Đào Đỏ Tím", "Hải Đường Đỏ",
-            "Hải Đường Vàng", "Vạn Tuế Lá Xanh", "Hồng Jacqueline Trắng", "Đỗ Quyên Vàng", "Tử Linh Lan Hồng", "Tử Linh Lan Tím",
-            "Đỗ Quyên Đỏ", "Tử Linh Lan Đỏ", "Tối Trời", "Hoa Baby Trắng", "Hoa Baby Hồng", "Hoa Baby Lam",
-            "Thanh Cúc Hồng", "Thanh Cúc Lam", "Hoa Thủy Châu Tím", "Hoa Thủy Châu Trắng", "Huệ Hosta Tím", "Huệ Hosta Lam",
-            "Hoa Báo Xuân Vàng", "Hoa Báo Xuân Hồng", "Hoa Huyền Cam", "Hoa Huyền Tím Trắng", "Mẹ Đất Cam Vàng", "Hoa Ông Lão Hồng",
-            "Đậu Thơm Xanh Mơ", "Bà Bà Na Hồng Nhạt", "Ghim Cài Lửa", "Ghim Cài Hồng Hạnh", "Diên Vĩ Thung Lũng Lam", "Diên Vĩ Thung Lũng Trắng",
-            "Cổ Thủy Tiên Cam", "Cổ Thủy Tiên Vàng", "Oải Hương An Giấc", "Hoa Anh Thảo Hồng Nhạt", "Hoa Anh Thảo Tím Nhạt", "Hoa Anh Thảo Xanh Nhạt",
-            "Hoa Thỏ Li Trắng Sáng", "Lan Hoàng Thảo Tím Dịu", "Yên Thảo Xanh Non", "Yên Thảo Hồng Nhạt", "Mẫu Đơn Hà Bao Hồng", "Lệ Bạch Ngọc",
-            "Hoa Hồng Sa Mạc Vàng Nhạt", "Thược Dược Dương Xỉ Hồng Đào", "Thược Dược Dương Xỉ Đỏ Tươi", "Quả Cầu Xanh Dịu"
-        ];
-        
-        let count = 0;
-        list.forEach(name => {
-            push(flowerTypesRef, { name: name, quality: "Lam" });
-            count++;
-        });
-        
-        alert("✨ Hoàn tất! Đã nạp thành công " + count + " loại hoa Phẩm LAM vào hệ thống.");
-        document.getElementById('magicBtnBlue').style.display = 'none';
-    }
-</script>
 </body>
 </html>
