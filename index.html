@@ -784,65 +784,6 @@
 
     document.getElementById('searchInput').addEventListener('input', applyFilters);
 </script>
-<!-- NÚT MA THUẬT THÊM 139 HOA TÍM V3 (CHUẨN 100%) -->
-<button onclick="autoAddPurpleFlowersV3()" id="magicBtnPurpleV3" style="position:fixed; bottom:20px; left:20px; z-index:99999; padding:15px 25px; background:linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color:white; border-radius:15px; font-weight:900; font-size: 1.1rem; border:none; cursor:pointer; box-shadow: 0 10px 20px rgba(155, 89, 182, 0.4); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
-    🔮 BẤM NẠP LẠI 139 HOA TÍM CHUẨN XÁC
-</button>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyDBeKm7IEohpTi8exTi1ijvM-LHODMidj0",
-        authDomain: "flower-17430.firebaseapp.com",
-        databaseURL: "https://flower-17430-default-rtdb.firebaseio.com",
-        projectId: "flower-17430",
-        storageBucket: "flower-17430.firebasestorage.app",
-        messagingSenderId: "447458858978",
-        appId: "1:447458858978:web:2ae2ccd28d3e71e4b3d2e3"
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const flowerTypesRef = ref(db, 'hoavien_flower_types');
-
-    window.autoAddPurpleFlowersV3 = function() {
-        const list = [
-            "Dạ Yến Thảo Lam", "Hoa Anh Thảo Xanh", "Hồng Champagne", "Vạn Tuế Lá Lam", "Hồng Lenten Đỏ", "Mạch Môn Hồng Phấn",
-            "Hoa Lộ Vi Vàng", "Mạn Đà La", "Tường Vi Hồng", "Gấu Bông", "Cây Holly Vòng Xanh", "Bụp Hồng Cận Hồng",
-            "Hoa Hồng Koko Loko", "Hoa Anh Thảo Hồng", "Lạp Mai Đỏ", "Mạn Châu Sa", "Hoa Hải Quỳ Trắng", "San Hô Xanh",
-            "Ngôi Sao Bethlehem", "Lung Linh Bóng Trắng", "Hoa Phi Yến Tím", "Hoa Hành Tím", "Nhài Nhật", "Lan Phương Vĩ Đỏ",
-            "Hoa Anh Thảo Vàng", "Diên Vĩ Đức Trắng Vàng", "Hồng Lenten Vàng", "Cây Sống Đời Đỏ", "Cây Sống Đời Vàng", "Hoa Lộ Vi Trắng",
-            "Cúc Thược Dược Cam", "Cúc Thược Dược Đen", "Lan Vũ Nữ Vàng", "Địa Lan Trắng", "Hoa Poppy Himalaya Vàng", "Hoa Poppy Himalaya Xanh",
-            "Hồng Môn Phấn", "Hải Quỳ Cam", "Mộc Hương Vàng", "Mộc Hương Cam", "Mộc Hương Trắng", "San Hô Tím",
-            "San Hô Cam", "Hải Quỳ Đỏ", "Hoa Hải Quỳ Tím", "Hoa Hải Quỳ Hồng", "Tử Đằng Hồng", "Tử Đằng Lam",
-            "Hoa Poppy Tím", "Hoa Poppy Đỏ", "Hoa Poppy Cam", "Hoa Ông Lão Tím", "Cúc Indo Cam", "Cúc Indo Hồng",
-            "Hoa Phi Yến Lam", "Hoa Phi Yến Hồng", "Hoa Lồng Đèn Cam", "Hoa Lồng Đèn Tím", "Diên Vĩ Đức Hồng Tím", "Diên Vĩ Đức Kem Đỏ",
-            "Mộc Lan Tím", "Mộc Lan Vàng", "Hồng Lenten Hồng", "Cây Sống Đời Hồng", "Mạch Môn Sương Trắng", "Hoa Lộ Vi Hồng",
-            "Hoa Sao Nhái Tím", "Hoa Sao Nhái Hồng", "Lan Vũ Nữ Cam", "Lan Vũ Nữ Đỏ", "Tuyết Mai Trắng", "Tuyết Mai Hồng",
-            "Địa Lan Xanh", "Hoa Poppy Himalaya Tím", "Lay Ơn Vàng", "Hải Quỳ Trắng", "Trúc Đào Xanh", "Hải Đường Hồng",
-            "Hoa Loa Kèn Đỏ", "Hoa Loa Kèn Hồng", "Hoa Loa Kèn Cam", "Thược Dược Đỏ", "Thược Dược Trắng", "Rosa Banksiae Hồng",
-            "Rosa Banksiae Vàng", "Thược Dược Hồng", "Rosa Banksiae Trắng", "Tường Vi Xanh", "Tường Vi Vàng", "Lay Ơn Trắng",
-            "Lay Ơn Tím", "Nhụy Linh Ánh Sao", "Hoa Bồ Câu Tím", "Hoa Bồ Câu Đỏ", "Loa Kèn Peru Đỏ", "Loa Kèn Peru Xanh",
-            "Cẩm Chướng Gấm Đỏ", "Cẩm Chướng Gấm Tím", "Cây Lá Gan Tím", "Hoa Sứ Sáng Ngọc", "Mao Lương Hoa Đào Mật", "Mao Lương Kem Vàng",
-            "Mao Lương Cam Hoàng Hôn", "Gừng Sen Hồng Đào", "Gừng Sen Bạch Ngọc", "Gừng Sen Ban Mai", "Đăng Tiêu Cam Vàng", "Đăng Tiêu Đỏ Chu",
-            "Đăng Tiêu Trắng Tím", "Trà Mai Hồng", "Lệ Đường Thanh Nhã", "Đồng Trùng Thông Vàng", "Đồng Trùng Thông Tím", "Đồng Trùng Thông Hồng",
-            "Ngót Nghẻo Cam Thẫm", "Ngót Nghẻo Hồng Phấn", "Ngót Nghẻo Đỏ Lửa", "Tử Kinh Ngoại Tím", "Bách Hợp Lồng Đèn", "Hoa Thụy Hương Vàng Nhạt",
-            "Hoa Thụy Hương Trắng Tuyết", "Hoa Thụy Hương Tím Khói", "Hoa Lạp Kim Xanh Sẫm", "Hoa Lạp Kim Vàng Nhạt", "Hoa Lạp Kim Hồng San Hô", "Sen Trời Đầy Sao",
-            "Hoa Huệ Mưa Thanh Nhã", "Hoa Mặt Rồng Đỏ Tươi", "Hoa Mặt Rồng Xanh Trong", "Hoa Mặt Rồng Hồng Phấn", "Đại Nham Đồng Vàng Mật", "Đại Nham Đồng Sắc Tím",
-            "Đại Nham Đồng Hồng Sẫm", "Hoa Sao Sáng Bạc", "Hoa Tử Đằng Cánh Kép", "Nhài Dây Trắng Mây", "Nhài Dây Sắc Sao", "Từ Cô Hồng Nhạt",
-            "Từ Cô Tím Mây"
-        ];
-        
-        let count = 0;
-        list.forEach(name => {
-            push(flowerTypesRef, { name: name, quality: "Tím" });
-            count++;
-        });
-        
-        alert("✨ Quá chuẩn! Đã nạp đầy đủ toàn bộ " + count + " loại hoa Phẩm Tím vào hệ thống Cloud.");
-        document.getElementById('magicBtnPurpleV3').style.display = 'none';
-    }
-</script>
 </body>
 </html>
