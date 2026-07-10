@@ -12,29 +12,10 @@
         body { display: flex; min-height: 100vh; background-color: var(--bg-body); background-image: url('https://images.unsplash.com/photo-1508610048659-a06b669e3321?q=80&w=2000'); background-size: cover; background-position: center; background-attachment: fixed; background-blend-mode: soft-light; color: var(--text-main); }
         
         /* === HIỆU ỨNG HOA LÁ RƠI === */
-        #falling-elements {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; /* KHÔNG CẢN TRỞ NÚT BẤM CỦA NGƯỜI DÙNG */
-            z-index: 9999; overflow: hidden;
-        }
-        .falling-item {
-            position: absolute; top: -10%; user-select: none;
-            animation-name: fall, sway;
-            animation-iteration-count: infinite;
-            animation-timing-function: linear, ease-in-out;
-        }
-        @keyframes fall {
-            0% { top: -10%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 0.8; }
-            100% { top: 110%; opacity: 0; }
-        }
-        @keyframes sway {
-            0% { transform: translateX(0px) rotate(0deg); }
-            50% { transform: translateX(60px) rotate(45deg); }
-            100% { transform: translateX(0px) rotate(90deg); }
-        }
-        /* ============================ */
+        #falling-elements { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
+        .falling-item { position: absolute; top: -10%; user-select: none; animation-name: fall, sway; animation-iteration-count: infinite; animation-timing-function: linear, ease-in-out; }
+        @keyframes fall { 0% { top: -10%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 0.8; } 100% { top: 110%; opacity: 0; } }
+        @keyframes sway { 0% { transform: translateX(0px) rotate(0deg); } 50% { transform: translateX(60px) rotate(45deg); } 100% { transform: translateX(0px) rotate(90deg); } }
 
         .sidebar { width: var(--sidebar-width); background: rgba(26, 77, 46, 0.95); backdrop-filter: blur(10px); color: #fff; padding: 30px 20px; display: flex; flex-direction: column; position: fixed; height: 100%; z-index: 100; box-shadow: 4px 0 20px rgba(0,0,0,0.1);}
         .logo-section { display: flex; align-items: center; gap: 15px; font-size: 1.4rem; font-weight: 800; margin-bottom: 50px; letter-spacing: 1px;}
@@ -108,11 +89,11 @@
 
         /* GIAO DIỆN IPHONE / MOBILE APP */
         @media (max-width: 768px) {
-            .sidebar { width: 100%; height: 65px; top: auto; bottom: 0; flex-direction: row; padding: 0; align-items: center; justify-content: center; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.15); }
+            .sidebar { width: 100%; height: 65px; top: auto; bottom: 0; flex-direction: row; padding: 0; align-items: center; justify-content: center; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.15); overflow-x: auto; white-space: nowrap;}
             .logo-section { display: none; }
             .nav-links { width: 100%; }
-            .nav-links ul { display: flex; justify-content: space-around; margin: 0; padding: 0; }
-            .nav-links li { margin: 0; flex: 1; text-align: center; }
+            .nav-links ul { display: flex; justify-content: flex-start; margin: 0; padding: 0 10px; }
+            .nav-links li { margin: 0; flex: 1; text-align: center; min-width: 75px;}
             .nav-links a { flex-direction: column; gap: 4px; padding: 8px 0; font-size: 0.65rem; justify-content: center; background: transparent !important; }
             .nav-links a i { font-size: 1.3rem; }
             .nav-links a.active { color: var(--primary-green); border: none; transform: translateY(-2px); }
@@ -128,7 +109,7 @@
             .search-container, .action-buttons { width: 100%; }
             .search-container input { padding: 10px 15px 10px 35px; font-size: 0.9rem;}
             .search-container i { left: 12px; font-size: 1rem; }
-            .btn-add { padding: 10px 20px; font-size: 0.9rem; justify-content: center; }
+            .btn-add { padding: 10px 20px; font-size: 0.9rem; justify-content: center; width: 100%;}
             .data-section { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
             table { border-spacing: 0 8px; }
             th { font-size: 0.7rem; padding: 0 10px 5px 10px; white-space: nowrap; }
@@ -155,6 +136,8 @@
             <li><a class="nav-btn active" data-target="page-home"><i class="fas fa-layer-group"></i>Bảng Tin</a></li>
             <li><a class="nav-btn" data-target="page-list"><i class="fas fa-seedling"></i>Danh Sách Hoa</a></li>
             <li><a class="nav-btn" data-target="page-members"><i class="fas fa-users"></i>Thành Viên</a></li>
+            <!-- THÊM TAB LOẠI HOA -->
+            <li><a class="nav-btn" data-target="page-flower-types"><i class="fas fa-list-ul"></i>Loại Hoa</a></li>
         </ul>
     </nav>
 </aside>
@@ -221,20 +204,34 @@
         <div class="home-container">
             <h2 style="margin-bottom: 5px; color: var(--dark-green); font-size: 2rem; font-weight: 800;"><i class="fas fa-users"></i> Quản Lý Thành Viên</h2>
             <p style="color: #7f8c8d; margin-bottom: 25px;">Thêm tên thành viên vào đây để làm dữ liệu chọn khi thêm hoa mới.</p>
-            
             <div class="table-controls">
-                <div class="action-buttons" style="width: 100%;">
-                    <button class="btn-add" id="openMemberModalBtn"><i class="fas fa-user-plus"></i> Thêm Thành Viên Mới</button>
-                </div>
+                <div class="action-buttons" style="width: 100%;"><button class="btn-add" id="openMemberModalBtn"><i class="fas fa-user-plus"></i> Thêm Thành Viên Mới</button></div>
             </div>
-            
             <div class="data-section">
                 <table>
                     <thead>
                         <tr><th style="text-align: center; width: 60px;">STT</th><th>Tên Thành Viên</th><th style="text-align: right; padding-right: 30px;">Hành Động</th></tr>
                     </thead>
-                    <tbody id="memberTableBody">
-                    </tbody>
+                    <tbody id="memberTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRANG LOẠI HOA (MỚI) -->
+    <div id="page-flower-types" class="page-section">
+        <div class="home-container">
+            <h2 style="margin-bottom: 5px; color: var(--dark-green); font-size: 2rem; font-weight: 800;"><i class="fas fa-list-ul"></i> Quản Lý Loại Hoa</h2>
+            <p style="color: #7f8c8d; margin-bottom: 25px;">Thêm tên các loại hoa vào đây để tạo danh sách chọn nhanh cho hệ thống.</p>
+            <div class="table-controls">
+                <div class="action-buttons" style="width: 100%;"><button class="btn-add" id="openFlowerTypeModalBtn"><i class="fas fa-plus-circle"></i> Thêm Loại Hoa Mới</button></div>
+            </div>
+            <div class="data-section">
+                <table>
+                    <thead>
+                        <tr><th style="text-align: center; width: 60px;">STT</th><th>Tên Loại Hoa</th><th style="text-align: right; padding-right: 30px;">Hành Động</th></tr>
+                    </thead>
+                    <tbody id="flowerTypeTableBody"></tbody>
                 </table>
             </div>
         </div>
@@ -242,6 +239,7 @@
 
 </main>
 
+<!-- Khung Modal Thêm Hoa -->
 <div class="modal" id="addModal">
     <div class="modal-content">
         <div class="modal-header"><h3>✨ Thêm Hoa Mới</h3><span class="close-btn" id="closeModalBtn">&times;</span></div>
@@ -252,14 +250,20 @@
                     <option value="">-- Đang tải danh sách thành viên... --</option>
                 </select>
             </div>
-            <div class="form-group"><label>🌿 Tên hoa / Vật phẩm</label><input type="text" id="flowerInput" required></div>
+            <!-- ĐÃ SỬA THÀNH NÚT SỔ XUỐNG -->
+            <div class="form-group">
+                <label>🌿 Tên hoa / Vật phẩm</label>
+                <select id="flowerInput" required>
+                    <option value="">-- Đang tải danh sách loại hoa... --</option>
+                </select>
+            </div>
             <div class="form-group">
                 <label>🎨 Phẩm hoa</label>
                 <select id="qualityInput" required>
                     <option value="Đỏ">Đỏ</option><option value="Vàng">Vàng</option><option value="Tím">Tím</option><option value="Xanh">Xanh</option><option value="Lam">Lam</option>
                 </select>
             </div>
-            <button type="submit" class="btn-submit">Lưu Thông Tin</button>
+            <button type="submit" class="btn-submit">Lưu Lên Cloud</button>
         </form>
     </div>
 </div>
@@ -277,32 +281,41 @@
     </div>
 </div>
 
+<!-- Khung Modal Thêm Loại Hoa (MỚI) -->
+<div class="modal" id="addFlowerTypeModal">
+    <div class="modal-content">
+        <div class="modal-header"><h3>🌿 Thêm Loại Hoa</h3><span class="close-btn" id="closeFlowerTypeModalBtn">&times;</span></div>
+        <form id="flowerTypeForm">
+            <div class="form-group">
+                <label>Tên loại hoa mới</label>
+                <input type="text" id="newFlowerTypeName" placeholder="Ví dụ: Hoa Hồng, Cỏ Bốn Lá..." required>
+            </div>
+            <button type="submit" class="btn-submit">Thêm Vào Danh Sách</button>
+        </form>
+    </div>
+</div>
+
 <script>
     // === TẠO HIỆU ỨNG HOA RƠI ===
     function createFallingElements() {
         const container = document.getElementById('falling-elements');
-        const elements = ['🌸', '🍃', '💮', '🍂', '🍁', '✨']; // Ký hiệu hoa và lá
-        const totalElements = 25; // Số lượng cánh hoa trên màn hình
-
+        const elements = ['🌸', '🍃', '💮', '🍂', '🍁', '✨']; 
+        const totalElements = 25; 
         for (let i = 0; i < totalElements; i++) {
             let item = document.createElement('div');
             item.classList.add('falling-item');
             item.innerText = elements[Math.floor(Math.random() * elements.length)];
-            
-            // Lập trình ngẫu nhiên vị trí, tốc độ và kích thước
             item.style.left = Math.random() * 100 + 'vw';
             item.style.animationDuration = (Math.random() * 6 + 6) + 's, ' + (Math.random() * 3 + 3) + 's'; 
             item.style.animationDelay = Math.random() * 8 + 's, ' + Math.random() * 5 + 's';
             item.style.fontSize = (Math.random() * 12 + 10) + 'px';
-            item.style.opacity = Math.random() * 0.5 + 0.3; // Mờ ảo chút cho đẹp
-
+            item.style.opacity = Math.random() * 0.5 + 0.3; 
             container.appendChild(item);
         }
     }
-    // Khởi chạy khi web load xong
     document.addEventListener("DOMContentLoaded", createFallingElements);
-    // =============================
 
+    // Chuyển Tab
     const navBtns = document.querySelectorAll('.nav-btn');
     const pages = document.querySelectorAll('.page-section');
     navBtns.forEach(btn => {
@@ -313,17 +326,25 @@
         });
     });
 
+    // Bật tắt Modal Hoa
     const modal = document.getElementById('addModal');
     document.getElementById('openModalBtn').onclick = () => modal.style.display = 'flex';
     document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; document.getElementById('dataForm').reset(); };
     
+    // Bật tắt Modal Thành viên
     const memberModal = document.getElementById('addMemberModal');
     document.getElementById('openMemberModalBtn').onclick = () => memberModal.style.display = 'flex';
     document.getElementById('closeMemberModalBtn').onclick = () => { memberModal.style.display = 'none'; document.getElementById('memberForm').reset(); };
 
+    // Bật tắt Modal Loại Hoa
+    const flowerTypeModal = document.getElementById('addFlowerTypeModal');
+    document.getElementById('openFlowerTypeModalBtn').onclick = () => flowerTypeModal.style.display = 'flex';
+    document.getElementById('closeFlowerTypeModalBtn').onclick = () => { flowerTypeModal.style.display = 'none'; document.getElementById('flowerTypeForm').reset(); };
+
     window.onclick = (e) => { 
         if (e.target == modal) { modal.style.display = 'none'; document.getElementById('dataForm').reset(); } 
         if (e.target == memberModal) { memberModal.style.display = 'none'; document.getElementById('memberForm').reset(); } 
+        if (e.target == flowerTypeModal) { flowerTypeModal.style.display = 'none'; document.getElementById('flowerTypeForm').reset(); } 
     }
 </script>
 
@@ -347,7 +368,9 @@
     const configRef = ref(db, 'hoavien_config');
     const recordsRef = ref(db, 'hoavien_records');
     const membersRef = ref(db, 'hoavien_members'); 
+    const flowerTypesRef = ref(db, 'hoavien_flower_types'); // Bảng Loại Hoa mới
 
+    // Bảng tin Cache
     const bannerImg = document.getElementById('bannerImg');
     const imgPlaceholder = document.getElementById('imgPlaceholder');
     const homeText = document.getElementById('homeText');
@@ -402,6 +425,7 @@
         }
     });
 
+    // --- QUẢN LÝ THÀNH VIÊN ---
     onValue(membersRef, (snapshot) => {
         const memberTable = document.getElementById('memberTableBody');
         const ownerSelect = document.getElementById('ownerInput');
@@ -409,28 +433,19 @@
         
         if (snapshot.exists()) {
             ownerSelect.innerHTML = '<option value="">-- Chọn thành viên sở hữu --</option>';
-        } else {
-            ownerSelect.innerHTML = '<option value="">(Chưa có thành viên nào)</option>';
-        }
+        } else { ownerSelect.innerHTML = '<option value="">(Chưa có thành viên nào)</option>'; }
 
         let index = 1;
         snapshot.forEach((childSnapshot) => {
-            const id = childSnapshot.key;
-            const data = childSnapshot.val();
-            
+            const id = childSnapshot.key; const data = childSnapshot.val();
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td style="text-align: center;">${index++}</td>
                 <td class="item-cell"><i class="fas fa-user-circle" style="color:var(--primary-green); font-size:1.2rem;"></i> ${data.name}</td>
-                <td style="text-align: right; padding-right: 20px;">
-                    <button class="btn-delete" onclick="deleteMemberFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button>
-                </td>
+                <td style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteMemberFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
             `;
             memberTable.appendChild(row);
-
-            const option = document.createElement('option');
-            option.value = data.name;
-            option.textContent = data.name;
+            const option = document.createElement('option'); option.value = data.name; option.textContent = data.name;
             ownerSelect.appendChild(option);
         });
     });
@@ -439,16 +454,51 @@
         e.preventDefault();
         const newMember = { name: document.getElementById('newMemberName').value };
         push(membersRef, newMember); 
-        document.getElementById('addMemberModal').style.display = 'none';
-        this.reset();
+        document.getElementById('addMemberModal').style.display = 'none'; this.reset();
     });
 
     window.deleteMemberFirebase = function(id) {
-        if (confirm('⚠️ Xóa thành viên này khỏi danh sách hội?')) {
-            remove(ref(db, `hoavien_members/${id}`));
-        }
+        if (confirm('⚠️ Xóa thành viên này khỏi danh sách hội?')) { remove(ref(db, `hoavien_members/${id}`)); }
     }
 
+    // --- QUẢN LÝ LOẠI HOA (MỚI) ---
+    onValue(flowerTypesRef, (snapshot) => {
+        const typeTable = document.getElementById('flowerTypeTableBody');
+        const flowerSelect = document.getElementById('flowerInput');
+        typeTable.innerHTML = '';
+        
+        if (snapshot.exists()) {
+            flowerSelect.innerHTML = '<option value="">-- Chọn loại hoa / vật phẩm --</option>';
+        } else { flowerSelect.innerHTML = '<option value="">(Chưa có loại hoa nào)</option>'; }
+
+        let index = 1;
+        snapshot.forEach((childSnapshot) => {
+            const id = childSnapshot.key; const data = childSnapshot.val();
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="text-align: center;">${index++}</td>
+                <td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green); font-size:1.2rem;"></i> ${data.name}</td>
+                <td style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteFlowerTypeFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
+            `;
+            typeTable.appendChild(row);
+            const option = document.createElement('option'); option.value = data.name; option.textContent = data.name;
+            flowerSelect.appendChild(option);
+        });
+    });
+
+    document.getElementById('flowerTypeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const newType = { name: document.getElementById('newFlowerTypeName').value };
+        push(flowerTypesRef, newType); 
+        document.getElementById('addFlowerTypeModal').style.display = 'none'; this.reset();
+    });
+
+    window.deleteFlowerTypeFirebase = function(id) {
+        if (confirm('⚠️ Xóa loại hoa này khỏi danh sách chọn?')) { remove(ref(db, `hoavien_flower_types/${id}`)); }
+    }
+
+
+    // --- QUẢN LÝ DANH SÁCH HOA CHUNG ---
     let records = [];
     let currentFilter = 'all';
     const colorMap = {
@@ -468,22 +518,18 @@
     document.getElementById('dataForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const ownerVal = document.getElementById('ownerInput').value;
-        if(ownerVal === "") { alert("Vui lòng chọn Người sở hữu!"); return; }
+        const flowerVal = document.getElementById('flowerInput').value;
         
-        const newRecord = {
-            owner: ownerVal,
-            flowerName: document.getElementById('flowerInput').value,
-            quality: document.getElementById('qualityInput').value
-        };
+        if(ownerVal === "") { alert("Vui lòng chọn Người sở hữu!"); return; }
+        if(flowerVal === "") { alert("Vui lòng chọn Tên hoa / Vật phẩm!"); return; }
+        
+        const newRecord = { owner: ownerVal, flowerName: flowerVal, quality: document.getElementById('qualityInput').value };
         push(recordsRef, newRecord); 
-        document.getElementById('addModal').style.display = 'none';
-        this.reset();
+        document.getElementById('addModal').style.display = 'none'; this.reset();
     });
 
     window.deleteRecordFirebase = function(id) {
-        if (confirm('⚠️ Bạn có chắc chắn muốn xóa dòng này trên hệ thống chung không?')) {
-            remove(ref(db, `hoavien_records/${id}`));
-        }
+        if (confirm('⚠️ Bạn có chắc chắn muốn xóa dòng này trên hệ thống chung không?')) { remove(ref(db, `hoavien_records/${id}`)); }
     }
 
     const filterCards = document.querySelectorAll('#filterCards .card');
