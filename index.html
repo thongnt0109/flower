@@ -119,7 +119,7 @@
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56, 239, 125, 0.5);}
         select.locked-select { background-color: #f1f2f6; pointer-events: none; opacity: 0.8; color: #7f8c8d; }
 
-        /* === CSS MỚI CHO THANH TÌM KIẾM HOA === */
+        /* THANH TÌM KIẾM HOA */
         .searchable-select { position: relative; width: 100%; }
         .searchable-select input { padding-right: 35px !important; }
         .searchable-select i { position: absolute; right: 15px; top: 15px; color: #95a5a6; pointer-events: none;}
@@ -304,29 +304,30 @@
     </div>
 </main>
 
-<!-- MODAL THÊM HOA MỚI (ĐÃ NÂNG CẤP THANH TÌM KIẾM V21) -->
 <div class="modal" id="addModal">
-    <div class="modal-content" style="overflow: visible;"> <!-- Sửa overflow để dropdown không bị cắt -->
+    <div class="modal-content" style="overflow: visible;">
         <div class="corner-leaves"></div>
         <div class="modal-header"><h3 id="modalTitle">✨ Thêm Hoa Mới</h3><span class="close-btn" id="closeModalBtn">&times;</span></div>
         <form id="dataForm">
             <input type="hidden" id="editRecordId" value="">
+            
+            <!-- ĐÃ THÊM NÚT "CHỌN TẤT CẢ" Ở ĐÂY -->
             <div class="form-group">
-                <label>👤 Người sở hữu (Có thể tích chọn nhiều người)</label>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <label style="margin-bottom: 0;">👤 Người sở hữu</label>
+                    <button type="button" id="selectAllOwnersBtn" style="background: var(--primary-green); color: white; border: none; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 800; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">Chọn tất cả</button>
+                </div>
                 <div id="ownerCheckboxList" class="checkbox-list">
                     <div style="color: #95a5a6; font-size: 0.9rem; text-align: center; padding: 10px;">-- Đang tải danh sách thành viên... --</div>
                 </div>
             </div>
             
-            <!-- CẢI TIẾN: Ô TÌM KIẾM HOA THÔNG MINH -->
             <div class="form-group">
                 <label>🌿 Tên hoa / Vật phẩm</label>
                 <div class="searchable-select" id="flowerSelectWrapper">
                     <input type="text" id="flowerInputDisplay" placeholder="🔍 Gõ để tìm hoa nhanh..." autocomplete="off" required>
                     <i class="fas fa-chevron-down"></i>
-                    <!-- Input ẩn chứa tên hoa thực sự để submit lên cloud -->
                     <input type="hidden" id="flowerInput" required>
-                    
                     <div class="searchable-list" id="flowerListContainer">
                         <div style="padding:10px; color:#95a5a6; text-align:center;">-- Đang tải dữ liệu... --</div>
                     </div>
@@ -455,21 +456,44 @@
     });
 
     const modal = document.getElementById('addModal');
+    const selectAllBtn = document.getElementById('selectAllOwnersBtn');
+
     document.getElementById('openModalBtn').onclick = () => {
         document.getElementById('editRecordId').value = ""; 
         document.getElementById('dataForm').reset();
         
-        // Xóa sạch ô tìm kiếm hoa
         document.getElementById('flowerInputDisplay').value = "";
         document.getElementById('flowerInput').value = "";
         document.getElementById('qualityInput').value = "";
         
         document.getElementById('modalTitle').innerText = '✨ Thêm Hoa Mới';
         document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false);
+        
+        // Reset nút Chọn tất cả
+        selectAllBtn.innerText = "Chọn tất cả";
+        selectAllBtn.style.background = "var(--primary-green)";
+
         modal.style.display = 'flex';
     };
     document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; };
     
+    // LÔ GIC CHO NÚT CHỌN TẤT CẢ (V22)
+    selectAllBtn.addEventListener('click', function() {
+        const checkboxes = document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]');
+        if (checkboxes.length === 0) return;
+        
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        checkboxes.forEach(cb => cb.checked = !allChecked);
+        
+        if (!allChecked) {
+            this.innerText = "Bỏ chọn tất cả";
+            this.style.background = "#e74c3c";
+        } else {
+            this.innerText = "Chọn tất cả";
+            this.style.background = "var(--primary-green)";
+        }
+    });
+
     const memberModal = document.getElementById('addMemberModal');
     document.getElementById('openMemberModalBtn').onclick = () => memberModal.style.display = 'flex';
     document.getElementById('closeMemberModalBtn').onclick = () => { memberModal.style.display = 'none'; document.getElementById('memberForm').reset(); };
@@ -621,7 +645,6 @@
     window.deleteMemberFirebase = function(id) { if (confirm('⚠️ Xóa thành viên này khỏi danh sách hội?')) remove(ref(db, `hoavien_members/${id}`)); }
 
 
-    // === XỬ LÝ LÔ GIC CHO THANH TÌM KIẾM HOA (V21) ===
     const displayInput = document.getElementById('flowerInputDisplay');
     const hiddenInput = document.getElementById('flowerInput');
     const qualityInput = document.getElementById('qualityInput');
@@ -630,7 +653,7 @@
     onValue(flowerTypesRef, (snapshot) => {
         const typeTable = document.getElementById('flowerTypeTableBody');
         typeTable.innerHTML = '';
-        listContainer.innerHTML = ''; // Làm sạch danh sách tìm kiếm
+        listContainer.innerHTML = ''; 
         
         let totalFlowers = 0;
 
@@ -647,7 +670,6 @@
             const fName = data.name || 'Không tên';
             const colors = colorMap[quality] || colorMap['Chưa rõ'];
 
-            // 1. In vào bảng ở Tab "Loại Hoa"
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td style="text-align: center;">${index++}</td>
@@ -657,7 +679,6 @@
             `;
             typeTable.appendChild(row);
             
-            // 2. Tạo div cho danh sách thả xuống tìm kiếm
             const div = document.createElement('div');
             div.className = 'searchable-item';
             div.innerHTML = `
@@ -665,12 +686,11 @@
                 <span class="quality-badge" style="background:${colors.bg}; color:${colors.text}; border:1px solid ${colors.border}">${quality}</span>
             `;
             
-            // Khi bấm chọn 1 hoa trong danh sách
             div.onclick = function() {
-                displayInput.value = fName; // Hiện chữ lên ô input
-                hiddenInput.value = fName;  // Lưu vào ô ẩn để submit
-                qualityInput.value = quality; // Tự động điền phẩm hoa
-                listContainer.classList.remove('show'); // Đóng menu
+                displayInput.value = fName; 
+                hiddenInput.value = fName;  
+                qualityInput.value = quality; 
+                listContainer.classList.remove('show'); 
             };
             
             listContainer.appendChild(div);
@@ -678,18 +698,14 @@
         document.getElementById('totalFlowerTypesCount').innerText = totalFlowers;
     });
 
-    // Bật menu khi bấm vào ô input
     displayInput.addEventListener('focus', () => {
         listContainer.classList.add('show');
-        filterFlowers(''); // Hiện tất cả
+        filterFlowers(''); 
     });
 
-    // Lọc khi người dùng gõ phím
     displayInput.addEventListener('input', function() {
         listContainer.classList.add('show');
         filterFlowers(this.value);
-        
-        // Nếu người dùng đang gõ lại, xóa bỏ tên ẩn và phẩm hoa cũ đi (để bắt họ phải nhấp chọn lại)
         hiddenInput.value = ""; 
         qualityInput.value = "";
     });
@@ -700,21 +716,17 @@
         Array.from(items).forEach(item => {
             const flowerName = item.querySelector('span').innerText.toLowerCase();
             if (flowerName.includes(text)) {
-                item.style.display = 'flex'; // Dùng flex để thẻ màu ko bị rớt dòng
+                item.style.display = 'flex'; 
             } else {
                 item.style.display = 'none';
             }
         });
     }
 
-    // Đóng menu khi bấm ra ngoài
     document.addEventListener('click', function(e) {
         if (!document.getElementById('flowerSelectWrapper').contains(e.target)) {
             listContainer.classList.remove('show');
-            // Nếu bấm ra ngoài mà ô ẩn (hiddenInput) trống (tức là gõ linh tinh nhưng không chọn) -> Xóa trắng luôn
-            if(hiddenInput.value === "") {
-                 displayInput.value = "";
-            }
+            if(hiddenInput.value === "") { displayInput.value = ""; }
         }
     });
 
@@ -726,7 +738,6 @@
     window.deleteFlowerTypeFirebase = function(id) { if (confirm('⚠️ Xóa loại hoa này khỏi danh sách chọn?')) remove(ref(db, `hoavien_flower_types/${id}`)); }
 
 
-    // === QUẢN LÝ BẢNG CHÍNH VÀ LƯU TRỮ ===
     let records = [];
     let currentFilter = 'all';
 
@@ -741,17 +752,28 @@
         if(!recordToEdit) return;
 
         document.getElementById('editRecordId').value = id;
-        
-        // Cập nhật cho ô tìm kiếm
         document.getElementById('flowerInputDisplay').value = recordToEdit.flowerName;
         document.getElementById('flowerInput').value = recordToEdit.flowerName;
         document.getElementById('qualityInput').value = recordToEdit.quality;
 
         document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false);
         const ownersArray = (recordToEdit.owner || "").split(',').map(n => n.trim());
-        document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => {
+        const allCbs = document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]');
+        
+        allCbs.forEach(cb => {
             if(ownersArray.includes(cb.value)) cb.checked = true;
         });
+
+        // Kiểm tra xem có phải đang tích tất cả không để đổi màu nút
+        const allChecked = Array.from(allCbs).length > 0 && Array.from(allCbs).every(cb => cb.checked);
+        const selectAllBtn = document.getElementById('selectAllOwnersBtn');
+        if(allChecked) {
+            selectAllBtn.innerText = "Bỏ chọn tất cả";
+            selectAllBtn.style.background = "#e74c3c";
+        } else {
+            selectAllBtn.innerText = "Chọn tất cả";
+            selectAllBtn.style.background = "var(--primary-green)";
+        }
 
         document.getElementById('modalTitle').innerText = '✏️ Chỉnh Sửa Hoa';
         document.getElementById('addModal').style.display = 'flex';
@@ -764,7 +786,6 @@
         const ownersArray = Array.from(checkedBoxes).map(cb => cb.value);
         if(ownersArray.length === 0) { alert("⚠️ Vui lòng tích chọn ít nhất 1 Người sở hữu!"); return; }
         
-        // Lấy giá trị từ ô ẩn (hiddenInput) để đảm bảo người dùng đã CHỌN từ danh sách chứ không phải gõ bậy
         const flowerVal = document.getElementById('flowerInput').value;
         if(flowerVal === "") { alert("⚠️ Vui lòng gõ và nhấp CHỌN tên hoa từ danh sách xổ xuống!"); return; }
         
