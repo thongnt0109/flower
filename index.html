@@ -130,7 +130,7 @@
         .searchable-item:last-child { border-bottom: none; }
         .quality-badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        /* GIAO DIỆN IPHONE / MOBILE APP */
+        /* === GIAO DIỆN APP ĐIỆN THOẠI CHUYÊN NGHIỆP (V23) === */
         @media (max-width: 768px) {
             .sidebar { width: 100%; height: 65px; top: auto; bottom: 0; flex-direction: row; padding: 0; align-items: center; justify-content: center; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.15); overflow-x: auto; white-space: nowrap;}
             .logo-section { display: none; }
@@ -154,12 +154,23 @@
             .search-container input { padding: 10px 15px 10px 35px; font-size: 0.9rem;}
             .search-container i { left: 12px; font-size: 1rem; }
             .btn-add { padding: 10px 20px; font-size: 0.9rem; justify-content: center; width: 100%;}
-            .data-section { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
-            table { border-spacing: 0 8px; }
-            th { font-size: 0.7rem; padding: 0 10px 5px 10px; white-space: nowrap; }
-            td { padding: 12px 10px; font-size: 0.85rem; white-space: nowrap; }
-            td.owner-cell { white-space: normal; min-width: 200px; }
-            .item-cell { font-size: 0.9rem; }
+            
+            /* CSS CHUYỂN BẢNG THÀNH DẠNG THẺ (CARD) CHO MOBILE */
+            .data-section { overflow-x: visible; background: transparent; padding: 0; box-shadow: none; }
+            table { display: block; width: 100%; border-spacing: 0; }
+            thead { display: none; /* Giấu tiêu đề cột để màn hình gọn hơn */ } 
+            tbody { display: block; width: 100%; }
+            tr { display: block; background: #fff; margin-bottom: 15px; border-radius: 16px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative; border: 1px solid #f0f4f8; transition: transform 0.2s;}
+            tr:hover { transform: translateY(-2px); }
+            td { display: block; text-align: left; padding: 6px 0; border: none !important; width: 100%; white-space: normal; }
+            
+            /* Tùy chỉnh vị trí các cột bên trong thẻ Card */
+            td:first-child { position: absolute; top: 15px; right: 15px; width: auto; background: #f1f2f6; color: #7f8c8d; font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; border: none; }
+            td.item-cell { font-size: 1.15rem; padding-right: 50px; border-bottom: 1px dashed #ecf0f1 !important; padding-bottom: 12px; margin-bottom: 8px; color: var(--dark-green); }
+            td.owner-cell { min-width: 100%; max-width: 100%; padding-top: 5px; }
+            td:last-child { display: flex; justify-content: flex-end; gap: 10px; border-top: 1px dashed #ecf0f1 !important; padding-top: 12px; margin-top: 8px; border-radius: 0; }
+            body.view-only td:last-child.admin-only { display: none !important; }
+            
             .modal-content { width: 92%; padding: 20px; border-radius: 16px; }
             .modal-header h3 { font-size: 1.2rem; }
             .form-group label { font-size: 0.85rem; margin-bottom: 5px;}
@@ -311,7 +322,6 @@
         <form id="dataForm">
             <input type="hidden" id="editRecordId" value="">
             
-            <!-- ĐÃ THÊM NÚT "CHỌN TẤT CẢ" Ở ĐÂY -->
             <div class="form-group">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                     <label style="margin-bottom: 0;">👤 Người sở hữu</label>
@@ -340,7 +350,6 @@
                     <option value="">-- Tự động điền theo tên hoa --</option>
                     <option value="Đỏ">Đỏ</option><option value="Vàng">Vàng</option><option value="Tím">Tím</option><option value="Xanh">Xanh</option><option value="Lam">Lam</option>
                 </select>
-                <small style="color: #e74c3c; font-size: 0.75rem; font-weight: 600; display: block; margin-top: 5px;">*Phẩm hoa sẽ tự động thay đổi theo tên hoa bạn chọn bên trên.</small>
             </div>
             <button type="submit" class="btn-submit">Lưu Lên Cloud</button>
         </form>
@@ -469,7 +478,6 @@
         document.getElementById('modalTitle').innerText = '✨ Thêm Hoa Mới';
         document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false);
         
-        // Reset nút Chọn tất cả
         selectAllBtn.innerText = "Chọn tất cả";
         selectAllBtn.style.background = "var(--primary-green)";
 
@@ -477,7 +485,6 @@
     };
     document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; };
     
-    // LÔ GIC CHO NÚT CHỌN TẤT CẢ (V22)
     selectAllBtn.addEventListener('click', function() {
         const checkboxes = document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]');
         if (checkboxes.length === 0) return;
@@ -764,7 +771,6 @@
             if(ownersArray.includes(cb.value)) cb.checked = true;
         });
 
-        // Kiểm tra xem có phải đang tích tất cả không để đổi màu nút
         const allChecked = Array.from(allCbs).length > 0 && Array.from(allCbs).every(cb => cb.checked);
         const selectAllBtn = document.getElementById('selectAllOwnersBtn');
         if(allChecked) {
