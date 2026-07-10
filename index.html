@@ -79,15 +79,24 @@
         .btn-delete { background-color: #ffebee; color: #e53935; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;}
         .btn-delete:hover { background-color: #ef5350; color: white;}
         
-        /* CSS cho Thẻ tên người sở hữu (Tags) */
+        /* CSS CHO THẺ NGƯỜI SỞ HỮU RÚT GỌN */
+        .owner-cell {
+            display: flex; flex-wrap: wrap; gap: 6px; align-items: center; max-width: 400px;
+        }
         .owner-tag {
             background: rgba(46, 204, 113, 0.1); color: var(--dark-green);
             padding: 5px 12px; border-radius: 30px; font-size: 0.85rem; font-weight: 700;
-            display: inline-block; margin: 3px; border: 1px solid rgba(46, 204, 113, 0.3);
+            display: inline-flex; align-items: center; border: 1px solid rgba(46, 204, 113, 0.3);
+            white-space: nowrap;
         }
         .owner-tag i { margin-right: 4px; color: var(--primary-green); }
+        .owner-tag-more {
+            background: #f1f2f6; color: #7f8c8d; border: 1px solid #dcdde1; cursor: help; transition: 0.3s;
+        }
+        .owner-tag-more:hover {
+            background: #dfe4ea; color: #2c3e50;
+        }
 
-        /* CSS cho Khung chọn nhiều thành viên */
         .checkbox-list {
             max-height: 180px; overflow-y: auto; border: 2px solid #ecf0f1;
             border-radius: 12px; padding: 12px; background: #fff;
@@ -140,6 +149,7 @@
             table { border-spacing: 0 8px; }
             th { font-size: 0.7rem; padding: 0 10px 5px 10px; white-space: nowrap; }
             td { padding: 12px 10px; font-size: 0.85rem; white-space: nowrap; }
+            td.owner-cell { white-space: normal; min-width: 250px; } /* Cho phép rớt dòng trên điện thoại */
             .item-cell { font-size: 0.9rem; }
             .modal-content { width: 92%; padding: 20px; border-radius: 16px; }
             .modal-header h3 { font-size: 1.2rem; }
@@ -217,7 +227,7 @@
             </div>
             <table>
                 <thead>
-                    <tr><th style="text-align: center;">STT</th><th>Tên Hoa / Vật Phẩm</th><th>Phẩm Hoa</th><th style="min-width: 250px;">Người Sở Hữu</th><th style="text-align: right; padding-right: 30px;">Hành Động</th></tr>
+                    <tr><th style="text-align: center;">STT</th><th>Tên Hoa / Vật Phẩm</th><th>Phẩm Hoa</th><th>Người Sở Hữu</th><th style="text-align: right; padding-right: 30px;">Hành Động</th></tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
             </table>
@@ -261,12 +271,10 @@
     </div>
 </main>
 
-<!-- Khung Modal Thêm Hoa -->
 <div class="modal" id="addModal">
     <div class="modal-content">
         <div class="modal-header"><h3>✨ Thêm Hoa Mới</h3><span class="close-btn" id="closeModalBtn">&times;</span></div>
         <form id="dataForm">
-            <!-- ĐÃ NÂNG CẤP THÀNH DANH SÁCH CHỌN NHIỀU NGƯỜI (CHECKBOX) -->
             <div class="form-group">
                 <label>👤 Người sở hữu (Có thể tích chọn nhiều người)</label>
                 <div id="ownerCheckboxList" class="checkbox-list">
@@ -343,7 +351,6 @@
     const modal = document.getElementById('addModal');
     document.getElementById('openModalBtn').onclick = () => {
         modal.style.display = 'flex';
-        // Bỏ check tất cả các ô checkbox khi mở lại modal
         document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false);
     };
     document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; document.getElementById('dataForm').reset(); };
@@ -436,12 +443,11 @@
         }
     });
 
-    // --- QUẢN LÝ THÀNH VIÊN VÀ ĐỔ VÀO CHECKBOX ---
+    // Quản lý thành viên
     onValue(membersRef, (snapshot) => {
         const memberTable = document.getElementById('memberTableBody');
         const checkboxList = document.getElementById('ownerCheckboxList');
-        memberTable.innerHTML = '';
-        checkboxList.innerHTML = '';
+        memberTable.innerHTML = ''; checkboxList.innerHTML = '';
         
         if (!snapshot.exists()) {
             checkboxList.innerHTML = '<div style="color: #e74c3c; font-size: 0.9rem; padding: 10px;">Bạn cần thêm thành viên ở Tab "Thành Viên" trước!</div>';
@@ -450,50 +456,35 @@
         let index = 1;
         snapshot.forEach((childSnapshot) => {
             const id = childSnapshot.key; const data = childSnapshot.val();
-            
-            // Đổ vào bảng Quản lý thành viên
             const row = document.createElement('tr');
-            row.innerHTML = `
-                <td style="text-align: center;">${index++}</td>
-                <td class="item-cell"><i class="fas fa-user-circle" style="color:var(--primary-green); font-size:1.2rem;"></i> ${data.name}</td>
-                <td style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteMemberFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
-            `;
+            row.innerHTML = `<td style="text-align: center;">${index++}</td><td class="item-cell"><i class="fas fa-user-circle" style="color:var(--primary-green); font-size:1.2rem;"></i> ${data.name}</td><td style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteMemberFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>`;
             memberTable.appendChild(row);
 
-            // Đổ vào danh sách CHECKBOX
-            const label = document.createElement('label');
-            label.className = 'checkbox-item';
+            const label = document.createElement('label'); label.className = 'checkbox-item';
             label.innerHTML = `<input type="checkbox" value="${data.name}"> ${data.name}`;
             checkboxList.appendChild(label);
         });
     });
 
     document.getElementById('memberForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        push(membersRef, { name: document.getElementById('newMemberName').value }); 
+        e.preventDefault(); push(membersRef, { name: document.getElementById('newMemberName').value }); 
         document.getElementById('addMemberModal').style.display = 'none'; this.reset();
     });
     window.deleteMemberFirebase = function(id) { if (confirm('⚠️ Xóa thành viên này khỏi danh sách hội?')) remove(ref(db, `hoavien_members/${id}`)); }
 
-    // --- QUẢN LÝ LOẠI HOA ---
+    // Quản lý loại hoa
     onValue(flowerTypesRef, (snapshot) => {
         const typeTable = document.getElementById('flowerTypeTableBody');
         const flowerSelect = document.getElementById('flowerInput');
         typeTable.innerHTML = '';
-        
-        if (snapshot.exists()) {
-            flowerSelect.innerHTML = '<option value="">-- Chọn loại hoa / vật phẩm --</option>';
-        } else { flowerSelect.innerHTML = '<option value="">(Chưa có loại hoa nào)</option>'; }
+        if (snapshot.exists()) { flowerSelect.innerHTML = '<option value="">-- Chọn loại hoa / vật phẩm --</option>'; } 
+        else { flowerSelect.innerHTML = '<option value="">(Chưa có loại hoa nào)</option>'; }
 
         let index = 1;
         snapshot.forEach((childSnapshot) => {
             const id = childSnapshot.key; const data = childSnapshot.val();
             const row = document.createElement('tr');
-            row.innerHTML = `
-                <td style="text-align: center;">${index++}</td>
-                <td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green); font-size:1.2rem;"></i> ${data.name}</td>
-                <td style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteFlowerTypeFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
-            `;
+            row.innerHTML = `<td style="text-align: center;">${index++}</td><td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green); font-size:1.2rem;"></i> ${data.name}</td><td style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteFlowerTypeFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>`;
             typeTable.appendChild(row);
             const option = document.createElement('option'); option.value = data.name; option.textContent = data.name;
             flowerSelect.appendChild(option);
@@ -501,14 +492,13 @@
     });
 
     document.getElementById('flowerTypeForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        push(flowerTypesRef, { name: document.getElementById('newFlowerTypeName').value }); 
+        e.preventDefault(); push(flowerTypesRef, { name: document.getElementById('newFlowerTypeName').value }); 
         document.getElementById('addFlowerTypeModal').style.display = 'none'; this.reset();
     });
     window.deleteFlowerTypeFirebase = function(id) { if (confirm('⚠️ Xóa loại hoa này khỏi danh sách chọn?')) remove(ref(db, `hoavien_flower_types/${id}`)); }
 
 
-    // --- QUẢN LÝ DANH SÁCH HOA CHUNG ---
+    // --- QUẢN LÝ DANH SÁCH HOA CHUNG VÀ CƠ CHẾ RÚT GỌN THẺ THÔNG MINH ---
     let records = [];
     let currentFilter = 'all';
     const colorMap = {
@@ -527,19 +517,13 @@
 
     document.getElementById('dataForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        // Lấy tất cả các checkbox đã được tích chọn
         const checkedBoxes = document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]:checked');
         const ownersArray = Array.from(checkedBoxes).map(cb => cb.value);
-        
         if(ownersArray.length === 0) { alert("⚠️ Vui lòng tích chọn ít nhất 1 Người sở hữu!"); return; }
-        
         const flowerVal = document.getElementById('flowerInput').value;
         if(flowerVal === "") { alert("⚠️ Vui lòng chọn Tên hoa / Vật phẩm!"); return; }
         
-        // Nối tên các người sở hữu lại với nhau (Ví dụ: "Bạch Xuyên, Hắc Xuyên")
         const ownerVal = ownersArray.join(', ');
-        
         const newRecord = { owner: ownerVal, flowerName: flowerVal, quality: document.getElementById('qualityInput').value };
         push(recordsRef, newRecord); 
         document.getElementById('addModal').style.display = 'none'; this.reset();
@@ -571,16 +555,28 @@
             const colors = colorMap[record.quality] || { bg: '#eee', text: '#333', border: '#ccc' };
             const row = document.createElement('tr'); row.setAttribute('data-quality', record.quality);
             
-            // Xử lý chuỗi tên để tạo thành các thẻ (Tags)
-            const ownerTagsHTML = record.owner.split(',').map(name => {
-                return `<span class="owner-tag"><i class="fas fa-user-circle"></i> ${name.trim()}</span>`;
-            }).join('');
+            // XỬ LÝ RÚT GỌN THẺ TÊN (Chỉ hiện tối đa 3 thẻ)
+            const ownerArray = record.owner.split(',').filter(name => name.trim() !== '');
+            let ownerTagsHTML = '';
+            
+            if (ownerArray.length > 3) {
+                const displayedOwners = ownerArray.slice(0, 3);
+                const hiddenCount = ownerArray.length - 3;
+                const hiddenNames = ownerArray.slice(3).join(', '); // Tên bị ẩn để đưa vào tooltip
+                
+                // Vẽ 3 người đầu
+                ownerTagsHTML = displayedOwners.map(name => `<span class="owner-tag"><i class="fas fa-user-circle"></i> ${name.trim()}</span>`).join('');
+                // Vẽ thẻ "+X người"
+                ownerTagsHTML += `<span class="owner-tag owner-tag-more" title="${hiddenNames}">+${hiddenCount} người</span>`;
+            } else {
+                ownerTagsHTML = ownerArray.map(name => `<span class="owner-tag"><i class="fas fa-user-circle"></i> ${name.trim()}</span>`).join('');
+            }
 
             row.innerHTML = `
                 <td>${index + 1}</td>
                 <td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green)"></i> ${record.flowerName}</td>
                 <td><span style="background-color: ${colors.bg}; color: ${colors.text}; border: 1px solid ${colors.border}; padding: 6px 14px; border-radius: 20px; font-weight:800; font-size: 0.85rem; display: inline-block;">${record.quality}</span></td>
-                <td>${ownerTagsHTML}</td>
+                <td class="owner-cell">${ownerTagsHTML}</td>
                 <td style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteRecordFirebase('${record.id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
             `;
             tbody.appendChild(row);
