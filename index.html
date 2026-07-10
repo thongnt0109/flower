@@ -30,7 +30,7 @@
         .nav-links a.active { border-left: 4px solid var(--primary-green); }
         .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 40px; }
         
-        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; background: rgba(255,255,255,0.8); padding: 15px 30px; border-radius: 20px; backdrop-filter: blur(10px); box-shadow: var(--shadow-soft);}
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(255,255,255,0.8); padding: 15px 30px; border-radius: 20px; backdrop-filter: blur(10px); box-shadow: var(--shadow-soft);}
         .top-header .welcome-text { font-size: 1.3rem; font-weight: 700; color: var(--text-main); }
         
         #authBtn { background: #fff; border: 2px solid #e74c3c; color: #e74c3c; padding: 8px 18px; border-radius: 20px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
@@ -112,8 +112,6 @@
         .form-group input:focus, .form-group select:focus { border-color: var(--primary-green); box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1);}
         .btn-submit { width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 1.1rem; margin-top: 15px; transition: 0.3s;}
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56, 239, 125, 0.5);}
-
-        /* Khóa giao diện thẻ select phẩm hoa khi tự động điền */
         select.locked-select { background-color: #f1f2f6; pointer-events: none; opacity: 0.8; color: #7f8c8d; }
 
         /* GIAO DIỆN IPHONE / MOBILE APP */
@@ -183,6 +181,14 @@
             </div>
         </div>
     </header>
+
+    <div id="lockWarning" style="margin-bottom: 30px; background: #ffebee; border: 2px solid #ffcdd2; color: #c0392b; padding: 15px 25px; border-radius: 12px; font-weight: 700; display: flex; align-items: center; gap: 15px;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem;"></i>
+        <div>
+            <div style="font-size: 1.1rem; margin-bottom: 5px;">Bạn đang ở Chế độ Chỉ Xem (Chế độ Khách)</div>
+            <div style="font-size: 0.9rem; font-weight: 600; opacity: 0.8;">Các nút Thêm Mới, Sửa, Xóa và Tải Ảnh đã bị giấu đi để bảo mật. Hãy bấm vào nút <b style="color:#e74c3c;">[<i class="fas fa-lock"></i> Chỉ Xem]</b> ở góc trên cùng bên phải và nhập mật khẩu (123456) để hiển thị lại toàn bộ các nút!</div>
+        </div>
+    </div>
 
     <div id="page-home" class="page-section active">
         <div class="home-container">
@@ -355,16 +361,19 @@
 
     function updateAuthUI() {
         const authBtn = document.getElementById('authBtn');
+        const warning = document.getElementById('lockWarning');
         if (isAdmin) {
             authBtn.innerHTML = '<i class="fas fa-unlock"></i> Quyền Quản Trị';
             authBtn.style.borderColor = '#2ecc71'; authBtn.style.color = '#2ecc71';
             document.body.classList.remove('view-only'); 
             document.getElementById('homeText').setAttribute('contenteditable', 'true');
+            if(warning) warning.style.display = 'none';
         } else {
             authBtn.innerHTML = '<i class="fas fa-lock"></i> Chỉ Xem';
             authBtn.style.borderColor = '#e74c3c'; authBtn.style.color = '#e74c3c';
             document.body.classList.add('view-only'); 
             document.getElementById('homeText').setAttribute('contenteditable', 'false');
+            if(warning) warning.style.display = 'flex';
         }
     }
     updateAuthUI();
@@ -378,7 +387,7 @@
             const pass = prompt("Vui lòng nhập Mã bảo mật của Hội Trưởng / Hội Phó:");
             if (pass === ADMIN_PASS) {
                 isAdmin = true; localStorage.setItem('hoaVienAdmin', 'true'); updateAuthUI();
-                alert("Đã mở khóa quyền chỉnh sửa!");
+                alert("MỞ KHÓA THÀNH CÔNG! Tất cả các nút Thêm/Sửa/Xóa đã hiện ra.");
             } else if (pass !== null) {
                 alert("Mã bảo mật không đúng! Bạn chỉ có quyền Xem.");
             }
@@ -436,4 +445,301 @@
     import { getDatabase, ref, onValue, push, remove, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyDBeKm7IEohpTi8exTi1ijvM-LHODMid
+        apiKey: "AIzaSyDBeKm7IEohpTi8exTi1ijvM-LHODMidj0",
+        authDomain: "flower-17430.firebaseapp.com",
+        databaseURL: "https://flower-17430-default-rtdb.firebaseio.com",
+        projectId: "flower-17430",
+        storageBucket: "flower-17430.firebasestorage.app",
+        messagingSenderId: "447458858978",
+        appId: "1:447458858978:web:2ae2ccd28d3e71e4b3d2e3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    const configRef = ref(db, 'hoavien_config');
+    const recordsRef = ref(db, 'hoavien_records');
+    const membersRef = ref(db, 'hoavien_members'); 
+    const flowerTypesRef = ref(db, 'hoavien_flower_types'); 
+
+    const colorMap = {
+        'Đỏ': { bg: '#ffebee', text: '#d32f2f', border: '#ffcdd2' },
+        'Vàng': { bg: '#fff8e1', text: '#f57f17', border: '#ffecb3' },
+        'Tím': { bg: '#f3e5f5', text: '#7b1fa2', border: '#e1bee7' },
+        'Xanh': { bg: '#e8f5e9', text: '#388e3c', border: '#c8e6c9' },
+        'Lam': { bg: '#e3f2fd', text: '#1976d2', border: '#bbdefb' },
+        'Chưa rõ': { bg: '#eee', text: '#333', border: '#ccc' }
+    };
+
+    const popup = document.getElementById('ownerPopup');
+    window.showMoreOwners = function(event, names) {
+        event.stopPropagation();
+        popup.innerHTML = "<strong>Danh sách đầy đủ:</strong><br>" + names.split(', ').join('<br>');
+        popup.style.display = 'block';
+        let x = event.clientX || (event.touches && event.touches[0].clientX) || 100;
+        let y = event.clientY || (event.touches && event.touches[0].clientY) || 100;
+        if(x > window.innerWidth - 180) x = window.innerWidth - 180;
+        popup.style.left = x + 10 + 'px'; popup.style.top = y + 10 + 'px';
+    };
+    window.addEventListener('click', () => { popup.style.display = 'none'; });
+    window.addEventListener('touchend', () => { setTimeout(() => { popup.style.display = 'none'; }, 2000); }); 
+
+    const bannerImg = document.getElementById('bannerImg');
+    const imgPlaceholder = document.getElementById('imgPlaceholder');
+    const homeText = document.getElementById('homeText');
+    const cachedBanner = localStorage.getItem('localFastBanner');
+    const cachedText = localStorage.getItem('localFastText');
+
+    if (cachedBanner) { bannerImg.src = cachedBanner; bannerImg.style.display = 'block'; imgPlaceholder.style.display = 'none'; }
+    if (cachedText) { homeText.innerHTML = cachedText; }
+
+    onValue(configRef, (snapshot) => {
+        const data = snapshot.val();
+        if(data) {
+            if(data.banner && data.banner !== cachedBanner) {
+                bannerImg.src = data.banner; bannerImg.style.display = 'block'; imgPlaceholder.style.display = 'none';
+                localStorage.setItem('localFastBanner', data.banner);
+            }
+            if(data.homeText && data.homeText !== cachedText) {
+                homeText.innerHTML = data.homeText; localStorage.setItem('localFastText', data.homeText);
+            }
+        }
+    });
+
+    document.getElementById('btnSaveText').addEventListener('click', () => {
+        const text = homeText.innerHTML; set(ref(db, 'hoavien_config/homeText'), text);
+        localStorage.setItem('localFastText', text); alert('✨ Đã đồng bộ thông báo lên Cloud thành công!');
+    });
+
+    document.getElementById('imageUpload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                    let width = img.width, height = img.height;
+                    if (width > 1000) { height *= 1000 / width; width = 1000; }
+                    canvas.width = width; canvas.height = height; ctx.drawImage(img, 0, 0, width, height);
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    bannerImg.src = compressedBase64; bannerImg.style.display = 'block'; imgPlaceholder.style.display = 'none';
+                    set(ref(db, 'hoavien_config/banner'), compressedBase64); 
+                    localStorage.setItem('localFastBanner', compressedBase64);
+                }
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    const roleColors = { 'Hội Trưởng': '#e74c3c', 'Hội Phó': '#e67e22', 'Quản Lý': '#3498db', 'Thành Viên': '#95a5a6' };
+
+    onValue(membersRef, (snapshot) => {
+        const memberTable = document.getElementById('memberTableBody');
+        const checkboxList = document.getElementById('ownerCheckboxList');
+        memberTable.innerHTML = ''; checkboxList.innerHTML = '';
+        
+        if (!snapshot.exists()) {
+            checkboxList.innerHTML = '<div style="color: #e74c3c; font-size: 0.9rem; padding: 10px;">Bạn cần thêm thành viên ở Tab "Thành Viên" trước!</div>';
+        }
+
+        let index = 1;
+        snapshot.forEach((childSnapshot) => {
+            const id = childSnapshot.key; const data = childSnapshot.val() || {};
+            const rColor = roleColors[data.role || 'Thành Viên'];
+            const mName = data.name || 'Không tên';
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="text-align: center;">${index++}</td>
+                <td class="item-cell">
+                    <i class="fas fa-user-circle" style="color:var(--primary-green); font-size:1.2rem;"></i> ${mName} 
+                    <span style="font-size: 0.7rem; background: ${rColor}; color: white; padding: 2px 8px; border-radius: 10px; margin-left: 10px; font-weight:800;">${data.role || 'Thành Viên'}</span>
+                </td>
+                <td class="admin-only" style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteMemberFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
+            `;
+            memberTable.appendChild(row);
+
+            const label = document.createElement('label'); label.className = 'checkbox-item';
+            label.innerHTML = `<input type="checkbox" value="${mName}"> ${mName}`;
+            checkboxList.appendChild(label);
+        });
+    });
+
+    document.getElementById('memberForm').addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        push(membersRef, { name: document.getElementById('newMemberName').value, role: document.getElementById('newMemberRole').value }); 
+        document.getElementById('addMemberModal').style.display = 'none'; this.reset();
+    });
+    window.deleteMemberFirebase = function(id) { if (confirm('⚠️ Xóa thành viên này khỏi danh sách hội?')) remove(ref(db, `hoavien_members/${id}`)); }
+
+    onValue(flowerTypesRef, (snapshot) => {
+        const typeTable = document.getElementById('flowerTypeTableBody');
+        const flowerSelect = document.getElementById('flowerInput');
+        typeTable.innerHTML = '';
+        let totalFlowers = 0;
+
+        if (snapshot.exists()) { flowerSelect.innerHTML = '<option value="">-- Chọn loại hoa / vật phẩm --</option>'; } 
+        else { flowerSelect.innerHTML = '<option value="">(Chưa có loại hoa nào)</option>'; }
+
+        let index = 1;
+        snapshot.forEach((childSnapshot) => {
+            const id = childSnapshot.key; const data = childSnapshot.val() || {};
+            totalFlowers++;
+            
+            const quality = data.quality || 'Chưa rõ';
+            const fName = data.name || 'Không tên';
+            const colors = colorMap[quality] || colorMap['Chưa rõ'];
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="text-align: center;">${index++}</td>
+                <td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green); font-size:1.2rem;"></i> ${fName}</td>
+                <td><span style="background-color: ${colors.bg}; color: ${colors.text}; border: 1px solid ${colors.border}; padding: 6px 14px; border-radius: 20px; font-weight:800; font-size: 0.85rem; display: inline-block;">${quality}</span></td>
+                <td class="admin-only" style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteFlowerTypeFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
+            `;
+            typeTable.appendChild(row);
+            
+            const option = document.createElement('option'); 
+            option.value = fName; option.textContent = fName; option.setAttribute('data-quality', quality);
+            flowerSelect.appendChild(option);
+        });
+        document.getElementById('totalFlowerTypesCount').innerText = totalFlowers;
+    });
+
+    document.getElementById('flowerInput').addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if(!selectedOption) return;
+        const quality = selectedOption.getAttribute('data-quality');
+        const qualitySelect = document.getElementById('qualityInput');
+        if (quality && quality !== 'Chưa rõ') { qualitySelect.value = quality; } 
+        else { qualitySelect.value = ""; }
+    });
+
+    document.getElementById('flowerTypeForm').addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        push(flowerTypesRef, { name: document.getElementById('newFlowerTypeName').value, quality: document.getElementById('newFlowerTypeQuality').value }); 
+        document.getElementById('addFlowerTypeModal').style.display = 'none'; this.reset();
+    });
+    window.deleteFlowerTypeFirebase = function(id) { if (confirm('⚠️ Xóa loại hoa này khỏi danh sách chọn?')) remove(ref(db, `hoavien_flower_types/${id}`)); }
+
+    let records = [];
+    let currentFilter = 'all';
+
+    onValue(recordsRef, (snapshot) => {
+        records = [];
+        snapshot.forEach((childSnapshot) => { records.push({ id: childSnapshot.key, ...childSnapshot.val() }); });
+        renderTable();
+    });
+
+    window.editRecordFirebase = function(id) {
+        const recordToEdit = records.find(r => r.id === id);
+        if(!recordToEdit) return;
+
+        document.getElementById('editRecordId').value = id;
+        document.getElementById('flowerInput').value = recordToEdit.flowerName;
+        document.getElementById('qualityInput').value = recordToEdit.quality;
+
+        document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false);
+        const ownersArray = (recordToEdit.owner || "").split(',').map(n => n.trim());
+        document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => {
+            if(ownersArray.includes(cb.value)) cb.checked = true;
+        });
+
+        document.getElementById('modalTitle').innerText = '✏️ Chỉnh Sửa Hoa';
+        document.getElementById('addModal').style.display = 'flex';
+    }
+
+    document.getElementById('dataForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const checkedBoxes = document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]:checked');
+        const ownersArray = Array.from(checkedBoxes).map(cb => cb.value);
+        if(ownersArray.length === 0) { alert("⚠️ Vui lòng tích chọn ít nhất 1 Người sở hữu!"); return; }
+        const flowerVal = document.getElementById('flowerInput').value;
+        if(flowerVal === "") { alert("⚠️ Vui lòng chọn Tên hoa / Vật phẩm!"); return; }
+        
+        const ownerVal = ownersArray.join(', ');
+        const editId = document.getElementById('editRecordId').value;
+        const newRecord = { owner: ownerVal, flowerName: flowerVal, quality: document.getElementById('qualityInput').value };
+        
+        if (editId !== "") { set(ref(db, `hoavien_records/${editId}`), newRecord); } 
+        else { push(recordsRef, newRecord); }
+        
+        document.getElementById('addModal').style.display = 'none'; this.reset();
+    });
+
+    window.deleteRecordFirebase = function(id) {
+        if (confirm('⚠️ Bạn có chắc chắn muốn xóa dòng này trên hệ thống chung không?')) { remove(ref(db, `hoavien_records/${id}`)); }
+    }
+
+    const filterCards = document.querySelectorAll('#filterCards .card');
+    filterCards.forEach(card => {
+        card.addEventListener('click', function() {
+            filterCards.forEach(c => c.classList.remove('active')); this.classList.add('active');
+            currentFilter = this.getAttribute('data-filter'); applyFilters();
+        });
+    });
+
+    function updateStats() {
+        const counts = { 'all': records.length, 'Đỏ': 0, 'Vàng': 0, 'Tím': 0, 'Xanh': 0, 'Lam': 0 };
+        records.forEach(r => { if (counts[r.quality] !== undefined) counts[r.quality]++; });
+        for (const [key, value] of Object.entries(counts)) {
+            const el = document.getElementById(`count-${key}`); if (el) el.innerText = value;
+        }
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
+        records.forEach((record, index) => {
+            const colors = colorMap[record.quality] || colorMap['Chưa rõ'];
+            const row = document.createElement('tr'); 
+            row.setAttribute('data-quality', record.quality);
+            const fullSearchText = ((record.flowerName||"") + " " + (record.quality||"") + " " + (record.owner||"")).toLowerCase();
+            row.setAttribute('data-search', fullSearchText); 
+            
+            const ownerArray = (record.owner||"").split(',').filter(name => name.trim() !== '');
+            let ownerTagsHTML = '';
+            if (ownerArray.length > 3) {
+                const displayedOwners = ownerArray.slice(0, 3);
+                const hiddenCount = ownerArray.length - 3;
+                const hiddenNames = ownerArray.slice(3).join(', ');
+                ownerTagsHTML = displayedOwners.map(name => `<span class="owner-tag"><i class="fas fa-user-circle"></i> ${name.trim()}</span>`).join('');
+                ownerTagsHTML += `<span class="owner-tag owner-tag-more" onclick="showMoreOwners(event, '${hiddenNames}')">+${hiddenCount} người</span>`;
+            } else {
+                ownerTagsHTML = ownerArray.map(name => `<span class="owner-tag"><i class="fas fa-user-circle"></i> ${name.trim()}</span>`).join('');
+            }
+
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green)"></i> ${record.flowerName}</td>
+                <td><span style="background-color: ${colors.bg}; color: ${colors.text}; border: 1px solid ${colors.border}; padding: 6px 14px; border-radius: 20px; font-weight:800; font-size: 0.85rem; display: inline-block;">${record.quality}</span></td>
+                <td class="owner-cell">${ownerTagsHTML}</td>
+                <td class="admin-only" style="text-align: right; padding-right: 20px; white-space: nowrap;">
+                    <button class="btn-edit" onclick="editRecordFirebase('${record.id}')"><i class="fas fa-edit"></i> Sửa</button>
+                    <button class="btn-delete" onclick="deleteRecordFirebase('${record.id}')"><i class="fas fa-trash-alt"></i> Xóa</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+        updateStats(); applyFilters();
+    }
+
+    function applyFilters() {
+        const searchText = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#tableBody tr');
+        rows.forEach(row => {
+            const rowQuality = row.getAttribute('data-quality');
+            const rowText = row.getAttribute('data-search'); 
+            if ((currentFilter === 'all' || rowQuality === currentFilter) && rowText.includes(searchText)) {
+                row.style.display = '';
+            } else { row.style.display = 'none'; }
+        });
+    }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+</script>
+
+</body>
+</html>
