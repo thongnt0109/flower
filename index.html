@@ -784,6 +784,51 @@
 
     document.getElementById('searchInput').addEventListener('input', applyFilters);
 </script>
+<!-- NÚT MA THUẬT THÊM 60 HOA XANH -->
+<button onclick="autoAddGreenFlowers()" id="magicBtnGreen" style="position:fixed; bottom:20px; left:20px; z-index:99999; padding:15px 25px; background:linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color:white; border-radius:15px; font-weight:900; font-size: 1.1rem; border:none; cursor:pointer; box-shadow: 0 10px 20px rgba(46, 204, 113, 0.4); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
+    🍀 BẤM ĐỂ THÊM 60 HOA XANH
+</button>
 
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDBeKm7IEohpTi8exTi1ijvM-LHODMidj0",
+        authDomain: "flower-17430.firebaseapp.com",
+        databaseURL: "https://flower-17430-default-rtdb.firebaseio.com",
+        projectId: "flower-17430",
+        storageBucket: "flower-17430.firebasestorage.app",
+        messagingSenderId: "447458858978",
+        appId: "1:447458858978:web:2ae2ccd28d3e71e4b3d2e3"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const flowerTypesRef = ref(db, 'hoavien_flower_types');
+
+    window.autoAddGreenFlowers = function() {
+        const list = [
+            "Bách Hợp Trắng", "Cẩm Chướng", "Linh Lan", "Bách Hợp Vàng", "Cát Cánh Tím", "Tulip Vàng",
+            "Tử La Lan", "Tulip Hồng", "Mỹ Nhụy Răng Cưa", "Bách Hợp Hồng", "Hồng Nhung", "Cúc Họa Mi",
+            "Hồng Phấn", "Hoa Thanh Tú", "Hồng Vàng", "Tú Cầu Tím", "Sơn Trà", "Tú Cầu Hồng",
+            "Lan Nam Phi", "Tú Cầu Xanh", "Hướng Dương", "Hoa Thiên Điểu", "Cúc Kim Tiền", "Thủy Tiên",
+            "Cúc Châu Phi", "Vân Môn Hồng", "Hoa Chuông", "Vân Môn Vàng", "Bồ Công Anh", "Vân Môn Tím",
+            "Dạ Lan Hương Tím", "Hoa Hợp Hoan", "Dạ Lan Hương Hồng", "Hoa Nhài", "Dạ Lan Hương Vàng", "Cúc Hoàng Gia Vàng",
+            "Hoa Dành Dành", "Cúc Hoàng Gia Hồng", "Hoa Đào", "Cúc Hoàng Gia Cam", "Hoa Cát Tường Xanh", "Tử Đinh Hương Tím",
+            "Hoa Cát Tường Hồng", "Tử Đinh Hương Vàng", "Hoa Cát Tường Champagne", "Hoa Giấy Tím", "Hoa Lưu Ly", "Hoa Giấy Vàng",
+            "Nguyệt Quế Trắng", "Hoa Giấy Hồng", "Hoa Rosa Rubus Đỏ", "Hoa Thiên Nga", "Hoa Rosa Rubus Hồng", "Hoa Thanh Anh Tím",
+            "Hoa Rosa Rubus Trắng", "Hoa Huệ Trắng", "Cải Ô Rô Tím", "Hoa Huệ Tím", "Cúc Chuồn Chocolate", "Hoa Huệ Vàng"
+        ];
+        
+        let count = 0;
+        list.forEach(name => {
+            push(flowerTypesRef, { name: name, quality: "Xanh" });
+            count++;
+        });
+        
+        alert("✨ Hoàn tất! Đã nạp thành công " + count + " loại hoa Phẩm XANH vào hệ thống.");
+        document.getElementById('magicBtnGreen').style.display = 'none';
+    }
+</script>
 </body>
 </html>
