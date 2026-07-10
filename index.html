@@ -76,8 +76,12 @@
         td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; text-align: center; width: 60px; color: #95a5a6; border-left: 1px solid rgba(0,0,0,0.02);}
         td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; border-right: 1px solid rgba(0,0,0,0.02); }
         .item-cell { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.05rem; color: #2c3e50;}
+        
+        /* CSS cho nút Xóa và nút Sửa */
         .btn-delete { background-color: #ffebee; color: #e53935; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;}
         .btn-delete:hover { background-color: #ef5350; color: white;}
+        .btn-edit { background-color: #e3f2fd; color: #1976d2; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s; margin-right: 5px;}
+        .btn-edit:hover { background-color: #1e88e5; color: white;}
         
         /* CSS CHO THẺ NGƯỜI SỞ HỮU RÚT GỌN */
         .owner-cell { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; max-width: 400px; }
@@ -145,7 +149,7 @@
 
 <div id="falling-elements"></div>
 
-<!-- KHUNG POPUP ĐỂ HIỆN DANH SÁCH ẨN (DÙNG ĐƯỢC MOBILE) -->
+<!-- KHUNG POPUP ĐỂ HIỆN DANH SÁCH ẨN -->
 <div id="ownerPopup" style="display:none; position:fixed; background:#fff; padding:15px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:9999; border:1px solid #eee; font-size:0.9rem; color:#2c3e50; line-height:1.6; max-width:250px; pointer-events:none;"></div>
 
 <aside class="sidebar">
@@ -257,8 +261,12 @@
 
 <div class="modal" id="addModal">
     <div class="modal-content">
-        <div class="modal-header"><h3>✨ Thêm Hoa Mới</h3><span class="close-btn" id="closeModalBtn">&times;</span></div>
+        <!-- Đã thêm ID cho Tiêu đề để thay đổi khi bấm nút Sửa -->
+        <div class="modal-header"><h3 id="modalTitle">✨ Thêm Hoa Mới</h3><span class="close-btn" id="closeModalBtn">&times;</span></div>
         <form id="dataForm">
+            <!-- Thêm trường ẩn lưu ID nếu đang sửa dòng -->
+            <input type="hidden" id="editRecordId" value="">
+            
             <div class="form-group">
                 <label>👤 Người sở hữu (Có thể tích chọn nhiều người)</label>
                 <div id="ownerCheckboxList" class="checkbox-list">
@@ -333,10 +341,16 @@
     });
 
     const modal = document.getElementById('addModal');
+    
+    // Sửa lại logic nút Thêm để xóa sạch các trạng thái khi bấm vào
     document.getElementById('openModalBtn').onclick = () => {
+        document.getElementById('editRecordId').value = ""; // Làm sạch ID
+        document.getElementById('dataForm').reset(); // Làm sạch form
+        document.getElementById('modalTitle').innerText = '✨ Thêm Hoa Mới'; // Đổi lại tiêu đề
+        document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false); // Bỏ tick hết
         modal.style.display = 'flex';
-        document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false);
     };
+    
     document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; document.getElementById('dataForm').reset(); };
     
     const memberModal = document.getElementById('addMemberModal');
@@ -376,7 +390,7 @@
     const membersRef = ref(db, 'hoavien_members'); 
     const flowerTypesRef = ref(db, 'hoavien_flower_types'); 
 
-    // Popup logic dùng được trên Mobile
+    // Popup logic
     const popup = document.getElementById('ownerPopup');
     window.showMoreOwners = function(event, names) {
         event.stopPropagation();
@@ -516,18 +530,56 @@
         renderTable();
     });
 
+    // --- HÀM MỞ MODAL ĐỂ CHỈNH SỬA (MỚI) ---
+    window.editRecordFirebase = function(id) {
+        const recordToEdit = records.find(r => r.id === id);
+        if(!recordToEdit) return;
+
+        // Điền lại các ô input
+        document.getElementById('editRecordId').value = id;
+        document.getElementById('flowerInput').value = recordToEdit.flowerName;
+        document.getElementById('qualityInput').value = recordToEdit.quality;
+
+        // Bỏ tích tất cả checkbox trước
+        document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+        // Tích lại những người đã có
+        const ownersArray = recordToEdit.owner.split(',').map(n => n.trim());
+        document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => {
+            if(ownersArray.includes(cb.value)) {
+                cb.checked = true;
+            }
+        });
+
+        document.getElementById('modalTitle').innerText = '✏️ Chỉnh Sửa Hoa';
+        document.getElementById('addModal').style.display = 'flex';
+    }
+
+    // --- LƯU DỮ LIỆU (Thêm mới hoặc Cập nhật) ---
     document.getElementById('dataForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        
         const checkedBoxes = document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]:checked');
         const ownersArray = Array.from(checkedBoxes).map(cb => cb.value);
         if(ownersArray.length === 0) { alert("⚠️ Vui lòng tích chọn ít nhất 1 Người sở hữu!"); return; }
+        
         const flowerVal = document.getElementById('flowerInput').value;
         if(flowerVal === "") { alert("⚠️ Vui lòng chọn Tên hoa / Vật phẩm!"); return; }
         
         const ownerVal = ownersArray.join(', ');
+        const editId = document.getElementById('editRecordId').value;
         const newRecord = { owner: ownerVal, flowerName: flowerVal, quality: document.getElementById('qualityInput').value };
-        push(recordsRef, newRecord); 
-        document.getElementById('addModal').style.display = 'none'; this.reset();
+        
+        // Nếu editId có giá trị -> Tức là đang SỬA -> dùng set() đè lên
+        // Nếu editId rỗng -> Tức là đang THÊM MỚI -> dùng push() tạo mới
+        if (editId !== "") {
+            set(ref(db, `hoavien_records/${editId}`), newRecord);
+        } else {
+            push(recordsRef, newRecord); 
+        }
+        
+        document.getElementById('addModal').style.display = 'none'; 
+        this.reset();
     });
 
     window.deleteRecordFirebase = function(id) {
@@ -557,11 +609,9 @@
             const row = document.createElement('tr'); 
             row.setAttribute('data-quality', record.quality);
             
-            // CÁI TIẾN V15: Đưa đầy đủ thông tin vào nhãn tàng hình (data-search) để tìm kiếm không bị hụt
             const fullSearchText = (record.flowerName + " " + record.quality + " " + record.owner).toLowerCase();
             row.setAttribute('data-search', fullSearchText); 
             
-            // Xử lý rút gọn thẻ tên
             const ownerArray = record.owner.split(',').filter(name => name.trim() !== '');
             let ownerTagsHTML = '';
             
@@ -576,12 +626,16 @@
                 ownerTagsHTML = ownerArray.map(name => `<span class="owner-tag"><i class="fas fa-user-circle"></i> ${name.trim()}</span>`).join('');
             }
 
+            // ĐÃ THÊM NÚT SỬA VÀO ĐÂY
             row.innerHTML = `
                 <td>${index + 1}</td>
                 <td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green)"></i> ${record.flowerName}</td>
                 <td><span style="background-color: ${colors.bg}; color: ${colors.text}; border: 1px solid ${colors.border}; padding: 6px 14px; border-radius: 20px; font-weight:800; font-size: 0.85rem; display: inline-block;">${record.quality}</span></td>
                 <td class="owner-cell">${ownerTagsHTML}</td>
-                <td style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteRecordFirebase('${record.id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
+                <td style="text-align: right; padding-right: 20px; white-space: nowrap;">
+                    <button class="btn-edit" onclick="editRecordFirebase('${record.id}')"><i class="fas fa-edit"></i> Sửa</button>
+                    <button class="btn-delete" onclick="deleteRecordFirebase('${record.id}')"><i class="fas fa-trash-alt"></i> Xóa</button>
+                </td>
             `;
             tbody.appendChild(row);
         });
@@ -593,8 +647,6 @@
         const rows = document.querySelectorAll('#tableBody tr');
         rows.forEach(row => {
             const rowQuality = row.getAttribute('data-quality');
-            
-            // CÁI TIẾN V15: Đọc dữ liệu từ nhãn tàng hình thay vì từ chữ trên màn hình
             const rowText = row.getAttribute('data-search'); 
             
             if ((currentFilter === 'all' || rowQuality === currentFilter) && rowText.includes(searchText)) {
