@@ -11,6 +11,9 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; }
         body { display: flex; min-height: 100vh; background-color: var(--bg-body); background-image: url('https://images.unsplash.com/photo-1508610048659-a06b669e3321?q=80&w=2000'); background-size: cover; background-position: center; background-attachment: fixed; background-blend-mode: soft-light; color: var(--text-main); }
         
+        /* === CƠ CHẾ PHÂN QUYỀN (TÀNG HÌNH NÚT) === */
+        body.view-only .admin-only { display: none !important; }
+
         /* === HIỆU ỨNG HOA LÁ RƠI === */
         #falling-elements { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
         .falling-item { position: absolute; top: -10%; user-select: none; animation-name: fall, sway; animation-iteration-count: infinite; animation-timing-function: linear, ease-in-out; }
@@ -26,8 +29,14 @@
         .nav-links a:hover, .nav-links a.active { background: rgba(255,255,255,0.15); color: #fff; transform: translateX(5px); }
         .nav-links a.active { border-left: 4px solid var(--primary-green); }
         .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 40px; }
+        
         .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; background: rgba(255,255,255,0.8); padding: 15px 30px; border-radius: 20px; backdrop-filter: blur(10px); box-shadow: var(--shadow-soft);}
         .top-header .welcome-text { font-size: 1.3rem; font-weight: 700; color: var(--text-main); }
+        
+        /* Nút Khóa / Mở Khóa */
+        #authBtn { background: #fff; border: 2px solid #e74c3c; color: #e74c3c; padding: 8px 18px; border-radius: 20px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+        #authBtn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
         .page-section { display: none; animation: fadeInUp 0.4s ease-out; }
         .page-section.active { display: block; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -77,13 +86,11 @@
         td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; border-right: 1px solid rgba(0,0,0,0.02); }
         .item-cell { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.05rem; color: #2c3e50;}
         
-        /* CSS cho nút Xóa và nút Sửa */
         .btn-delete { background-color: #ffebee; color: #e53935; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;}
         .btn-delete:hover { background-color: #ef5350; color: white;}
         .btn-edit { background-color: #e3f2fd; color: #1976d2; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s; margin-right: 5px;}
         .btn-edit:hover { background-color: #1e88e5; color: white;}
         
-        /* CSS CHO THẺ NGƯỜI SỞ HỮU RÚT GỌN */
         .owner-cell { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; max-width: 400px; }
         .owner-tag { background: rgba(46, 204, 113, 0.1); color: var(--dark-green); padding: 5px 12px; border-radius: 30px; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; border: 1px solid rgba(46, 204, 113, 0.3); white-space: nowrap; }
         .owner-tag i { margin-right: 4px; color: var(--primary-green); }
@@ -118,8 +125,9 @@
             .nav-links a i { font-size: 1.3rem; }
             .nav-links a.active { color: var(--primary-green); border: none; transform: translateY(-2px); }
             .main-content { margin-left: 0; padding: 15px 10px 85px 10px; }
-            .top-header { flex-direction: column; gap: 8px; padding: 12px; margin-bottom: 15px;}
-            .top-header .welcome-text { font-size: 1.05rem; }
+            .top-header { flex-direction: column; gap: 15px; padding: 15px; margin-bottom: 15px; align-items: stretch;}
+            .top-header .welcome-text { font-size: 1.05rem; text-align: center;}
+            .header-actions { display: flex; justify-content: space-between; }
             .stat-cards { grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
             .card { padding: 12px 5px; border-radius: 12px; }
             .card-icon { font-size: 1.2rem; margin-bottom: 4px; }
@@ -145,11 +153,10 @@
         }
     </style>
 </head>
-<body>
+<body class="view-only"> <!-- Mặc định bật chế độ ẩn nút (Khách) -->
 
 <div id="falling-elements"></div>
 
-<!-- KHUNG POPUP ĐỂ HIỆN DANH SÁCH ẨN -->
 <div id="ownerPopup" style="display:none; position:fixed; background:#fff; padding:15px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:9999; border:1px solid #eee; font-size:0.9rem; color:#2c3e50; line-height:1.6; max-width:250px; pointer-events:none;"></div>
 
 <aside class="sidebar">
@@ -167,8 +174,12 @@
 <main class="main-content">
     <header class="top-header">
         <div class="welcome-text">👋 Chào mừng đến với <span style="color: var(--primary-green);">Hoa Viên Hội</span></div>
-        <div style="font-weight: 600; color: #7f8c8d; background: #fff; padding: 8px 15px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-            <i class="fas fa-circle" style="color: #2ecc71; font-size: 0.6rem; vertical-align: middle; margin-right: 5px;"></i> Cloud Sync Bật
+        <div class="header-actions" style="display: flex; gap: 15px; align-items: center;">
+            <!-- NÚT ĐĂNG NHẬP ADMIN -->
+            <button id="authBtn"><i class="fas fa-lock"></i> Chỉ Xem</button>
+            <div style="font-weight: 600; color: #7f8c8d; background: #fff; padding: 8px 15px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <i class="fas fa-circle" style="color: #2ecc71; font-size: 0.6rem; vertical-align: middle; margin-right: 5px;"></i> Cloud
+            </div>
         </div>
     </header>
 
@@ -183,14 +194,16 @@
                         <img id="bannerImg" src="" alt="" style="display: none;">
                         <i class="fas fa-image" id="imgPlaceholder" style="font-size: 3rem; color: #ccc;"></i>
                     </div>
-                    <div class="controls-row">
+                    <!-- ẨN NÚT VỚI KHÁCH -->
+                    <div class="controls-row admin-only">
                         <input type="file" id="imageUpload" accept="image/*" style="display: none;">
                         <button class="btn-outline" onclick="document.getElementById('imageUpload').click();"><i class="fas fa-image"></i> Tải ảnh bìa lên</button>
                     </div>
                 </div>
                 <div class="home-right">
                     <div id="homeText" class="editable-text" contenteditable="true"></div>
-                    <div style="text-align: right; margin-top: 20px;">
+                    <!-- ẨN NÚT VỚI KHÁCH -->
+                    <div style="text-align: right; margin-top: 20px;" class="admin-only">
                         <button class="btn-save" id="btnSaveText"><i class="fas fa-cloud-upload-alt"></i> Lưu Bản Tin Lên Cloud</button>
                     </div>
                 </div>
@@ -211,11 +224,11 @@
         <div class="data-section">
             <div class="table-controls">
                 <div class="search-container"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Tìm kiếm tên hoa, người sở hữu..."></div>
-                <div class="action-buttons"><button class="btn-add" id="openModalBtn"><i class="fas fa-plus"></i> Thêm Mới Hoa</button></div>
+                <div class="action-buttons admin-only"><button class="btn-add" id="openModalBtn"><i class="fas fa-plus"></i> Thêm Mới Hoa</button></div>
             </div>
             <table>
                 <thead>
-                    <tr><th style="text-align: center;">STT</th><th>Tên Hoa / Vật Phẩm</th><th>Phẩm Hoa</th><th>Người Sở Hữu</th><th style="text-align: right; padding-right: 30px;">Hành Động</th></tr>
+                    <tr><th style="text-align: center;">STT</th><th>Tên Hoa / Vật Phẩm</th><th>Phẩm Hoa</th><th>Người Sở Hữu</th><th class="admin-only" style="text-align: right; padding-right: 30px;">Hành Động</th></tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
             </table>
@@ -225,14 +238,14 @@
     <div id="page-members" class="page-section">
         <div class="home-container">
             <h2 style="margin-bottom: 5px; color: var(--dark-green); font-size: 2rem; font-weight: 800;"><i class="fas fa-users"></i> Quản Lý Thành Viên</h2>
-            <p style="color: #7f8c8d; margin-bottom: 25px;">Thêm tên thành viên vào đây để làm dữ liệu chọn khi thêm hoa mới.</p>
-            <div class="table-controls">
+            <p style="color: #7f8c8d; margin-bottom: 25px;">Danh sách các thành viên trong hội.</p>
+            <div class="table-controls admin-only">
                 <div class="action-buttons" style="width: 100%;"><button class="btn-add" id="openMemberModalBtn"><i class="fas fa-user-plus"></i> Thêm Thành Viên Mới</button></div>
             </div>
             <div class="data-section">
                 <table>
                     <thead>
-                        <tr><th style="text-align: center; width: 60px;">STT</th><th>Tên Thành Viên</th><th style="text-align: right; padding-right: 30px;">Hành Động</th></tr>
+                        <tr><th style="text-align: center; width: 60px;">STT</th><th>Thông Tin Thành Viên</th><th class="admin-only" style="text-align: right; padding-right: 30px;">Hành Động</th></tr>
                     </thead>
                     <tbody id="memberTableBody"></tbody>
                 </table>
@@ -243,14 +256,14 @@
     <div id="page-flower-types" class="page-section">
         <div class="home-container">
             <h2 style="margin-bottom: 5px; color: var(--dark-green); font-size: 2rem; font-weight: 800;"><i class="fas fa-list-ul"></i> Quản Lý Loại Hoa</h2>
-            <p style="color: #7f8c8d; margin-bottom: 25px;">Thêm tên các loại hoa vào đây để tạo danh sách chọn nhanh cho hệ thống.</p>
-            <div class="table-controls">
+            <p style="color: #7f8c8d; margin-bottom: 25px;">Danh sách các loại hoa dùng để chọn nhanh.</p>
+            <div class="table-controls admin-only">
                 <div class="action-buttons" style="width: 100%;"><button class="btn-add" id="openFlowerTypeModalBtn"><i class="fas fa-plus-circle"></i> Thêm Loại Hoa Mới</button></div>
             </div>
             <div class="data-section">
                 <table>
                     <thead>
-                        <tr><th style="text-align: center; width: 60px;">STT</th><th>Tên Loại Hoa</th><th style="text-align: right; padding-right: 30px;">Hành Động</th></tr>
+                        <tr><th style="text-align: center; width: 60px;">STT</th><th>Tên Loại Hoa</th><th class="admin-only" style="text-align: right; padding-right: 30px;">Hành Động</th></tr>
                     </thead>
                     <tbody id="flowerTypeTableBody"></tbody>
                 </table>
@@ -261,24 +274,18 @@
 
 <div class="modal" id="addModal">
     <div class="modal-content">
-        <!-- Đã thêm ID cho Tiêu đề để thay đổi khi bấm nút Sửa -->
         <div class="modal-header"><h3 id="modalTitle">✨ Thêm Hoa Mới</h3><span class="close-btn" id="closeModalBtn">&times;</span></div>
         <form id="dataForm">
-            <!-- Thêm trường ẩn lưu ID nếu đang sửa dòng -->
             <input type="hidden" id="editRecordId" value="">
-            
             <div class="form-group">
                 <label>👤 Người sở hữu (Có thể tích chọn nhiều người)</label>
                 <div id="ownerCheckboxList" class="checkbox-list">
                     <div style="color: #95a5a6; font-size: 0.9rem; text-align: center; padding: 10px;">-- Đang tải danh sách thành viên... --</div>
                 </div>
             </div>
-            
             <div class="form-group">
                 <label>🌿 Tên hoa / Vật phẩm</label>
-                <select id="flowerInput" required>
-                    <option value="">-- Đang tải danh sách loại hoa... --</option>
-                </select>
+                <select id="flowerInput" required><option value="">-- Đang tải danh sách loại hoa... --</option></select>
             </div>
             <div class="form-group">
                 <label>🎨 Phẩm hoa</label>
@@ -295,7 +302,20 @@
     <div class="modal-content">
         <div class="modal-header"><h3>👤 Thêm Thành Viên</h3><span class="close-btn" id="closeMemberModalBtn">&times;</span></div>
         <form id="memberForm">
-            <div class="form-group"><label>Tên thành viên mới</label><input type="text" id="newMemberName" placeholder="Nhập tên thành viên..." required></div>
+            <div class="form-group">
+                <label>Tên thành viên mới</label>
+                <input type="text" id="newMemberName" placeholder="Nhập tên thành viên..." required>
+            </div>
+            <!-- THÊM CHỨC VỤ CHO THÀNH VIÊN -->
+            <div class="form-group">
+                <label>Chức vụ trong hội</label>
+                <select id="newMemberRole" required>
+                    <option value="Thành Viên">Thành Viên</option>
+                    <option value="Quản Lý">Quản Lý</option>
+                    <option value="Hội Phó">Hội Phó</option>
+                    <option value="Hội Trưởng">Hội Trưởng</option>
+                </select>
+            </div>
             <button type="submit" class="btn-submit">Thêm Vào Hội</button>
         </form>
     </div>
@@ -305,26 +325,59 @@
     <div class="modal-content">
         <div class="modal-header"><h3>🌿 Thêm Loại Hoa</h3><span class="close-btn" id="closeFlowerTypeModalBtn">&times;</span></div>
         <form id="flowerTypeForm">
-            <div class="form-group"><label>Tên loại hoa mới</label><input type="text" id="newFlowerTypeName" placeholder="Ví dụ: Hoa Hồng, Cỏ Bốn Lá..." required></div>
+            <div class="form-group"><label>Tên loại hoa mới</label><input type="text" id="newFlowerTypeName" placeholder="Ví dụ: Hoa Hồng..." required></div>
             <button type="submit" class="btn-submit">Thêm Vào Danh Sách</button>
         </form>
     </div>
 </div>
 
 <script>
+    // --- XỬ LÝ NÚT PHÂN QUYỀN (MẬT KHẨU ADMIN) ---
+    const ADMIN_PASS = "123456"; // Mật khẩu dành cho Hội Trưởng / Hội Phó
+    let isAdmin = localStorage.getItem('hoaVienAdmin') === 'true';
+
+    function updateAuthUI() {
+        const authBtn = document.getElementById('authBtn');
+        if (isAdmin) {
+            authBtn.innerHTML = '<i class="fas fa-unlock"></i> Quyền Quản Trị';
+            authBtn.style.borderColor = '#2ecc71'; authBtn.style.color = '#2ecc71';
+            document.body.classList.remove('view-only'); // Hiện các nút Sửa/Xóa
+            document.getElementById('homeText').setAttribute('contenteditable', 'true');
+        } else {
+            authBtn.innerHTML = '<i class="fas fa-lock"></i> Chỉ Xem';
+            authBtn.style.borderColor = '#e74c3c'; authBtn.style.color = '#e74c3c';
+            document.body.classList.add('view-only'); // Giấu các nút Sửa/Xóa
+            document.getElementById('homeText').setAttribute('contenteditable', 'false');
+        }
+    }
+    
+    // Gọi hàm cập nhật lúc vừa mở web
+    updateAuthUI();
+
+    document.getElementById('authBtn').addEventListener('click', () => {
+        if (isAdmin) {
+            if(confirm("Đăng xuất khỏi quyền Quản Trị?")) {
+                isAdmin = false; localStorage.setItem('hoaVienAdmin', 'false'); updateAuthUI();
+            }
+        } else {
+            const pass = prompt("Vui lòng nhập Mã bảo mật của Hội Trưởng / Hội Phó:");
+            if (pass === ADMIN_PASS) {
+                isAdmin = true; localStorage.setItem('hoaVienAdmin', 'true'); updateAuthUI();
+                alert("Đã mở khóa quyền chỉnh sửa!");
+            } else if (pass !== null) {
+                alert("Mã bảo mật không đúng! Bạn chỉ có quyền Xem.");
+            }
+        }
+    });
+
+    // --- HIỆU ỨNG VÀ TAB CHUYỂN TRANG ---
     function createFallingElements() {
         const container = document.getElementById('falling-elements');
         const elements = ['🌸', '🍃', '💮', '🍂', '🍁', '✨']; 
-        const totalElements = 25; 
-        for (let i = 0; i < totalElements; i++) {
-            let item = document.createElement('div');
-            item.classList.add('falling-item');
-            item.innerText = elements[Math.floor(Math.random() * elements.length)];
-            item.style.left = Math.random() * 100 + 'vw';
-            item.style.animationDuration = (Math.random() * 6 + 6) + 's, ' + (Math.random() * 3 + 3) + 's'; 
-            item.style.animationDelay = Math.random() * 8 + 's, ' + Math.random() * 5 + 's';
-            item.style.fontSize = (Math.random() * 12 + 10) + 'px';
-            item.style.opacity = Math.random() * 0.5 + 0.3; 
+        for (let i = 0; i < 25; i++) {
+            let item = document.createElement('div'); item.classList.add('falling-item'); item.innerText = elements[Math.floor(Math.random() * elements.length)];
+            item.style.left = Math.random() * 100 + 'vw'; item.style.animationDuration = (Math.random() * 6 + 6) + 's, ' + (Math.random() * 3 + 3) + 's'; 
+            item.style.animationDelay = Math.random() * 8 + 's, ' + Math.random() * 5 + 's'; item.style.fontSize = (Math.random() * 12 + 10) + 'px'; item.style.opacity = Math.random() * 0.5 + 0.3; 
             container.appendChild(item);
         }
     }
@@ -340,18 +393,15 @@
         });
     });
 
+    // --- XỬ LÝ MODAL ---
     const modal = document.getElementById('addModal');
-    
-    // Sửa lại logic nút Thêm để xóa sạch các trạng thái khi bấm vào
     document.getElementById('openModalBtn').onclick = () => {
-        document.getElementById('editRecordId').value = ""; // Làm sạch ID
-        document.getElementById('dataForm').reset(); // Làm sạch form
-        document.getElementById('modalTitle').innerText = '✨ Thêm Hoa Mới'; // Đổi lại tiêu đề
-        document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false); // Bỏ tick hết
+        document.getElementById('editRecordId').value = ""; document.getElementById('dataForm').reset();
+        document.getElementById('modalTitle').innerText = '✨ Thêm Hoa Mới';
+        document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false);
         modal.style.display = 'flex';
     };
-    
-    document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; document.getElementById('dataForm').reset(); };
+    document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; };
     
     const memberModal = document.getElementById('addMemberModal');
     document.getElementById('openMemberModalBtn').onclick = () => memberModal.style.display = 'flex';
@@ -362,9 +412,9 @@
     document.getElementById('closeFlowerTypeModalBtn').onclick = () => { flowerTypeModal.style.display = 'none'; document.getElementById('flowerTypeForm').reset(); };
 
     window.onclick = (e) => { 
-        if (e.target == modal) { modal.style.display = 'none'; document.getElementById('dataForm').reset(); } 
-        if (e.target == memberModal) { memberModal.style.display = 'none'; document.getElementById('memberForm').reset(); } 
-        if (e.target == flowerTypeModal) { flowerTypeModal.style.display = 'none'; document.getElementById('flowerTypeForm').reset(); } 
+        if (e.target == modal) { modal.style.display = 'none'; } 
+        if (e.target == memberModal) { memberModal.style.display = 'none'; } 
+        if (e.target == flowerTypeModal) { flowerTypeModal.style.display = 'none'; } 
     }
 </script>
 
@@ -390,19 +440,16 @@
     const membersRef = ref(db, 'hoavien_members'); 
     const flowerTypesRef = ref(db, 'hoavien_flower_types'); 
 
-    // Popup logic
+    // Popup Logic cho Mobile
     const popup = document.getElementById('ownerPopup');
     window.showMoreOwners = function(event, names) {
         event.stopPropagation();
         popup.innerHTML = "<strong>Danh sách đầy đủ:</strong><br>" + names.split(', ').join('<br>');
         popup.style.display = 'block';
-        
         let x = event.clientX || (event.touches && event.touches[0].clientX) || 100;
         let y = event.clientY || (event.touches && event.touches[0].clientY) || 100;
         if(x > window.innerWidth - 180) x = window.innerWidth - 180;
-        
-        popup.style.left = x + 10 + 'px';
-        popup.style.top = y + 10 + 'px';
+        popup.style.left = x + 10 + 'px'; popup.style.top = y + 10 + 'px';
     };
     window.addEventListener('click', () => { popup.style.display = 'none'; });
     window.addEventListener('touchend', () => { setTimeout(() => { popup.style.display = 'none'; }, 2000); }); 
@@ -458,7 +505,9 @@
         }
     });
 
-    // Quản lý thành viên
+    // --- QUẢN LÝ THÀNH VIÊN VÀ CHỨC VỤ ---
+    const roleColors = { 'Hội Trưởng': '#e74c3c', 'Hội Phó': '#e67e22', 'Quản Lý': '#3498db', 'Thành Viên': '#95a5a6' };
+
     onValue(membersRef, (snapshot) => {
         const memberTable = document.getElementById('memberTableBody');
         const checkboxList = document.getElementById('ownerCheckboxList');
@@ -471,8 +520,17 @@
         let index = 1;
         snapshot.forEach((childSnapshot) => {
             const id = childSnapshot.key; const data = childSnapshot.val();
+            const rColor = roleColors[data.role || 'Thành Viên'];
+            
             const row = document.createElement('tr');
-            row.innerHTML = `<td style="text-align: center;">${index++}</td><td class="item-cell"><i class="fas fa-user-circle" style="color:var(--primary-green); font-size:1.2rem;"></i> ${data.name}</td><td style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteMemberFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>`;
+            row.innerHTML = `
+                <td style="text-align: center;">${index++}</td>
+                <td class="item-cell">
+                    <i class="fas fa-user-circle" style="color:var(--primary-green); font-size:1.2rem;"></i> ${data.name} 
+                    <span style="font-size: 0.7rem; background: ${rColor}; color: white; padding: 2px 8px; border-radius: 10px; margin-left: 10px; font-weight:800;">${data.role || 'Thành Viên'}</span>
+                </td>
+                <td class="admin-only" style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteMemberFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
+            `;
             memberTable.appendChild(row);
 
             const label = document.createElement('label'); label.className = 'checkbox-item';
@@ -482,12 +540,16 @@
     });
 
     document.getElementById('memberForm').addEventListener('submit', function(e) {
-        e.preventDefault(); push(membersRef, { name: document.getElementById('newMemberName').value }); 
+        e.preventDefault(); 
+        push(membersRef, { 
+            name: document.getElementById('newMemberName').value,
+            role: document.getElementById('newMemberRole').value
+        }); 
         document.getElementById('addMemberModal').style.display = 'none'; this.reset();
     });
     window.deleteMemberFirebase = function(id) { if (confirm('⚠️ Xóa thành viên này khỏi danh sách hội?')) remove(ref(db, `hoavien_members/${id}`)); }
 
-    // Quản lý loại hoa
+    // --- QUẢN LÝ LOẠI HOA ---
     onValue(flowerTypesRef, (snapshot) => {
         const typeTable = document.getElementById('flowerTypeTableBody');
         const flowerSelect = document.getElementById('flowerInput');
@@ -499,7 +561,7 @@
         snapshot.forEach((childSnapshot) => {
             const id = childSnapshot.key; const data = childSnapshot.val();
             const row = document.createElement('tr');
-            row.innerHTML = `<td style="text-align: center;">${index++}</td><td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green); font-size:1.2rem;"></i> ${data.name}</td><td style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteFlowerTypeFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>`;
+            row.innerHTML = `<td style="text-align: center;">${index++}</td><td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green); font-size:1.2rem;"></i> ${data.name}</td><td class="admin-only" style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteFlowerTypeFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>`;
             typeTable.appendChild(row);
             const option = document.createElement('option'); option.value = data.name; option.textContent = data.name;
             flowerSelect.appendChild(option);
@@ -513,7 +575,7 @@
     window.deleteFlowerTypeFirebase = function(id) { if (confirm('⚠️ Xóa loại hoa này khỏi danh sách chọn?')) remove(ref(db, `hoavien_flower_types/${id}`)); }
 
 
-    // Danh sách hoa chung
+    // --- DANH SÁCH HOA CHUNG VÀ TÍNH NĂNG CHỈNH SỬA ---
     let records = [];
     let currentFilter = 'all';
     const colorMap = {
@@ -530,39 +592,30 @@
         renderTable();
     });
 
-    // --- HÀM MỞ MODAL ĐỂ CHỈNH SỬA (MỚI) ---
+    // MỞ MODAL ĐỂ CHỈNH SỬA
     window.editRecordFirebase = function(id) {
         const recordToEdit = records.find(r => r.id === id);
         if(!recordToEdit) return;
 
-        // Điền lại các ô input
         document.getElementById('editRecordId').value = id;
         document.getElementById('flowerInput').value = recordToEdit.flowerName;
         document.getElementById('qualityInput').value = recordToEdit.quality;
 
-        // Bỏ tích tất cả checkbox trước
         document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false);
-
-        // Tích lại những người đã có
         const ownersArray = recordToEdit.owner.split(',').map(n => n.trim());
         document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => {
-            if(ownersArray.includes(cb.value)) {
-                cb.checked = true;
-            }
+            if(ownersArray.includes(cb.value)) cb.checked = true;
         });
 
         document.getElementById('modalTitle').innerText = '✏️ Chỉnh Sửa Hoa';
         document.getElementById('addModal').style.display = 'flex';
     }
 
-    // --- LƯU DỮ LIỆU (Thêm mới hoặc Cập nhật) ---
     document.getElementById('dataForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
         const checkedBoxes = document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]:checked');
         const ownersArray = Array.from(checkedBoxes).map(cb => cb.value);
         if(ownersArray.length === 0) { alert("⚠️ Vui lòng tích chọn ít nhất 1 Người sở hữu!"); return; }
-        
         const flowerVal = document.getElementById('flowerInput').value;
         if(flowerVal === "") { alert("⚠️ Vui lòng chọn Tên hoa / Vật phẩm!"); return; }
         
@@ -570,16 +623,13 @@
         const editId = document.getElementById('editRecordId').value;
         const newRecord = { owner: ownerVal, flowerName: flowerVal, quality: document.getElementById('qualityInput').value };
         
-        // Nếu editId có giá trị -> Tức là đang SỬA -> dùng set() đè lên
-        // Nếu editId rỗng -> Tức là đang THÊM MỚI -> dùng push() tạo mới
         if (editId !== "") {
-            set(ref(db, `hoavien_records/${editId}`), newRecord);
+            set(ref(db, `hoavien_records/${editId}`), newRecord); // Cập nhật đè lên dòng cũ
         } else {
-            push(recordsRef, newRecord); 
+            push(recordsRef, newRecord); // Thêm dòng mới
         }
         
-        document.getElementById('addModal').style.display = 'none'; 
-        this.reset();
+        document.getElementById('addModal').style.display = 'none'; this.reset();
     });
 
     window.deleteRecordFirebase = function(id) {
@@ -608,31 +658,27 @@
             const colors = colorMap[record.quality] || { bg: '#eee', text: '#333', border: '#ccc' };
             const row = document.createElement('tr'); 
             row.setAttribute('data-quality', record.quality);
-            
             const fullSearchText = (record.flowerName + " " + record.quality + " " + record.owner).toLowerCase();
             row.setAttribute('data-search', fullSearchText); 
             
             const ownerArray = record.owner.split(',').filter(name => name.trim() !== '');
             let ownerTagsHTML = '';
-            
             if (ownerArray.length > 3) {
                 const displayedOwners = ownerArray.slice(0, 3);
                 const hiddenCount = ownerArray.length - 3;
                 const hiddenNames = ownerArray.slice(3).join(', ');
-                
                 ownerTagsHTML = displayedOwners.map(name => `<span class="owner-tag"><i class="fas fa-user-circle"></i> ${name.trim()}</span>`).join('');
                 ownerTagsHTML += `<span class="owner-tag owner-tag-more" onclick="showMoreOwners(event, '${hiddenNames}')">+${hiddenCount} người</span>`;
             } else {
                 ownerTagsHTML = ownerArray.map(name => `<span class="owner-tag"><i class="fas fa-user-circle"></i> ${name.trim()}</span>`).join('');
             }
 
-            // ĐÃ THÊM NÚT SỬA VÀO ĐÂY
             row.innerHTML = `
                 <td>${index + 1}</td>
                 <td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green)"></i> ${record.flowerName}</td>
                 <td><span style="background-color: ${colors.bg}; color: ${colors.text}; border: 1px solid ${colors.border}; padding: 6px 14px; border-radius: 20px; font-weight:800; font-size: 0.85rem; display: inline-block;">${record.quality}</span></td>
                 <td class="owner-cell">${ownerTagsHTML}</td>
-                <td style="text-align: right; padding-right: 20px; white-space: nowrap;">
+                <td class="admin-only" style="text-align: right; padding-right: 20px; white-space: nowrap;">
                     <button class="btn-edit" onclick="editRecordFirebase('${record.id}')"><i class="fas fa-edit"></i> Sửa</button>
                     <button class="btn-delete" onclick="deleteRecordFirebase('${record.id}')"><i class="fas fa-trash-alt"></i> Xóa</button>
                 </td>
@@ -648,7 +694,6 @@
         rows.forEach(row => {
             const rowQuality = row.getAttribute('data-quality');
             const rowText = row.getAttribute('data-search'); 
-            
             if ((currentFilter === 'all' || rowQuality === currentFilter) && rowText.includes(searchText)) {
                 row.style.display = '';
             } else { row.style.display = 'none'; }
