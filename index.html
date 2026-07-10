@@ -383,18 +383,15 @@
         popup.innerHTML = "<strong>Danh sách đầy đủ:</strong><br>" + names.split(', ').join('<br>');
         popup.style.display = 'block';
         
-        // Tính toán vị trí hiển thị hợp lý
         let x = event.clientX || (event.touches && event.touches[0].clientX) || 100;
         let y = event.clientY || (event.touches && event.touches[0].clientY) || 100;
-        
-        // Né góc màn hình điện thoại
         if(x > window.innerWidth - 180) x = window.innerWidth - 180;
         
         popup.style.left = x + 10 + 'px';
         popup.style.top = y + 10 + 'px';
     };
     window.addEventListener('click', () => { popup.style.display = 'none'; });
-    window.addEventListener('touchend', () => { setTimeout(() => { popup.style.display = 'none'; }, 2000); }); // Tự ẩn sau 2s trên mobile
+    window.addEventListener('touchend', () => { setTimeout(() => { popup.style.display = 'none'; }, 2000); }); 
 
     // Bảng tin Cache
     const bannerImg = document.getElementById('bannerImg');
@@ -557,7 +554,12 @@
         const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
         records.forEach((record, index) => {
             const colors = colorMap[record.quality] || { bg: '#eee', text: '#333', border: '#ccc' };
-            const row = document.createElement('tr'); row.setAttribute('data-quality', record.quality);
+            const row = document.createElement('tr'); 
+            row.setAttribute('data-quality', record.quality);
+            
+            // CÁI TIẾN V15: Đưa đầy đủ thông tin vào nhãn tàng hình (data-search) để tìm kiếm không bị hụt
+            const fullSearchText = (record.flowerName + " " + record.quality + " " + record.owner).toLowerCase();
+            row.setAttribute('data-search', fullSearchText); 
             
             // Xử lý rút gọn thẻ tên
             const ownerArray = record.owner.split(',').filter(name => name.trim() !== '');
@@ -591,7 +593,10 @@
         const rows = document.querySelectorAll('#tableBody tr');
         rows.forEach(row => {
             const rowQuality = row.getAttribute('data-quality');
-            const rowText = row.innerText.toLowerCase();
+            
+            // CÁI TIẾN V15: Đọc dữ liệu từ nhãn tàng hình thay vì từ chữ trên màn hình
+            const rowText = row.getAttribute('data-search'); 
+            
             if ((currentFilter === 'all' || rowQuality === currentFilter) && rowText.includes(searchText)) {
                 row.style.display = '';
             } else { row.style.display = 'none'; }
