@@ -27,11 +27,8 @@
         .home-container { background: rgba(255,255,255,0.95); padding: 40px; border-radius: 24px; box-shadow: var(--shadow-soft); backdrop-filter: blur(10px);}
         .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: stretch; margin-top: 20px;}
         .home-left, .home-right { display: flex; flex-direction: column; }
-        
-        /* Chỉnh khung ảnh có nền xám nhẹ lúc chờ load */
         .banner-wrapper { flex: 1; width: 100%; min-height: 400px; border-radius: 20px; overflow: hidden; position: relative; border: 3px dashed #e1e8ed; transition: all 0.3s; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center;}
         .banner-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        
         .editable-text { flex: 1; width: 100%; min-height: 400px; padding: 30px; border: 2px solid #e1e8ed; border-radius: 20px; background: #fff; font-size: 1.15rem; line-height: 1.8; outline: none; transition: all 0.3s; color: #34495e; overflow-y: auto;}
         .editable-text:focus { border-color: var(--primary-green); box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1); }
         .controls-row { display: flex; justify-content: center; margin-top: 20px;}
@@ -39,7 +36,6 @@
         .btn-outline:hover { background: var(--primary-green); color: white; transform: translateY(-2px);}
         .btn-save { background: var(--accent-gradient); color: white; border: none; padding: 12px 30px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 1rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);}
         .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56, 239, 125, 0.5);}
-        
         .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; margin-bottom: 30px; }
         .card { background: rgba(255,255,255,0.95); padding: 20px 15px; border-radius: 16px; box-shadow: var(--shadow-soft); text-align: center; border: 2px solid transparent; transition: all 0.3s; cursor: pointer;}
         .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
@@ -79,7 +75,7 @@
         .close-btn:hover { color: #e74c3c; transform: rotate(90deg);}
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 700; color: #34495e; font-size: 0.95rem;}
-        .form-group input, .form-group select { width: 100%; padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 12px; font-size: 1rem; font-weight: 600; color: #2c3e50; outline: none; transition: 0.3s;}
+        .form-group input, .form-group select { width: 100%; padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 12px; font-size: 1rem; font-weight: 600; color: #2c3e50; outline: none; transition: 0.3s; background-color: #fff;}
         .form-group input:focus, .form-group select:focus { border-color: var(--primary-green); box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1);}
         .btn-submit { width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 1.1rem; margin-top: 15px; transition: 0.3s;}
         .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56, 239, 125, 0.5);}
@@ -91,7 +87,7 @@
             .nav-links { width: 100%; }
             .nav-links ul { display: flex; justify-content: space-around; margin: 0; padding: 0; }
             .nav-links li { margin: 0; flex: 1; text-align: center; }
-            .nav-links a { flex-direction: column; gap: 4px; padding: 8px 0; font-size: 0.7rem; justify-content: center; background: transparent !important; }
+            .nav-links a { flex-direction: column; gap: 4px; padding: 8px 0; font-size: 0.65rem; justify-content: center; background: transparent !important; }
             .nav-links a i { font-size: 1.3rem; }
             .nav-links a.active { color: var(--primary-green); border: none; transform: translateY(-2px); }
             .main-content { margin-left: 0; padding: 15px 10px 85px 10px; }
@@ -129,6 +125,8 @@
         <ul>
             <li><a class="nav-btn active" data-target="page-home"><i class="fas fa-layer-group"></i>Bảng Tin</a></li>
             <li><a class="nav-btn" data-target="page-list"><i class="fas fa-seedling"></i>Danh Sách Hoa</a></li>
+            <!-- THÊM TAB THÀNH VIÊN -->
+            <li><a class="nav-btn" data-target="page-members"><i class="fas fa-users"></i>Thành Viên</a></li>
         </ul>
     </nav>
 </aside>
@@ -141,6 +139,7 @@
         </div>
     </header>
 
+    <!-- TRANG BẢNG TIN -->
     <div id="page-home" class="page-section active">
         <div class="home-container">
             <h2 style="margin-bottom: 5px; color: var(--dark-green); font-size: 2rem; font-weight: 800;"><i class="fas fa-seedling"></i> Bảng Tin Hoa Viên</h2>
@@ -148,7 +147,6 @@
             
             <div class="home-grid">
                 <div class="home-left">
-                    <!-- Đã xóa link ảnh mặc định để tránh chớp giật -->
                     <div class="banner-wrapper">
                         <img id="bannerImg" src="" alt="" style="display: none;">
                         <i class="fas fa-image" id="imgPlaceholder" style="font-size: 3rem; color: #ccc;"></i>
@@ -159,7 +157,6 @@
                     </div>
                 </div>
                 <div class="home-right">
-                    <!-- Đã xóa chữ mặc định để tránh chớp giật -->
                     <div id="homeText" class="editable-text" contenteditable="true"></div>
                     <div style="text-align: right; margin-top: 20px;">
                         <button class="btn-save" id="btnSaveText"><i class="fas fa-cloud-upload-alt"></i> Lưu Bản Tin Lên Cloud</button>
@@ -169,6 +166,7 @@
         </div>
     </div>
 
+    <!-- TRANG DANH SÁCH HOA -->
     <div id="page-list" class="page-section">
         <div class="stat-cards" id="filterCards">
             <div class="card active" data-filter="all"><div class="card-icon"><i class="fas fa-layer-group"></i></div><div class="card-value" id="count-all">0</div><div class="card-label">Tất Cả</div></div>
@@ -192,13 +190,46 @@
             </table>
         </div>
     </div>
+
+    <!-- TRANG THÀNH VIÊN (MỚI) -->
+    <div id="page-members" class="page-section">
+        <div class="home-container">
+            <h2 style="margin-bottom: 5px; color: var(--dark-green); font-size: 2rem; font-weight: 800;"><i class="fas fa-users"></i> Quản Lý Thành Viên</h2>
+            <p style="color: #7f8c8d; margin-bottom: 25px;">Thêm tên thành viên vào đây để làm dữ liệu chọn khi thêm hoa mới.</p>
+            
+            <div class="table-controls">
+                <div class="action-buttons" style="width: 100%;">
+                    <button class="btn-add" id="openMemberModalBtn"><i class="fas fa-user-plus"></i> Thêm Thành Viên Mới</button>
+                </div>
+            </div>
+            
+            <div class="data-section">
+                <table>
+                    <thead>
+                        <tr><th style="text-align: center; width: 60px;">STT</th><th>Tên Thành Viên</th><th style="text-align: right; padding-right: 30px;">Hành Động</th></tr>
+                    </thead>
+                    <tbody id="memberTableBody">
+                        <!-- Dữ liệu thành viên sẽ load vào đây -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </main>
 
+<!-- Khung Modal Thêm Hoa -->
 <div class="modal" id="addModal">
     <div class="modal-content">
         <div class="modal-header"><h3>✨ Thêm Hoa Mới</h3><span class="close-btn" id="closeModalBtn">&times;</span></div>
         <form id="dataForm">
-            <div class="form-group"><label>👤 Người sở hữu</label><input type="text" id="ownerInput" required></div>
+            <div class="form-group">
+                <label>👤 Người sở hữu</label>
+                <!-- ĐÃ SỬA THÀNH NÚT SỔ XUỐNG -->
+                <select id="ownerInput" required>
+                    <option value="">-- Đang tải danh sách thành viên... --</option>
+                </select>
+            </div>
             <div class="form-group"><label>🌿 Tên hoa / Vật phẩm</label><input type="text" id="flowerInput" required></div>
             <div class="form-group">
                 <label>🎨 Phẩm hoa</label>
@@ -211,7 +242,22 @@
     </div>
 </div>
 
+<!-- Khung Modal Thêm Thành Viên (MỚI) -->
+<div class="modal" id="addMemberModal">
+    <div class="modal-content">
+        <div class="modal-header"><h3>👤 Thêm Thành Viên</h3><span class="close-btn" id="closeMemberModalBtn">&times;</span></div>
+        <form id="memberForm">
+            <div class="form-group">
+                <label>Tên thành viên mới</label>
+                <input type="text" id="newMemberName" placeholder="Nhập tên thành viên..." required>
+            </div>
+            <button type="submit" class="btn-submit">Thêm Vào Hội</button>
+        </form>
+    </div>
+</div>
+
 <script>
+    // Xử lý chuyển Tab
     const navBtns = document.querySelectorAll('.nav-btn');
     const pages = document.querySelectorAll('.page-section');
     navBtns.forEach(btn => {
@@ -222,17 +268,27 @@
         });
     });
 
+    // Bật tắt Modal Hoa
     const modal = document.getElementById('addModal');
     document.getElementById('openModalBtn').onclick = () => modal.style.display = 'flex';
     document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; document.getElementById('dataForm').reset(); };
-    window.onclick = (e) => { if (e.target == modal) { modal.style.display = 'none'; document.getElementById('dataForm').reset(); } }
+    
+    // Bật tắt Modal Thành viên
+    const memberModal = document.getElementById('addMemberModal');
+    document.getElementById('openMemberModalBtn').onclick = () => memberModal.style.display = 'flex';
+    document.getElementById('closeMemberModalBtn').onclick = () => { memberModal.style.display = 'none'; document.getElementById('memberForm').reset(); };
+
+    window.onclick = (e) => { 
+        if (e.target == modal) { modal.style.display = 'none'; document.getElementById('dataForm').reset(); } 
+        if (e.target == memberModal) { memberModal.style.display = 'none'; document.getElementById('memberForm').reset(); } 
+    }
 </script>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase, ref, onValue, push, remove, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-    // MÃ CỦA BẠN ĐÃ ĐƯỢC GẮN VÀO ĐÂY!
+    // Khóa Firebase cũ của bạn
     const firebaseConfig = {
         apiKey: "AIzaSyDBeKm7IEohpTi8exTi1ijvM-LHODMidj0",
         authDomain: "flower-17430.firebaseapp.com",
@@ -245,51 +301,30 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const recordsRef = ref(db, 'hoavien_records');
+    
     const configRef = ref(db, 'hoavien_config');
+    const recordsRef = ref(db, 'hoavien_records');
+    const membersRef = ref(db, 'hoavien_members'); // Bảng Thành Viên mới
 
-    // === TÍNH NĂNG LOAD TỐC ĐỘ BÀN THỜ (CACHE FIRST) ===
+    // --- XỬ LÝ BẢNG TIN (CACHE MƯỢT MÀ) ---
     const bannerImg = document.getElementById('bannerImg');
     const imgPlaceholder = document.getElementById('imgPlaceholder');
     const homeText = document.getElementById('homeText');
-
-    // 1. Lấy ảnh và chữ từ bộ nhớ tạm của máy tính (Hiện ngay lập tức)
     const cachedBanner = localStorage.getItem('localFastBanner');
     const cachedText = localStorage.getItem('localFastText');
 
-    if (cachedBanner) {
-        bannerImg.src = cachedBanner;
-        bannerImg.style.display = 'block';
-        imgPlaceholder.style.display = 'none';
-    }
-    if (cachedText) {
-        homeText.innerHTML = cachedText;
-    }
+    if (cachedBanner) { bannerImg.src = cachedBanner; bannerImg.style.display = 'block'; imgPlaceholder.style.display = 'none'; }
+    if (cachedText) { homeText.innerHTML = cachedText; }
 
-    let records = [];
-    let currentFilter = 'all';
-    const colorMap = {
-        'Đỏ': { bg: '#ffebee', text: '#d32f2f', border: '#ffcdd2' },
-        'Vàng': { bg: '#fff8e1', text: '#f57f17', border: '#ffecb3' },
-        'Tím': { bg: '#f3e5f5', text: '#7b1fa2', border: '#e1bee7' },
-        'Xanh': { bg: '#e8f5e9', text: '#388e3c', border: '#c8e6c9' },
-        'Lam': { bg: '#e3f2fd', text: '#1976d2', border: '#bbdefb' }
-    };
-
-    // 2. Firebase âm thầm tải dữ liệu cập nhật
     onValue(configRef, (snapshot) => {
         const data = snapshot.val();
         if(data) {
-            // Nếu Firebase có ảnh mới thì cập nhật đè lên ảnh cũ
             if(data.banner && data.banner !== cachedBanner) {
-                bannerImg.src = data.banner;
-                bannerImg.style.display = 'block';
-                imgPlaceholder.style.display = 'none';
-                localStorage.setItem('localFastBanner', data.banner); // Lưu vào máy
+                bannerImg.src = data.banner; bannerImg.style.display = 'block'; imgPlaceholder.style.display = 'none';
+                localStorage.setItem('localFastBanner', data.banner);
             }
             if(data.homeText && data.homeText !== cachedText) {
-                homeText.innerHTML = data.homeText;
-                localStorage.setItem('localFastText', data.homeText); // Lưu vào máy
+                homeText.innerHTML = data.homeText; localStorage.setItem('localFastText', data.homeText);
             }
         }
     });
@@ -301,7 +336,6 @@
         alert('✨ Đã đồng bộ thông báo lên Cloud thành công!');
     });
 
-    // === TÍNH NĂNG ÉP CÂN ẢNH SIÊU NHẸ ===
     document.getElementById('imageUpload').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -309,28 +343,15 @@
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
-                    // Thu nhỏ ảnh xuống để tải nhanh
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
-                    const MAX_WIDTH = 1000;
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    }
-                    canvas.width = width;
-                    canvas.height = height;
+                    let width = img.width, height = img.height;
+                    if (width > 1000) { height *= 1000 / width; width = 1000; }
+                    canvas.width = width; canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // Ép nén chất lượng (0.7 = 70% chất lượng) để siêu nhẹ
                     const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-
-                    bannerImg.src = compressedBase64;
-                    bannerImg.style.display = 'block';
-                    imgPlaceholder.style.display = 'none';
                     
+                    bannerImg.src = compressedBase64; bannerImg.style.display = 'block'; imgPlaceholder.style.display = 'none';
                     set(ref(db, 'hoavien_config/banner'), compressedBase64); 
                     localStorage.setItem('localFastBanner', compressedBase64);
                 }
@@ -340,18 +361,84 @@
         }
     });
 
+    // --- XỬ LÝ THÀNH VIÊN (MỚI) ---
+    onValue(membersRef, (snapshot) => {
+        const memberTable = document.getElementById('memberTableBody');
+        const ownerSelect = document.getElementById('ownerInput');
+        memberTable.innerHTML = '';
+        
+        // Cập nhật thẻ Select xổ xuống
+        if (snapshot.exists()) {
+            ownerSelect.innerHTML = '<option value="">-- Chọn thành viên sở hữu --</option>';
+        } else {
+            ownerSelect.innerHTML = '<option value="">(Chưa có thành viên nào)</option>';
+        }
+
+        let index = 1;
+        snapshot.forEach((childSnapshot) => {
+            const id = childSnapshot.key;
+            const data = childSnapshot.val();
+            
+            // Đổ vào Bảng Quản lý Thành Viên
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="text-align: center;">${index++}</td>
+                <td class="item-cell"><i class="fas fa-user-circle" style="color:var(--primary-green); font-size:1.2rem;"></i> ${data.name}</td>
+                <td style="text-align: right; padding-right: 20px;">
+                    <button class="btn-delete" onclick="deleteMemberFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button>
+                </td>
+            `;
+            memberTable.appendChild(row);
+
+            // Đổ vào Danh sách xổ xuống ở Modal Hoa
+            const option = document.createElement('option');
+            option.value = data.name;
+            option.textContent = data.name;
+            ownerSelect.appendChild(option);
+        });
+    });
+
+    // Thêm Thành Viên Lên Cloud
+    document.getElementById('memberForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const newMember = { name: document.getElementById('newMemberName').value };
+        push(membersRef, newMember); 
+        document.getElementById('addMemberModal').style.display = 'none';
+        this.reset();
+    });
+
+    // Xóa Thành Viên
+    window.deleteMemberFirebase = function(id) {
+        if (confirm('⚠️ Xóa thành viên này khỏi danh sách hội?')) {
+            remove(ref(db, `hoavien_members/${id}`));
+        }
+    }
+
+
+    // --- XỬ LÝ DANH SÁCH HOA ---
+    let records = [];
+    let currentFilter = 'all';
+    const colorMap = {
+        'Đỏ': { bg: '#ffebee', text: '#d32f2f', border: '#ffcdd2' },
+        'Vàng': { bg: '#fff8e1', text: '#f57f17', border: '#ffecb3' },
+        'Tím': { bg: '#f3e5f5', text: '#7b1fa2', border: '#e1bee7' },
+        'Xanh': { bg: '#e8f5e9', text: '#388e3c', border: '#c8e6c9' },
+        'Lam': { bg: '#e3f2fd', text: '#1976d2', border: '#bbdefb' }
+    };
+
     onValue(recordsRef, (snapshot) => {
         records = [];
-        snapshot.forEach((childSnapshot) => {
-            records.push({ id: childSnapshot.key, ...childSnapshot.val() });
-        });
+        snapshot.forEach((childSnapshot) => { records.push({ id: childSnapshot.key, ...childSnapshot.val() }); });
         renderTable();
     });
 
     document.getElementById('dataForm').addEventListener('submit', function(e) {
         e.preventDefault();
+        const ownerVal = document.getElementById('ownerInput').value;
+        if(ownerVal === "") { alert("Vui lòng chọn Người sở hữu!"); return; }
+        
         const newRecord = {
-            owner: document.getElementById('ownerInput').value,
+            owner: ownerVal,
             flowerName: document.getElementById('flowerInput').value,
             quality: document.getElementById('qualityInput').value
         };
@@ -369,10 +456,8 @@
     const filterCards = document.querySelectorAll('#filterCards .card');
     filterCards.forEach(card => {
         card.addEventListener('click', function() {
-            filterCards.forEach(c => c.classList.remove('active'));
-            this.classList.add('active');
-            currentFilter = this.getAttribute('data-filter');
-            applyFilters();
+            filterCards.forEach(c => c.classList.remove('active')); this.classList.add('active');
+            currentFilter = this.getAttribute('data-filter'); applyFilters();
         });
     });
 
@@ -380,35 +465,25 @@
         const counts = { 'all': records.length, 'Đỏ': 0, 'Vàng': 0, 'Tím': 0, 'Xanh': 0, 'Lam': 0 };
         records.forEach(r => { if (counts[r.quality] !== undefined) counts[r.quality]++; });
         for (const [key, value] of Object.entries(counts)) {
-            const el = document.getElementById(`count-${key}`);
-            if (el) el.innerText = value;
+            const el = document.getElementById(`count-${key}`); if (el) el.innerText = value;
         }
     }
 
     function renderTable() {
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = '';
+        const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
         records.forEach((record, index) => {
             const colors = colorMap[record.quality] || { bg: '#eee', text: '#333', border: '#ccc' };
-            const row = document.createElement('tr');
-            row.setAttribute('data-quality', record.quality);
+            const row = document.createElement('tr'); row.setAttribute('data-quality', record.quality);
             row.innerHTML = `
                 <td>${index + 1}</td>
                 <td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green)"></i> ${record.flowerName}</td>
-                <td>
-                    <span style="background-color: ${colors.bg}; color: ${colors.text}; border: 1px solid ${colors.border}; padding: 6px 14px; border-radius: 20px; font-weight:800; font-size: 0.85rem; display: inline-block;">
-                        ${record.quality}
-                    </span>
-                </td>
-                <td class="owner-text">${record.owner}</td>
-                <td style="text-align: right; padding-right: 20px;">
-                    <button class="btn-delete" onclick="deleteRecordFirebase('${record.id}')"><i class="fas fa-trash-alt"></i> Xóa</button>
-                </td>
+                <td><span style="background-color: ${colors.bg}; color: ${colors.text}; border: 1px solid ${colors.border}; padding: 6px 14px; border-radius: 20px; font-weight:800; font-size: 0.85rem; display: inline-block;">${record.quality}</span></td>
+                <td class="owner-text" style="font-weight: 800;"><i class="fas fa-user-circle" style="color: #95a5a6; margin-right: 5px;"></i>${record.owner}</td>
+                <td style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteRecordFirebase('${record.id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
             `;
             tbody.appendChild(row);
         });
-        updateStats();
-        applyFilters();
+        updateStats(); applyFilters();
     }
 
     function applyFilters() {
@@ -417,13 +492,9 @@
         rows.forEach(row => {
             const rowQuality = row.getAttribute('data-quality');
             const rowText = row.innerText.toLowerCase();
-            const matchFilter = (currentFilter === 'all' || rowQuality === currentFilter);
-            const matchSearch = rowText.includes(searchText);
-            if (matchFilter && matchSearch) {
+            if ((currentFilter === 'all' || rowQuality === currentFilter) && rowText.includes(searchText)) {
                 row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
+            } else { row.style.display = 'none'; }
         });
     }
 
