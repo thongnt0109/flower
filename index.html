@@ -784,50 +784,6 @@
 
     document.getElementById('searchInput').addEventListener('input', applyFilters);
 </script>
-<!-- NÚT MA THUẬT THÊM 49 HOA VÀNG -->
-<button onclick="autoAddYellowFlowers()" id="magicBtnYellow" style="position:fixed; bottom:20px; left:20px; z-index:99999; padding:15px 25px; background:linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); color:white; border-radius:15px; font-weight:900; font-size: 1.1rem; border:none; cursor:pointer; box-shadow: 0 10px 20px rgba(241, 196, 15, 0.4); text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
-    🌟 BẤM ĐỂ THÊM 49 HOA VÀNG
-</button>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyDBeKm7IEohpTi8exTi1ijvM-LHODMidj0",
-        authDomain: "flower-17430.firebaseapp.com",
-        databaseURL: "https://flower-17430-default-rtdb.firebaseio.com",
-        projectId: "flower-17430",
-        storageBucket: "flower-17430.firebasestorage.app",
-        messagingSenderId: "447458858978",
-        appId: "1:447458858978:web:2ae2ccd28d3e71e4b3d2e3"
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const flowerTypesRef = ref(db, 'hoavien_flower_types');
-
-    window.autoAddYellowFlowers = function() {
-        const list = [
-            "Mộc Lan Ngọc Ngà", "Trái Tim Đá Quý", "Thuyền Tiên Sông Ngân", "Bóng Quế Cành Ngọc", "Tùng Linh Chiếu Rọi", "Hồng Cecil Lam",
-            "Hồng Cecil Phấn", "Lạp Mai Hương Phi", "Lạp Mai Linh Lung", "Mẫu Đơn Ánh Tím", "Cá Heo Xanh", "Cá Heo Hồng",
-            "Cá Heo Trắng", "Sắc Cam Mùa Xuân", "Mẫu Đơn Ánh Ngọc", "Mẫu Đơn Ánh Xanh", "Tiên Nữ Rải Hoa", "Phù Dung Hồng Hộp Báu",
-            "Phù Dung Cam Hộp Báu", "Phù Dung Tím Hộp Báu", "Mưa Bụi Cô Tô", "Trúc Ánh Sắc Vàng", "Nguyệt Quý Mây Hồng", "Nguyệt Quý Ánh Vàng",
-            "Nguyệt Quý Sắc Cam", "Thỏ Ngọc Ôm Ánh Sáng", "Hạc Gửi Ngân Hà", "Tử Linh Phúc Lộc", "Tiếng Sao Hoa Lung", "Hoa Lung Tỏa Hương",
-            "Chương Hoa Mộng Điệp", "Sách Mai Điệp Ảnh", "Hương Hoa Diên Vĩ", "Đế Vương Hồng Tía", "Đế Vương Xích Diễm", "Cháo Ngọt Sương Hoa",
-            "Hương Lam Đêm", "Gấu Hoa Hồng", "Cừu Bông Ngọt Ngào", "Cúc Mẫu Đơn Tím Nho", "Cúc Mẫu Đơn Sứ Xanh", "Cúc Mẫu Đơn Cam Ráng Chiều",
-            "Trái Tim Tím Mật", "Ngọc Lan Lưu Hương", "Diều Giấy Đón Xuân", "Hoa Lửa Ráng Đỏ", "Hoa Lửa Thanh Ly", "Lạc Anh Phù Hương",
-            "Bích Sắc Quỳnh Đài"
-        ];
-        
-        let count = 0;
-        list.forEach(name => {
-            push(flowerTypesRef, { name: name, quality: "Vàng" });
-            count++;
-        });
-        
-        alert("✨ Xuất sắc! Đã nạp tự động " + count + " loại hoa Phẩm Vàng vào hệ thống.");
-        document.getElementById('magicBtnYellow').style.display = 'none';
-    }
-</script>
 </body>
 </html>
