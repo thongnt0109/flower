@@ -10,6 +10,32 @@
         :root { --sidebar-width: 260px; --primary-green: #2ecc71; --dark-green: #1a4d2e; --accent-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); --text-main: #2c3e50; --bg-body: #f0f4f8; --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05); --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; }
         body { display: flex; min-height: 100vh; background-color: var(--bg-body); background-image: url('https://images.unsplash.com/photo-1508610048659-a06b669e3321?q=80&w=2000'); background-size: cover; background-position: center; background-attachment: fixed; background-blend-mode: soft-light; color: var(--text-main); }
+        
+        /* === HIỆU ỨNG HOA LÁ RƠI === */
+        #falling-elements {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; /* KHÔNG CẢN TRỞ NÚT BẤM CỦA NGƯỜI DÙNG */
+            z-index: 9999; overflow: hidden;
+        }
+        .falling-item {
+            position: absolute; top: -10%; user-select: none;
+            animation-name: fall, sway;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear, ease-in-out;
+        }
+        @keyframes fall {
+            0% { top: -10%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 0.8; }
+            100% { top: 110%; opacity: 0; }
+        }
+        @keyframes sway {
+            0% { transform: translateX(0px) rotate(0deg); }
+            50% { transform: translateX(60px) rotate(45deg); }
+            100% { transform: translateX(0px) rotate(90deg); }
+        }
+        /* ============================ */
+
         .sidebar { width: var(--sidebar-width); background: rgba(26, 77, 46, 0.95); backdrop-filter: blur(10px); color: #fff; padding: 30px 20px; display: flex; flex-direction: column; position: fixed; height: 100%; z-index: 100; box-shadow: 4px 0 20px rgba(0,0,0,0.1);}
         .logo-section { display: flex; align-items: center; gap: 15px; font-size: 1.4rem; font-weight: 800; margin-bottom: 50px; letter-spacing: 1px;}
         .logo-section i { color: #ff9a9e; font-size: 1.8rem; filter: drop-shadow(0 2px 5px rgba(255, 154, 158, 0.5));}
@@ -119,13 +145,15 @@
 </head>
 <body>
 
+<!-- KHUNG CHỨA HIỆU ỨNG RƠI -->
+<div id="falling-elements"></div>
+
 <aside class="sidebar">
     <div class="logo-section"><i class="fas fa-fan fa-spin" style="animation-duration: 10s;"></i> FLOWER HỘI</div>
     <nav class="nav-links">
         <ul>
             <li><a class="nav-btn active" data-target="page-home"><i class="fas fa-layer-group"></i>Bảng Tin</a></li>
             <li><a class="nav-btn" data-target="page-list"><i class="fas fa-seedling"></i>Danh Sách Hoa</a></li>
-            <!-- THÊM TAB THÀNH VIÊN -->
             <li><a class="nav-btn" data-target="page-members"><i class="fas fa-users"></i>Thành Viên</a></li>
         </ul>
     </nav>
@@ -139,7 +167,6 @@
         </div>
     </header>
 
-    <!-- TRANG BẢNG TIN -->
     <div id="page-home" class="page-section active">
         <div class="home-container">
             <h2 style="margin-bottom: 5px; color: var(--dark-green); font-size: 2rem; font-weight: 800;"><i class="fas fa-seedling"></i> Bảng Tin Hoa Viên</h2>
@@ -166,7 +193,6 @@
         </div>
     </div>
 
-    <!-- TRANG DANH SÁCH HOA -->
     <div id="page-list" class="page-section">
         <div class="stat-cards" id="filterCards">
             <div class="card active" data-filter="all"><div class="card-icon"><i class="fas fa-layer-group"></i></div><div class="card-value" id="count-all">0</div><div class="card-label">Tất Cả</div></div>
@@ -191,7 +217,6 @@
         </div>
     </div>
 
-    <!-- TRANG THÀNH VIÊN (MỚI) -->
     <div id="page-members" class="page-section">
         <div class="home-container">
             <h2 style="margin-bottom: 5px; color: var(--dark-green); font-size: 2rem; font-weight: 800;"><i class="fas fa-users"></i> Quản Lý Thành Viên</h2>
@@ -209,7 +234,6 @@
                         <tr><th style="text-align: center; width: 60px;">STT</th><th>Tên Thành Viên</th><th style="text-align: right; padding-right: 30px;">Hành Động</th></tr>
                     </thead>
                     <tbody id="memberTableBody">
-                        <!-- Dữ liệu thành viên sẽ load vào đây -->
                     </tbody>
                 </table>
             </div>
@@ -218,14 +242,12 @@
 
 </main>
 
-<!-- Khung Modal Thêm Hoa -->
 <div class="modal" id="addModal">
     <div class="modal-content">
         <div class="modal-header"><h3>✨ Thêm Hoa Mới</h3><span class="close-btn" id="closeModalBtn">&times;</span></div>
         <form id="dataForm">
             <div class="form-group">
                 <label>👤 Người sở hữu</label>
-                <!-- ĐÃ SỬA THÀNH NÚT SỔ XUỐNG -->
                 <select id="ownerInput" required>
                     <option value="">-- Đang tải danh sách thành viên... --</option>
                 </select>
@@ -242,7 +264,6 @@
     </div>
 </div>
 
-<!-- Khung Modal Thêm Thành Viên (MỚI) -->
 <div class="modal" id="addMemberModal">
     <div class="modal-content">
         <div class="modal-header"><h3>👤 Thêm Thành Viên</h3><span class="close-btn" id="closeMemberModalBtn">&times;</span></div>
@@ -257,7 +278,31 @@
 </div>
 
 <script>
-    // Xử lý chuyển Tab
+    // === TẠO HIỆU ỨNG HOA RƠI ===
+    function createFallingElements() {
+        const container = document.getElementById('falling-elements');
+        const elements = ['🌸', '🍃', '💮', '🍂', '🍁', '✨']; // Ký hiệu hoa và lá
+        const totalElements = 25; // Số lượng cánh hoa trên màn hình
+
+        for (let i = 0; i < totalElements; i++) {
+            let item = document.createElement('div');
+            item.classList.add('falling-item');
+            item.innerText = elements[Math.floor(Math.random() * elements.length)];
+            
+            // Lập trình ngẫu nhiên vị trí, tốc độ và kích thước
+            item.style.left = Math.random() * 100 + 'vw';
+            item.style.animationDuration = (Math.random() * 6 + 6) + 's, ' + (Math.random() * 3 + 3) + 's'; 
+            item.style.animationDelay = Math.random() * 8 + 's, ' + Math.random() * 5 + 's';
+            item.style.fontSize = (Math.random() * 12 + 10) + 'px';
+            item.style.opacity = Math.random() * 0.5 + 0.3; // Mờ ảo chút cho đẹp
+
+            container.appendChild(item);
+        }
+    }
+    // Khởi chạy khi web load xong
+    document.addEventListener("DOMContentLoaded", createFallingElements);
+    // =============================
+
     const navBtns = document.querySelectorAll('.nav-btn');
     const pages = document.querySelectorAll('.page-section');
     navBtns.forEach(btn => {
@@ -268,12 +313,10 @@
         });
     });
 
-    // Bật tắt Modal Hoa
     const modal = document.getElementById('addModal');
     document.getElementById('openModalBtn').onclick = () => modal.style.display = 'flex';
     document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; document.getElementById('dataForm').reset(); };
     
-    // Bật tắt Modal Thành viên
     const memberModal = document.getElementById('addMemberModal');
     document.getElementById('openMemberModalBtn').onclick = () => memberModal.style.display = 'flex';
     document.getElementById('closeMemberModalBtn').onclick = () => { memberModal.style.display = 'none'; document.getElementById('memberForm').reset(); };
@@ -288,7 +331,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase, ref, onValue, push, remove, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
-    // Khóa Firebase cũ của bạn
     const firebaseConfig = {
         apiKey: "AIzaSyDBeKm7IEohpTi8exTi1ijvM-LHODMidj0",
         authDomain: "flower-17430.firebaseapp.com",
@@ -304,9 +346,8 @@
     
     const configRef = ref(db, 'hoavien_config');
     const recordsRef = ref(db, 'hoavien_records');
-    const membersRef = ref(db, 'hoavien_members'); // Bảng Thành Viên mới
+    const membersRef = ref(db, 'hoavien_members'); 
 
-    // --- XỬ LÝ BẢNG TIN (CACHE MƯỢT MÀ) ---
     const bannerImg = document.getElementById('bannerImg');
     const imgPlaceholder = document.getElementById('imgPlaceholder');
     const homeText = document.getElementById('homeText');
@@ -361,13 +402,11 @@
         }
     });
 
-    // --- XỬ LÝ THÀNH VIÊN (MỚI) ---
     onValue(membersRef, (snapshot) => {
         const memberTable = document.getElementById('memberTableBody');
         const ownerSelect = document.getElementById('ownerInput');
         memberTable.innerHTML = '';
         
-        // Cập nhật thẻ Select xổ xuống
         if (snapshot.exists()) {
             ownerSelect.innerHTML = '<option value="">-- Chọn thành viên sở hữu --</option>';
         } else {
@@ -379,7 +418,6 @@
             const id = childSnapshot.key;
             const data = childSnapshot.val();
             
-            // Đổ vào Bảng Quản lý Thành Viên
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td style="text-align: center;">${index++}</td>
@@ -390,7 +428,6 @@
             `;
             memberTable.appendChild(row);
 
-            // Đổ vào Danh sách xổ xuống ở Modal Hoa
             const option = document.createElement('option');
             option.value = data.name;
             option.textContent = data.name;
@@ -398,7 +435,6 @@
         });
     });
 
-    // Thêm Thành Viên Lên Cloud
     document.getElementById('memberForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const newMember = { name: document.getElementById('newMemberName').value };
@@ -407,15 +443,12 @@
         this.reset();
     });
 
-    // Xóa Thành Viên
     window.deleteMemberFirebase = function(id) {
         if (confirm('⚠️ Xóa thành viên này khỏi danh sách hội?')) {
             remove(ref(db, `hoavien_members/${id}`));
         }
     }
 
-
-    // --- XỬ LÝ DANH SÁCH HOA ---
     let records = [];
     let currentFilter = 'all';
     const colorMap = {
