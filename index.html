@@ -130,7 +130,7 @@
         .searchable-item:last-child { border-bottom: none; }
         .quality-badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        /* === GIAO DIỆN APP ĐIỆN THOẠI CHUYÊN NGHIỆP === */
+        /* GIAO DIỆN IPHONE / MOBILE APP */
         @media (max-width: 768px) {
             .sidebar { width: 100%; height: 65px; top: auto; bottom: 0; flex-direction: row; padding: 0; align-items: center; justify-content: center; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.15); overflow-x: auto; white-space: nowrap;}
             .logo-section { display: none; }
@@ -155,7 +155,6 @@
             .search-container i { left: 12px; font-size: 1rem; }
             .btn-add { padding: 10px 20px; font-size: 0.9rem; justify-content: center; width: 100%;}
             
-            /* CSS CHUYỂN BẢNG THÀNH DẠNG THẺ (CARD) CHO MOBILE */
             .data-section { overflow-x: visible; background: transparent; padding: 0; box-shadow: none; }
             table { display: block; width: 100%; border-spacing: 0; }
             thead { display: none; } 
@@ -183,7 +182,6 @@
 
 <div id="falling-elements"></div>
 
-<!-- ĐÃ SỬA LẠI POPUP CHO ĐIỆN THOẠI (BẢN V24) -->
 <div id="ownerPopup" style="display:none; position:fixed; background:#fff; padding:15px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:9999; border:1px solid #eee; font-size:0.9rem; color:#2c3e50; line-height:1.6; min-width: 150px; max-width:250px;"></div>
 
 <aside class="sidebar">
@@ -300,9 +298,17 @@
                 <i class="fas fa-leaf"></i> Tổng số loại hoa trong Game: <span id="totalFlowerTypesCount" style="color: #e74c3c; font-size: 1.3rem;">0</span>
             </div>
 
+            <!-- NÂNG CẤP V25: THANH TÌM KIẾM TRONG MỤC LOẠI HOA -->
             <div class="table-controls admin-only">
-                <div class="action-buttons" style="width: 100%;"><button class="btn-add" id="openFlowerTypeModalBtn"><i class="fas fa-plus-circle"></i> Thêm Loại Hoa Mới</button></div>
+                <div class="search-container" style="flex: 1;">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchFlowerTypeInput" placeholder="Tìm nhanh tên loại hoa, phẩm hoa...">
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-add" id="openFlowerTypeModalBtn"><i class="fas fa-plus-circle"></i> Thêm Loại Hoa Mới</button>
+                </div>
             </div>
+            
             <div class="data-section">
                 <table>
                     <thead>
@@ -379,17 +385,22 @@
     </div>
 </div>
 
+<!-- NÂNG CẤP V25: MODAL CHỈNH SỬA & THÊM LOẠI HOA -->
 <div class="modal" id="addFlowerTypeModal">
     <div class="modal-content">
         <div class="corner-leaves"></div>
-        <div class="modal-header"><h3>🌿 Thêm Loại Hoa</h3><span class="close-btn" id="closeFlowerTypeModalBtn">&times;</span></div>
+        <div class="modal-header"><h3 id="flowerTypeModalTitle">🌿 Thêm Loại Hoa</h3><span class="close-btn" id="closeFlowerTypeModalBtn">&times;</span></div>
         <form id="flowerTypeForm">
+            <!-- Lưu lại ID và Tên cũ để dùng cho Cập nhật hàng loạt (Cascade Update) -->
+            <input type="hidden" id="editFlowerTypeId" value="">
+            <input type="hidden" id="oldFlowerTypeName" value="">
+            
             <div class="form-group">
-                <label>Tên loại hoa mới</label>
+                <label>Tên loại hoa</label>
                 <input type="text" id="newFlowerTypeName" placeholder="Ví dụ: Hoa Ngân Hà..." required>
             </div>
             <div class="form-group">
-                <label>🎨 Phẩm hoa mặc định của loại này</label>
+                <label>🎨 Phẩm hoa</label>
                 <select id="newFlowerTypeQuality" required>
                     <option value="Đỏ">Đỏ</option>
                     <option value="Vàng">Vàng</option>
@@ -398,7 +409,7 @@
                     <option value="Lam">Lam</option>
                 </select>
             </div>
-            <button type="submit" class="btn-submit">Thêm Vào Danh Sách</button>
+            <button type="submit" class="btn-submit">Lưu Vào Danh Sách</button>
         </form>
     </div>
 </div>
@@ -506,7 +517,13 @@
     document.getElementById('closeMemberModalBtn').onclick = () => { memberModal.style.display = 'none'; document.getElementById('memberForm').reset(); };
 
     const flowerTypeModal = document.getElementById('addFlowerTypeModal');
-    document.getElementById('openFlowerTypeModalBtn').onclick = () => flowerTypeModal.style.display = 'flex';
+    document.getElementById('openFlowerTypeModalBtn').onclick = () => {
+        document.getElementById('editFlowerTypeId').value = "";
+        document.getElementById('oldFlowerTypeName').value = "";
+        document.getElementById('flowerTypeForm').reset();
+        document.getElementById('flowerTypeModalTitle').innerText = '🌿 Thêm Loại Hoa Mới';
+        flowerTypeModal.style.display = 'flex';
+    };
     document.getElementById('closeFlowerTypeModalBtn').onclick = () => { flowerTypeModal.style.display = 'none'; document.getElementById('flowerTypeForm').reset(); };
 
     window.onclick = (e) => { 
@@ -517,8 +534,9 @@
 </script>
 
 <script type="module">
+    // Đã import thêm hàm update từ Firebase để chạy tính năng Cập nhật hàng loạt
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getDatabase, ref, onValue, push, remove, set } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
+    import { getDatabase, ref, onValue, push, remove, set, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDBeKm7IEohpTi8exTi1ijvM-LHODMidj0",
@@ -547,12 +565,11 @@
         'Chưa rõ': { bg: '#eee', text: '#333', border: '#ccc' }
     };
 
-    // === CẢI TIẾN POPUP CHO MOBILE (V24) ===
+    let records = []; // Mảng chứa dữ liệu bảng chính
+
     const popup = document.getElementById('ownerPopup');
     window.showMoreOwners = function(event, names) {
         event.stopPropagation();
-        
-        // Thêm nút X để tắt thủ công và thanh cuộn bên trong
         popup.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #f1f2f6; padding-bottom:8px; margin-bottom:8px;">
                 <strong style="color: var(--dark-green); font-size: 1rem;"><i class="fas fa-users"></i> Danh sách:</strong>
@@ -562,24 +579,14 @@
                 ${names.split(', ').join('<br>')}
             </div>
         `;
-        
         popup.style.display = 'block';
-        
         let x = event.clientX || (event.touches && event.touches[0].clientX) || 100;
         let y = event.clientY || (event.touches && event.touches[0].clientY) || 100;
-        
-        // Điều chỉnh tọa độ để không bị lẹm ra ngoài màn hình
         if(x > window.innerWidth - 200) x = window.innerWidth - 200;
-        if(y > window.innerHeight - 280) y = window.innerHeight - 280; // Giúp popup không rớt xuống đáy
-        
-        popup.style.left = x + 10 + 'px'; 
-        popup.style.top = y + 10 + 'px';
+        if(y > window.innerHeight - 280) y = window.innerHeight - 280; 
+        popup.style.left = x + 10 + 'px'; popup.style.top = y + 10 + 'px';
     };
-    
-    // Ngăn chặn việc bấm vào bên trong popup làm nó tắt
     popup.addEventListener('click', function(e) { e.stopPropagation(); });
-    
-    // Chỉ tắt khi bấm ra vùng trắng bên ngoài
     window.addEventListener('click', () => { popup.style.display = 'none'; });
 
     const bannerImg = document.getElementById('bannerImg');
@@ -674,6 +681,7 @@
     window.deleteMemberFirebase = function(id) { if (confirm('⚠️ Xóa thành viên này khỏi danh sách hội?')) remove(ref(db, `hoavien_members/${id}`)); }
 
 
+    // === QUẢN LÝ LOẠI HOA VÀ TÌM KIẾM LOẠI HOA ===
     const displayInput = document.getElementById('flowerInputDisplay');
     const hiddenInput = document.getElementById('flowerInput');
     const qualityInput = document.getElementById('qualityInput');
@@ -699,12 +707,19 @@
             const fName = data.name || 'Không tên';
             const colors = colorMap[quality] || colorMap['Chưa rõ'];
 
+            // Gắn data-search để tìm kiếm trên Tab Loại Hoa
             const row = document.createElement('tr');
+            const searchString = (fName + " " + quality).toLowerCase();
+            row.setAttribute('data-flower-search', searchString);
+            
             row.innerHTML = `
                 <td style="text-align: center;">${index++}</td>
                 <td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green); font-size:1.2rem;"></i> ${fName}</td>
                 <td><span style="background-color: ${colors.bg}; color: ${colors.text}; border: 1px solid ${colors.border}; padding: 6px 14px; border-radius: 20px; font-weight:800; font-size: 0.85rem; display: inline-block;">${quality}</span></td>
-                <td class="admin-only" style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteFlowerTypeFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
+                <td class="admin-only" style="text-align: right; padding-right: 20px; white-space: nowrap;">
+                    <button class="btn-edit" onclick="editFlowerTypeFirebase('${id}', '${fName}', '${quality}')"><i class="fas fa-edit"></i> Sửa</button>
+                    <button class="btn-delete" onclick="deleteFlowerTypeFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button>
+                </td>
             `;
             typeTable.appendChild(row);
             
@@ -725,8 +740,76 @@
             listContainer.appendChild(div);
         });
         document.getElementById('totalFlowerTypesCount').innerText = totalFlowers;
+        applyFlowerTypeFilters(); // Cập nhật lại bộ lọc nếu đang gõ dở
     });
 
+    // Hàm gọi chức năng Edit Loại Hoa
+    window.editFlowerTypeFirebase = function(id, name, quality) {
+        document.getElementById('editFlowerTypeId').value = id;
+        document.getElementById('oldFlowerTypeName').value = name; // Giữ tên cũ để đem đi dò tìm cập nhật đồng loạt
+        document.getElementById('newFlowerTypeName').value = name;
+        document.getElementById('newFlowerTypeQuality').value = quality;
+        
+        document.getElementById('flowerTypeModalTitle').innerText = '✏️ Chỉnh Sửa Loại Hoa';
+        document.getElementById('addFlowerTypeModal').style.display = 'flex';
+    }
+
+    // TÍNH NĂNG CẬP NHẬT ĐỒNG LOẠT (CASCADE UPDATE)
+    document.getElementById('flowerTypeForm').addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        const newName = document.getElementById('newFlowerTypeName').value;
+        const newQuality = document.getElementById('newFlowerTypeQuality').value;
+        const editId = document.getElementById('editFlowerTypeId').value;
+        const oldName = document.getElementById('oldFlowerTypeName').value;
+
+        if (editId !== "") {
+            // 1. Cập nhật tên/phẩm loại hoa trong bảng Gốc
+            set(ref(db, `hoavien_flower_types/${editId}`), { name: newName, quality: newQuality });
+
+            // 2. Tự động truy quét và Cập nhật toàn bộ các Hoa tương ứng bên Bảng Danh Sách
+            if (oldName !== "") {
+                const multiUpdates = {};
+                let hasUpdates = false;
+                
+                records.forEach(record => {
+                    if (record.flowerName === oldName) {
+                        multiUpdates[`hoavien_records/${record.id}/flowerName`] = newName;
+                        multiUpdates[`hoavien_records/${record.id}/quality`] = newQuality;
+                        hasUpdates = true;
+                    }
+                });
+                
+                if (hasUpdates) {
+                    update(ref(db), multiUpdates).then(() => {
+                        alert(`Tuyệt vời! Hệ thống đã tự động tìm và cập nhật tên hoa/phẩm mới cho toàn bộ các thành viên đang sở hữu hoa "${oldName}".`);
+                    });
+                }
+            }
+        } else {
+            // Nếu không có ID thì là Thêm mới bình thường
+            push(flowerTypesRef, { name: newName, quality: newQuality }); 
+        }
+
+        document.getElementById('addFlowerTypeModal').style.display = 'none'; 
+        this.reset();
+    });
+
+    window.deleteFlowerTypeFirebase = function(id) { if (confirm('⚠️ Xóa loại hoa này khỏi danh sách chọn?')) remove(ref(db, `hoavien_flower_types/${id}`)); }
+
+    // Tính năng thanh Search trong Tab Loại Hoa
+    document.getElementById('searchFlowerTypeInput').addEventListener('input', applyFlowerTypeFilters);
+    function applyFlowerTypeFilters() {
+        const searchText = document.getElementById('searchFlowerTypeInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#flowerTypeTableBody tr');
+        rows.forEach(row => {
+            const rowText = row.getAttribute('data-flower-search') || ""; 
+            if (rowText.includes(searchText)) {
+                row.style.display = '';
+            } else { row.style.display = 'none'; }
+        });
+    }
+
+    // Tính năng Auto-complete lúc Add Hoa Mới
     displayInput.addEventListener('focus', () => {
         listContainer.classList.add('show');
         filterFlowers(''); 
@@ -759,17 +842,7 @@
         }
     });
 
-    document.getElementById('flowerTypeForm').addEventListener('submit', function(e) {
-        e.preventDefault(); 
-        push(flowerTypesRef, { name: document.getElementById('newFlowerTypeName').value, quality: document.getElementById('newFlowerTypeQuality').value }); 
-        document.getElementById('addFlowerTypeModal').style.display = 'none'; this.reset();
-    });
-    window.deleteFlowerTypeFirebase = function(id) { if (confirm('⚠️ Xóa loại hoa này khỏi danh sách chọn?')) remove(ref(db, `hoavien_flower_types/${id}`)); }
-
-
-    let records = [];
-    let currentFilter = 'all';
-
+    // === QUẢN LÝ BẢNG CHÍNH ===
     onValue(recordsRef, (snapshot) => {
         records = [];
         snapshot.forEach((childSnapshot) => { records.push({ id: childSnapshot.key, ...childSnapshot.val() }); });
