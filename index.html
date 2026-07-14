@@ -561,8 +561,7 @@
         'Chưa rõ': { bg: '#eee', text: '#333', border: '#ccc' }
     };
 
-    // BIẾN TOÀN CỤC CHỈ ĐƯỢC KHAI BÁO 1 LẦN Ở ĐÂY
-    let records = []; 
+    let records = []; // Mảng chứa dữ liệu bảng chính
     let currentFilter = 'all';
 
     const popup = document.getElementById('ownerPopup');
@@ -679,7 +678,7 @@
     window.deleteMemberFirebase = function(id) { if (confirm('⚠️ Xóa thành viên này khỏi danh sách hội?')) remove(ref(db, `hoavien_members/${id}`)); }
 
 
-    // === QUẢN LÝ LOẠI HOA ===
+    // === QUẢN LÝ LOẠI HOA VÀ TÌM KIẾM LOẠI HOA ===
     const displayInput = document.getElementById('flowerInputDisplay');
     const hiddenInput = document.getElementById('flowerInput');
     const qualityInput = document.getElementById('qualityInput');
@@ -774,10 +773,8 @@
                 
                 if (hasUpdates) {
                     update(ref(db), multiUpdates).then(() => {
-                        alert(`Tuyệt vời! Đã tự động cập nhật tên hoa/phẩm mới cho toàn bộ các thành viên đang sở hữu hoa "${oldName}".`);
+                        alert(`Tuyệt vời! Hệ thống đã tự động tìm và cập nhật tên hoa/phẩm mới cho toàn bộ các thành viên đang sở hữu hoa "${oldName}".`);
                     });
-                } else {
-                     alert("Đã cập nhật loại hoa!");
                 }
             }
         } else {
@@ -879,6 +876,7 @@
         document.getElementById('addModal').style.display = 'flex';
     }
 
+    // TÍNH NĂNG CHỐNG THÊM TRÙNG LẶP (V27)
     document.getElementById('dataForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -889,8 +887,26 @@
         const flowerVal = document.getElementById('flowerInput').value;
         if(flowerVal === "") { alert("⚠️ Vui lòng gõ và nhấp CHỌN tên hoa từ danh sách xổ xuống!"); return; }
         
-        const ownerVal = ownersArray.join(', ');
         const editId = document.getElementById('editRecordId').value;
+        
+        // KIỂM TRA TRÙNG LẶP HOA TRONG BẢNG
+        if (editId === "") {
+            // Khi tạo mới: Kiểm tra xem hoa này đã tồn tại trong mảng records chưa
+            const isDuplicate = records.some(r => r.flowerName.toLowerCase() === flowerVal.toLowerCase());
+            if (isDuplicate) {
+                alert(`🛑 CẢNH BÁO TRÙNG LẶP:\n\nHoa [ ${flowerVal} ] đã được tạo trong danh sách từ trước!\n\n👉 Cách giải quyết: Vui lòng quay lại màn hình chính, gõ tên hoa này vào thanh tìm kiếm, sau đó bấm nút "Sửa" để tích thêm người sở hữu mới nhé.`);
+                return; // Chặn lưu
+            }
+        } else {
+            // Khi đang sửa: Tránh trường hợp sửa trùng vào tên của một hoa khác đã tồn tại
+            const isDuplicate = records.some(r => r.flowerName.toLowerCase() === flowerVal.toLowerCase() && r.id !== editId);
+            if (isDuplicate) {
+                alert(`🛑 CẢNH BÁO TRÙNG LẶP:\n\nHoa [ ${flowerVal} ] đã tồn tại ở một dòng khác trong danh sách.\nVui lòng không đổi tên trùng với hoa đã có sẵn!`);
+                return; // Chặn lưu
+            }
+        }
+
+        const ownerVal = ownersArray.join(', ');
         const newRecord = { owner: ownerVal, flowerName: flowerVal, quality: document.getElementById('qualityInput').value };
         
         if (editId !== "") { set(ref(db, `hoavien_records/${editId}`), newRecord); } 
