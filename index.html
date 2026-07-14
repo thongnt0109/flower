@@ -298,7 +298,6 @@
                 <i class="fas fa-leaf"></i> Tổng số loại hoa trong Game: <span id="totalFlowerTypesCount" style="color: #e74c3c; font-size: 1.3rem;">0</span>
             </div>
 
-            <!-- NÂNG CẤP V25: THANH TÌM KIẾM TRONG MỤC LOẠI HOA -->
             <div class="table-controls admin-only">
                 <div class="search-container" style="flex: 1;">
                     <i class="fas fa-search"></i>
@@ -385,13 +384,11 @@
     </div>
 </div>
 
-<!-- NÂNG CẤP V25: MODAL CHỈNH SỬA & THÊM LOẠI HOA -->
 <div class="modal" id="addFlowerTypeModal">
     <div class="modal-content">
         <div class="corner-leaves"></div>
         <div class="modal-header"><h3 id="flowerTypeModalTitle">🌿 Thêm Loại Hoa</h3><span class="close-btn" id="closeFlowerTypeModalBtn">&times;</span></div>
         <form id="flowerTypeForm">
-            <!-- Lưu lại ID và Tên cũ để dùng cho Cập nhật hàng loạt (Cascade Update) -->
             <input type="hidden" id="editFlowerTypeId" value="">
             <input type="hidden" id="oldFlowerTypeName" value="">
             
@@ -534,7 +531,6 @@
 </script>
 
 <script type="module">
-    // Đã import thêm hàm update từ Firebase để chạy tính năng Cập nhật hàng loạt
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase, ref, onValue, push, remove, set, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
 
@@ -565,7 +561,9 @@
         'Chưa rõ': { bg: '#eee', text: '#333', border: '#ccc' }
     };
 
-    let records = []; // Mảng chứa dữ liệu bảng chính
+    // BIẾN TOÀN CỤC CHỈ ĐƯỢC KHAI BÁO 1 LẦN Ở ĐÂY
+    let records = []; 
+    let currentFilter = 'all';
 
     const popup = document.getElementById('ownerPopup');
     window.showMoreOwners = function(event, names) {
@@ -681,7 +679,7 @@
     window.deleteMemberFirebase = function(id) { if (confirm('⚠️ Xóa thành viên này khỏi danh sách hội?')) remove(ref(db, `hoavien_members/${id}`)); }
 
 
-    // === QUẢN LÝ LOẠI HOA VÀ TÌM KIẾM LOẠI HOA ===
+    // === QUẢN LÝ LOẠI HOA ===
     const displayInput = document.getElementById('flowerInputDisplay');
     const hiddenInput = document.getElementById('flowerInput');
     const qualityInput = document.getElementById('qualityInput');
@@ -707,7 +705,6 @@
             const fName = data.name || 'Không tên';
             const colors = colorMap[quality] || colorMap['Chưa rõ'];
 
-            // Gắn data-search để tìm kiếm trên Tab Loại Hoa
             const row = document.createElement('tr');
             const searchString = (fName + " " + quality).toLowerCase();
             row.setAttribute('data-flower-search', searchString);
@@ -740,13 +737,12 @@
             listContainer.appendChild(div);
         });
         document.getElementById('totalFlowerTypesCount').innerText = totalFlowers;
-        applyFlowerTypeFilters(); // Cập nhật lại bộ lọc nếu đang gõ dở
+        applyFlowerTypeFilters(); 
     });
 
-    // Hàm gọi chức năng Edit Loại Hoa
     window.editFlowerTypeFirebase = function(id, name, quality) {
         document.getElementById('editFlowerTypeId').value = id;
-        document.getElementById('oldFlowerTypeName').value = name; // Giữ tên cũ để đem đi dò tìm cập nhật đồng loạt
+        document.getElementById('oldFlowerTypeName').value = name; 
         document.getElementById('newFlowerTypeName').value = name;
         document.getElementById('newFlowerTypeQuality').value = quality;
         
@@ -754,7 +750,6 @@
         document.getElementById('addFlowerTypeModal').style.display = 'flex';
     }
 
-    // TÍNH NĂNG CẬP NHẬT ĐỒNG LOẠT (CASCADE UPDATE)
     document.getElementById('flowerTypeForm').addEventListener('submit', function(e) {
         e.preventDefault(); 
         const newName = document.getElementById('newFlowerTypeName').value;
@@ -763,10 +758,8 @@
         const oldName = document.getElementById('oldFlowerTypeName').value;
 
         if (editId !== "") {
-            // 1. Cập nhật tên/phẩm loại hoa trong bảng Gốc
             set(ref(db, `hoavien_flower_types/${editId}`), { name: newName, quality: newQuality });
 
-            // 2. Tự động truy quét và Cập nhật toàn bộ các Hoa tương ứng bên Bảng Danh Sách
             if (oldName !== "") {
                 const multiUpdates = {};
                 let hasUpdates = false;
@@ -781,12 +774,13 @@
                 
                 if (hasUpdates) {
                     update(ref(db), multiUpdates).then(() => {
-                        alert(`Tuyệt vời! Hệ thống đã tự động tìm và cập nhật tên hoa/phẩm mới cho toàn bộ các thành viên đang sở hữu hoa "${oldName}".`);
+                        alert(`Tuyệt vời! Đã tự động cập nhật tên hoa/phẩm mới cho toàn bộ các thành viên đang sở hữu hoa "${oldName}".`);
                     });
+                } else {
+                     alert("Đã cập nhật loại hoa!");
                 }
             }
         } else {
-            // Nếu không có ID thì là Thêm mới bình thường
             push(flowerTypesRef, { name: newName, quality: newQuality }); 
         }
 
@@ -796,10 +790,15 @@
 
     window.deleteFlowerTypeFirebase = function(id) { if (confirm('⚠️ Xóa loại hoa này khỏi danh sách chọn?')) remove(ref(db, `hoavien_flower_types/${id}`)); }
 
-    // Tính năng thanh Search trong Tab Loại Hoa
-    document.getElementById('searchFlowerTypeInput').addEventListener('input', applyFlowerTypeFilters);
+    const searchFlowerTypeInput = document.getElementById('searchFlowerTypeInput');
+    if(searchFlowerTypeInput) {
+        searchFlowerTypeInput.addEventListener('input', applyFlowerTypeFilters);
+    }
+    
     function applyFlowerTypeFilters() {
-        const searchText = document.getElementById('searchFlowerTypeInput').value.toLowerCase();
+        const searchInputEl = document.getElementById('searchFlowerTypeInput');
+        if(!searchInputEl) return;
+        const searchText = searchInputEl.value.toLowerCase();
         const rows = document.querySelectorAll('#flowerTypeTableBody tr');
         rows.forEach(row => {
             const rowText = row.getAttribute('data-flower-search') || ""; 
@@ -809,7 +808,6 @@
         });
     }
 
-    // Tính năng Auto-complete lúc Add Hoa Mới
     displayInput.addEventListener('focus', () => {
         listContainer.classList.add('show');
         filterFlowers(''); 
@@ -836,13 +834,14 @@
     }
 
     document.addEventListener('click', function(e) {
-        if (!document.getElementById('flowerSelectWrapper').contains(e.target)) {
+        const wrapper = document.getElementById('flowerSelectWrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
             listContainer.classList.remove('show');
             if(hiddenInput.value === "") { displayInput.value = ""; }
         }
     });
 
-    // === QUẢN LÝ BẢNG CHÍNH ===
+    // === QUẢN LÝ BẢNG CHÍNH VÀ TÌM KIẾM CHÍNH ===
     onValue(recordsRef, (snapshot) => {
         records = [];
         snapshot.forEach((childSnapshot) => { records.push({ id: childSnapshot.key, ...childSnapshot.val() }); });
@@ -956,19 +955,24 @@
         updateStats(); applyFilters();
     }
 
+    const mainSearchInput = document.getElementById('searchInput');
+    if(mainSearchInput) {
+        mainSearchInput.addEventListener('input', applyFilters);
+    }
+
     function applyFilters() {
-        const searchText = document.getElementById('searchInput').value.toLowerCase();
+        const searchInputEl = document.getElementById('searchInput');
+        if(!searchInputEl) return;
+        const searchText = searchInputEl.value.toLowerCase();
         const rows = document.querySelectorAll('#tableBody tr');
         rows.forEach(row => {
             const rowQuality = row.getAttribute('data-quality');
-            const rowText = row.getAttribute('data-search'); 
+            const rowText = row.getAttribute('data-search') || ""; 
             if ((currentFilter === 'all' || rowQuality === currentFilter) && rowText.includes(searchText)) {
                 row.style.display = '';
             } else { row.style.display = 'none'; }
         });
     }
-
-    document.getElementById('searchInput').addEventListener('input', applyFilters);
 </script>
 
 </body>
