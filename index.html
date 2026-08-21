@@ -6,65 +6,124 @@
     <title>FLOWER - Hoa Viên Hội</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
-        :root { --sidebar-width: 260px; --primary-green: #2ecc71; --dark-green: #1a4d2e; --accent-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); --text-main: #2c3e50; --bg-body: #f0f4f8; --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05); --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1); }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; }
-        body { display: flex; min-height: 100vh; background-color: var(--bg-body); background-image: url('https://images.unsplash.com/photo-1508610048659-a06b669e3321?q=80&w=2000'); background-size: cover; background-position: center; background-attachment: fixed; background-blend-mode: soft-light; color: var(--text-main); }
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
         
+        /* BIẾN MÀU SẮC ĐỘNG (NGÀY & ĐÊM) */
+        :root { 
+            --sidebar-width: 260px; 
+            --primary-green: #2ecc71; 
+            --dark-green: #1a4d2e; 
+            --accent-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
+            
+            /* Mặc định là Ngày */
+            --bg-body: url('https://images.unsplash.com/photo-1508610048659-a06b669e3321?q=80&w=2000');
+            --bg-glass: rgba(255, 255, 255, 0.7);
+            --bg-glass-solid: rgba(255, 255, 255, 0.9);
+            --text-main: #2c3e50; 
+            --text-muted: #7f8c8d;
+            --border-glass: rgba(255, 255, 255, 0.4);
+            --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1); 
+        }
+
+        /* CHẾ ĐỘ BAN ĐÊM (DARK MODE) */
+        body.theme-night {
+            --bg-body: url('https://images.unsplash.com/photo-1532767153582-b1a0e5145009?q=80&w=2000');
+            --bg-glass: rgba(15, 23, 42, 0.75);
+            --bg-glass-solid: rgba(15, 23, 42, 0.95);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            --primary-green: #4ade80;
+            --dark-green: #86efac;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', sans-serif; }
+        
+        /* TÙY CHỈNH THANH CUỘN (SCROLLBAR DÂY LEO) */
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary-green); border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+        ::-webkit-scrollbar-thumb:hover { background-color: var(--dark-green); }
+
+        body { display: flex; min-height: 100vh; background-image: var(--bg-body); background-size: cover; background-position: center; background-attachment: fixed; color: var(--text-main); transition: background-image 1s ease-in-out; }
         body.view-only .admin-only { display: none !important; }
 
+        /* HIỆU ỨNG GỢN SÓNG CLICK (RIPPLE) */
+        .click-ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-anim 0.6s linear; background-color: rgba(255, 255, 255, 0.4); pointer-events: none; z-index: 999999; }
+        @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
+
+        /* HIỆU ỨNG RƠI ĐỘNG (HOA/ĐOM ĐÓM) */
         #falling-elements { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
-        .falling-item { position: absolute; top: -10%; user-select: none; animation-name: fall, sway; animation-iteration-count: infinite; animation-timing-function: linear, ease-in-out; }
+        .falling-item { position: absolute; top: -10%; user-select: none; animation-name: fall, sway; animation-iteration-count: infinite; animation-timing-function: linear, ease-in-out; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));}
+        .theme-night .falling-item { filter: drop-shadow(0 0 8px rgba(255, 255, 100, 0.8)); } /* Hào quang đom đóm */
         @keyframes fall { 0% { top: -10%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 0.8; } 100% { top: 110%; opacity: 0; } }
         @keyframes sway { 0% { transform: translateX(0px) rotate(0deg); } 50% { transform: translateX(60px) rotate(45deg); } 100% { transform: translateX(0px) rotate(90deg); } }
 
-        /* Khung Dây Leo */
-        .home-container, .modal-content { position: relative; border: 2px dashed rgba(46, 204, 113, 0.6) !important; box-shadow: 0 10px 30px rgba(46, 204, 113, 0.1) !important; margin-top: 15px; margin-bottom: 15px; }
+        /* KHUNG KÍNH (GLASSMORPHISM) */
+        .glass-panel { background: var(--bg-glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border-glass); box-shadow: var(--shadow-glass); border-radius: 24px; }
+        
+        /* KHUNG DÂY LEO */
+        .home-container, .modal-content { position: relative; margin-top: 15px; margin-bottom: 15px; border: 2px dashed rgba(46, 204, 113, 0.4) !important; }
         .home-container::before, .modal-content::before { content: '🌿'; position: absolute; top: -25px; left: -22px; font-size: 45px; transform: rotate(-45deg); filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.15)); z-index: 10; pointer-events: none; }
         .home-container::after, .modal-content::after { content: '🌿'; position: absolute; bottom: -25px; right: -22px; font-size: 45px; transform: rotate(135deg); filter: drop-shadow(-2px -4px 6px rgba(0,0,0,0.15)); z-index: 10; pointer-events: none; }
         .corner-leaves { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
         .corner-leaves::before { content: '🍃'; position: absolute; top: -20px; right: -18px; font-size: 35px; transform: rotate(45deg); filter: drop-shadow(-2px 4px 4px rgba(0,0,0,0.1)); }
         .corner-leaves::after { content: '🍃'; position: absolute; bottom: -20px; left: -18px; font-size: 35px; transform: rotate(-135deg); filter: drop-shadow(2px -4px 4px rgba(0,0,0,0.1)); }
 
-        .sidebar { width: var(--sidebar-width); background: rgba(26, 77, 46, 0.95); backdrop-filter: blur(10px); color: #fff; padding: 30px 20px; display: flex; flex-direction: column; position: fixed; height: 100%; z-index: 100; box-shadow: 4px 0 20px rgba(0,0,0,0.1);}
-        .logo-section { display: flex; align-items: center; gap: 15px; font-size: 1.4rem; font-weight: 800; margin-bottom: 50px; letter-spacing: 1px;}
-        .logo-section i { color: #ff9a9e; font-size: 1.8rem; filter: drop-shadow(0 2px 5px rgba(255, 154, 158, 0.5));}
+        .sidebar { width: var(--sidebar-width); display: flex; flex-direction: column; position: fixed; height: 100%; z-index: 100; padding: 30px 20px; background: rgba(15, 30, 20, 0.85); backdrop-filter: blur(20px); border-right: 1px solid rgba(255,255,255,0.1); color: #fff;}
+        .logo-section { display: flex; align-items: center; gap: 15px; font-size: 1.4rem; font-weight: 800; margin-bottom: 50px; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(0,0,0,0.3);}
+        .logo-section i { color: #ff9a9e; font-size: 1.8rem; filter: drop-shadow(0 0 10px rgba(255, 154, 158, 0.8));}
         .nav-links ul { list-style: none; }
         .nav-links li { margin-bottom: 15px; }
         .nav-links a { text-decoration: none; color: rgba(255,255,255,0.7); display: flex; align-items: center; gap: 15px; padding: 14px 20px; border-radius: 12px; transition: all 0.3s ease; cursor: pointer; font-weight: 600;}
-        .nav-links a:hover, .nav-links a.active { background: rgba(255,255,255,0.15); color: #fff; transform: translateX(5px); }
+        .nav-links a:hover, .nav-links a.active { background: rgba(255,255,255,0.2); color: #fff; transform: translateX(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
         .nav-links a.active { border-left: 4px solid var(--primary-green); }
+        
         .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 40px; overflow-x: hidden; }
         
-        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(255,255,255,0.8); padding: 15px 30px; border-radius: 20px; backdrop-filter: blur(10px); box-shadow: var(--shadow-soft);}
-        .top-header .welcome-text { font-size: 1.3rem; font-weight: 700; color: var(--text-main); }
-        #authBtn { background: #fff; border: 2px solid #e74c3c; color: #e74c3c; padding: 8px 18px; border-radius: 20px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
-        #authBtn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-
-        .page-section { display: none; animation: fadeInUp 0.4s ease-out; }
-        .page-section.active { display: block; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 30px; }
+        .top-header .welcome-text { font-size: 1.3rem; font-weight: 800; color: var(--text-main); text-shadow: 0 2px 5px rgba(255,255,255,0.3); }
+        .theme-night .top-header .welcome-text { text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         
-        .home-container { background: rgba(255,255,255,0.95); padding: 40px; border-radius: 24px; box-shadow: var(--shadow-soft); backdrop-filter: blur(10px);}
+        #authBtn { background: var(--bg-glass-solid); border: 2px solid #e74c3c; color: #e74c3c; padding: 8px 18px; border-radius: 20px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
+        #authBtn:hover { transform: translateY(-2px); box-shadow: 0 0 15px rgba(231, 76, 60, 0.4); }
+
+        .page-section { display: none; animation: zoomFadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .page-section.active { display: block; }
+        @keyframes zoomFadeIn { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        
+        .home-container { padding: 40px; }
         .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: stretch; margin-top: 20px;}
         .home-left, .home-right { display: flex; flex-direction: column; }
-        .banner-wrapper { flex: 1; width: 100%; min-height: 400px; border-radius: 20px; overflow: hidden; position: relative; border: 3px dashed #e1e8ed; transition: all 0.3s; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center;}
+        .banner-wrapper { flex: 1; width: 100%; min-height: 400px; border-radius: 20px; overflow: hidden; position: relative; border: 2px solid var(--border-glass); transition: all 0.3s; background: rgba(0,0,0,0.1); display: flex; justify-content: center; align-items: center;}
         .banner-wrapper img { width: 100%; height: 100%; object-fit: cover; }
-        .editable-text { flex: 1; width: 100%; min-height: 400px; padding: 30px; border: 2px solid #e1e8ed; border-radius: 20px; background: #fff; font-size: 1.15rem; line-height: 1.8; outline: none; transition: all 0.3s; color: #34495e; overflow-y: auto;}
-        .editable-text:focus { border-color: var(--primary-green); box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1); }
+        .editable-text { flex: 1; width: 100%; min-height: 400px; padding: 30px; border: 2px solid var(--border-glass); border-radius: 20px; background: var(--bg-glass-solid); font-size: 1.15rem; line-height: 1.8; outline: none; transition: all 0.3s; color: var(--text-main); overflow-y: auto;}
+        .editable-text:focus { border-color: var(--primary-green); box-shadow: 0 0 20px rgba(46, 204, 113, 0.3); }
         .controls-row { display: flex; justify-content: center; margin-top: 20px;}
-        .btn-outline { background: #fff; border: 2px solid var(--primary-green); color: var(--primary-green); padding: 10px 25px; border-radius: 12px; cursor: pointer; transition: all 0.3s; font-weight: 700; display: flex; align-items: center; gap: 8px;}
-        .btn-outline:hover { background: var(--primary-green); color: white; transform: translateY(-2px);}
+        .btn-outline { background: var(--bg-glass-solid); border: 2px solid var(--primary-green); color: var(--primary-green); padding: 10px 25px; border-radius: 12px; cursor: pointer; transition: all 0.3s; font-weight: 800; display: flex; align-items: center; gap: 8px;}
+        .btn-outline:hover { background: var(--primary-green); color: white; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);}
         .btn-save { background: var(--accent-gradient); color: white; border: none; padding: 12px 30px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 1rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);}
-        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56, 239, 125, 0.5);}
+        .btn-save:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 25px rgba(56, 239, 125, 0.6);}
         
+        /* HIỆU ỨNG THẺ BÀI HÀO QUANG 3D */
         .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .card { background: rgba(255,255,255,0.95); padding: 20px 15px; border-radius: 16px; box-shadow: var(--shadow-soft); text-align: center; border: 2px solid transparent; transition: all 0.3s; cursor: pointer;}
-        .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
-        .card.active { border-color: var(--primary-green); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(46, 204, 113, 0.2); }
-        .card-icon { font-size: 1.5rem; margin-bottom: 8px; }
-        .card-value { font-size: 2rem; font-weight: 800; color: var(--text-main); line-height: 1;}
-        .card-label { font-size: 0.85rem; color: #7f8c8d; margin-top: 5px; font-weight: 700; text-transform: uppercase;}
+        .card { background: var(--bg-glass-solid); padding: 20px 15px; border-radius: 16px; box-shadow: var(--shadow-glass); text-align: center; border: 2px solid var(--border-glass); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer;}
+        .card:hover { transform: translateY(-10px) scale(1.05); }
+        
+        .card[data-filter="all"]:hover { box-shadow: 0 15px 30px rgba(46, 204, 113, 0.4); border-color: #2ecc71; }
+        .card[data-filter="Đỏ"]:hover { box-shadow: 0 15px 30px rgba(229, 57, 53, 0.4); border-color: #e53935; }
+        .card[data-filter="Vàng"]:hover { box-shadow: 0 15px 30px rgba(251, 192, 45, 0.4); border-color: #fbc02d; }
+        .card[data-filter="Tím"]:hover { box-shadow: 0 15px 30px rgba(142, 36, 170, 0.4); border-color: #8e24aa; }
+        .card[data-filter="Xanh"]:hover { box-shadow: 0 15px 30px rgba(67, 160, 71, 0.4); border-color: #43a047; }
+        .card[data-filter="Lam"]:hover { box-shadow: 0 15px 30px rgba(30, 136, 229, 0.4); border-color: #1e88e5; }
+        
+        .card.active { border-color: var(--primary-green); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(46, 204, 113, 0.3); background: rgba(46, 204, 113, 0.1);}
+        .card-icon { font-size: 1.8rem; margin-bottom: 8px; transition: transform 0.3s;}
+        .card:hover .card-icon { transform: scale(1.2) rotate(10deg); }
+        .card-value { font-size: 2.2rem; font-weight: 900; color: var(--text-main); line-height: 1;}
+        .card-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 5px; font-weight: 800; text-transform: uppercase;}
         .card[data-filter="all"] .card-icon { color: var(--primary-green); }
         .card[data-filter="Đỏ"] .card-icon { color: #e53935; }
         .card[data-filter="Vàng"] .card-icon { color: #fbc02d; }
@@ -73,119 +132,148 @@
         .card[data-filter="Lam"] .card-icon { color: #1e88e5; }
         
         .data-section { background: transparent; padding: 0; box-shadow: none; }
-        .table-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 20px; background: rgba(255,255,255,0.8); padding: 20px; border-radius: 20px; box-shadow: var(--shadow-soft);}
+        .table-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; gap: 20px; padding: 20px; }
         .search-container { flex: 1; position: relative; max-width: 500px;}
-        .search-container i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #95a5a6; font-size: 1.1rem;}
-        .search-container input { width: 100%; padding: 14px 20px 14px 50px; border: 2px solid transparent; border-radius: 30px; font-size: 1rem; background: #f4f6f8; font-weight: 600; color: #34495e;}
-        .search-container input:focus { background: #fff; border-color: var(--primary-green); outline: none;}
+        .search-container i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 1.1rem;}
+        .search-container input { width: 100%; padding: 14px 20px 14px 50px; border: 2px solid var(--border-glass); border-radius: 30px; font-size: 1rem; background: var(--bg-glass-solid); font-weight: 600; color: var(--text-main); transition: 0.3s;}
+        .search-container input:focus { border-color: var(--primary-green); box-shadow: 0 0 15px rgba(46, 204, 113, 0.3); outline: none;}
         .btn-add { background: var(--accent-gradient); color: white; border: none; padding: 14px 28px; border-radius: 30px; cursor: pointer; font-weight: 800; font-size: 1rem; display: flex; align-items: center; gap: 10px; transition: all 0.3s;}
-        .btn-add:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(56, 239, 125, 0.5); }
+        .btn-add:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 25px rgba(56, 239, 125, 0.6); }
         
+        /* BẢNG HOA TỎA HÀO QUANG */
         table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
-        th { padding: 0 20px 10px 20px; text-align: left; color: #7f8c8d; text-transform: uppercase; font-weight: 800; font-size: 0.85rem; border: none;}
-        tbody tr { background: rgba(255,255,255,0.95); box-shadow: var(--shadow-soft); transition: all 0.3s;}
-        tbody tr:hover { transform: scale(1.01) translateY(-2px); box-shadow: var(--shadow-hover); }
-        td { padding: 18px 20px; border-top: 1px solid rgba(0,0,0,0.02); border-bottom: 1px solid rgba(0,0,0,0.02); vertical-align: middle; font-weight: 600; color: #34495e;}
-        td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; text-align: center; width: 60px; color: #95a5a6; border-left: 1px solid rgba(0,0,0,0.02);}
-        td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; border-right: 1px solid rgba(0,0,0,0.02); }
-        .item-cell { display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 1.05rem; color: #2c3e50;}
+        th { padding: 0 20px 10px 20px; text-align: left; color: var(--text-muted); text-transform: uppercase; font-weight: 800; font-size: 0.85rem; border: none;}
+        tbody tr { background: var(--bg-glass-solid); box-shadow: var(--shadow-glass); transition: all 0.3s; border: 1px solid var(--border-glass);}
         
-        .btn-delete { background-color: #ffebee; color: #e53935; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s;}
-        .btn-delete:hover { background-color: #ef5350; color: white;}
-        .btn-edit { background-color: #e3f2fd; color: #1976d2; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; transition: all 0.2s; margin-right: 5px;}
-        .btn-edit:hover { background-color: #1e88e5; color: white;}
+        tbody tr:hover { transform: scale(1.01) translateY(-3px); }
+        tr[data-quality="Đỏ"]:hover { box-shadow: 0 5px 20px rgba(229, 57, 53, 0.3); border-color: rgba(229, 57, 53, 0.5); }
+        tr[data-quality="Vàng"]:hover { box-shadow: 0 5px 20px rgba(251, 192, 45, 0.3); border-color: rgba(251, 192, 45, 0.5); }
+        tr[data-quality="Tím"]:hover { box-shadow: 0 5px 20px rgba(142, 36, 170, 0.3); border-color: rgba(142, 36, 170, 0.5); }
+        tr[data-quality="Xanh"]:hover { box-shadow: 0 5px 20px rgba(67, 160, 71, 0.3); border-color: rgba(67, 160, 71, 0.5); }
+        tr[data-quality="Lam"]:hover { box-shadow: 0 5px 20px rgba(30, 136, 229, 0.3); border-color: rgba(30, 136, 229, 0.5); }
+
+        td { padding: 18px 20px; vertical-align: middle; font-weight: 700; color: var(--text-main);}
+        td:first-child { border-top-left-radius: 16px; border-bottom-left-radius: 16px; text-align: center; width: 60px; color: var(--text-muted); font-weight: 900;}
+        td:last-child { border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
+        .item-cell { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.1rem; }
         
-        .owner-cell { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; max-width: 400px; }
-        .owner-tag { background: rgba(46, 204, 113, 0.1); color: var(--dark-green); padding: 5px 12px; border-radius: 30px; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; border: 1px solid rgba(46, 204, 113, 0.3); white-space: nowrap; }
-        .owner-tag i { margin-right: 4px; color: var(--primary-green); }
-        .owner-tag-more { background: #f1f2f6; color: #7f8c8d; border: 1px solid #dcdde1; cursor: pointer; transition: 0.3s; }
-        .owner-tag-more:hover { background: #dfe4ea; color: #2c3e50; transform: scale(1.05); }
+        .btn-delete { background-color: rgba(229, 57, 53, 0.1); color: #e53935; border: 1px solid rgba(229, 57, 53, 0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 800; transition: all 0.2s;}
+        .btn-delete:hover { background-color: #e53935; color: white; box-shadow: 0 4px 10px rgba(229, 57, 53, 0.4);}
+        .btn-edit { background-color: rgba(30, 136, 229, 0.1); color: #1976d2; border: 1px solid rgba(30, 136, 229, 0.3); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 800; transition: all 0.2s; margin-right: 5px;}
+        .theme-night .btn-edit { color: #64b5f6; }
+        .btn-edit:hover { background-color: #1e88e5; color: white; box-shadow: 0 4px 10px rgba(30, 136, 229, 0.4);}
+        
+        .owner-cell { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; max-width: 400px; }
+        .owner-tag { background: rgba(46, 204, 113, 0.15); color: var(--primary-green); padding: 6px 14px; border-radius: 30px; font-size: 0.85rem; font-weight: 800; display: inline-flex; align-items: center; border: 1px solid rgba(46, 204, 113, 0.3); white-space: nowrap; transition: 0.3s;}
+        .owner-tag:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(46, 204, 113, 0.2); }
+        .owner-tag i { margin-right: 5px; }
+        .owner-tag-more { background: rgba(149, 165, 166, 0.1); color: var(--text-muted); border: 1px dashed var(--text-muted); cursor: pointer; }
+        .owner-tag-more:hover { background: rgba(149, 165, 166, 0.3); color: var(--text-main); }
 
-        .checkbox-list { max-height: 180px; overflow-y: auto; border: 2px solid #ecf0f1; border-radius: 12px; padding: 12px; background: #fff; }
-        .checkbox-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; font-weight: 600; color: #2c3e50; font-size: 0.95rem; }
-        .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary-green); cursor: pointer; }
+        .checkbox-list { max-height: 180px; overflow-y: auto; border: 2px solid var(--border-glass); border-radius: 12px; padding: 12px; background: rgba(0,0,0,0.02); }
+        .checkbox-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; font-weight: 700; color: var(--text-main); font-size: 1rem; transition: 0.2s; padding: 5px; border-radius: 8px;}
+        .checkbox-item:hover { background: rgba(46, 204, 113, 0.1); }
+        .checkbox-item input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary-green); cursor: pointer; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 32, 39, 0.6); backdrop-filter: blur(5px); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background-color: white; padding: 40px; border-radius: 24px; width: 450px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); animation: fadeInUp 0.3s ease-out;}
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 1000; justify-content: center; align-items: center; perspective: 1000px;}
+        .modal-content { background: var(--bg-glass-solid); padding: 40px; border-radius: 24px; width: 450px; box-shadow: 0 30px 60px rgba(0,0,0,0.3); animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--border-glass);}
+        @keyframes dropIn { from { opacity: 0; transform: rotateX(-20deg) translateY(-50px) scale(0.9); } to { opacity: 1; transform: rotateX(0) translateY(0) scale(1); } }
+        
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .modal-header h3 { margin: 0; color: var(--text-main); font-size: 1.5rem; font-weight: 800;}
-        .close-btn { font-size: 1.8rem; cursor: pointer; color: #95a5a6; transition: 0.2s;}
-        .close-btn:hover { color: #e74c3c; transform: rotate(90deg);}
+        .modal-header h3 { margin: 0; color: var(--text-main); font-size: 1.6rem; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .close-btn { font-size: 2rem; cursor: pointer; color: var(--text-muted); transition: 0.3s; line-height: 1;}
+        .close-btn:hover { color: #e74c3c; transform: rotate(90deg) scale(1.2);}
+        
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 700; color: #34495e; font-size: 0.95rem;}
-        .form-group input:not([type="checkbox"]), .form-group select { width: 100%; padding: 12px 15px; border: 2px solid #ecf0f1; border-radius: 12px; font-size: 1rem; font-weight: 600; color: #2c3e50; outline: none; transition: 0.3s; background-color: #fff;}
-        .form-group input:focus, .form-group select:focus { border-color: var(--primary-green); box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1);}
-        .btn-submit { width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-weight: 800; font-size: 1.1rem; margin-top: 15px; transition: 0.3s;}
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56, 239, 125, 0.5);}
-        select.locked-select { background-color: #f1f2f6; pointer-events: none; opacity: 0.8; color: #7f8c8d; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 800; color: var(--text-main); font-size: 1rem;}
+        .form-group input:not([type="checkbox"]), .form-group select { width: 100%; padding: 14px 18px; border: 2px solid var(--border-glass); border-radius: 12px; font-size: 1.05rem; font-weight: 700; color: var(--text-main); outline: none; transition: 0.3s; background: rgba(255,255,255,0.5);}
+        .theme-night .form-group input:not([type="checkbox"]), .theme-night .form-group select { background: rgba(0,0,0,0.2); }
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary-green); box-shadow: 0 0 15px rgba(46, 204, 113, 0.3); background: var(--bg-glass-solid);}
+        
+        .btn-submit { width: 100%; background: var(--accent-gradient); color: white; border: none; padding: 16px; border-radius: 15px; cursor: pointer; font-weight: 900; font-size: 1.2rem; margin-top: 15px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);}
+        .btn-submit:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 30px rgba(46, 204, 113, 0.6);}
+        select.locked-select { background-color: rgba(0,0,0,0.05); pointer-events: none; opacity: 0.7; color: var(--text-muted); }
 
         /* THANH TÌM KIẾM HOA */
         .searchable-select { position: relative; width: 100%; }
         .searchable-select input { padding-right: 35px !important; }
-        .searchable-select i { position: absolute; right: 15px; top: 15px; color: #95a5a6; pointer-events: none;}
-        .searchable-list { display: none; position: absolute; top: 100%; left: 0; right: 0; max-height: 220px; overflow-y: auto; background: #fff; border: 2px solid var(--primary-green); border-radius: 12px; z-index: 1001; box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-top: 5px; }
-        .searchable-list.show { display: block; animation: fadeInUp 0.2s ease-out; }
-        .searchable-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #f0f4f8; font-weight: 700; color: #2c3e50; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;}
-        .searchable-item:hover { background: rgba(46, 204, 113, 0.1); color: var(--dark-green); padding-left: 20px; }
+        .searchable-select i { position: absolute; right: 18px; top: 18px; color: var(--text-muted); pointer-events: none;}
+        .searchable-list { display: none; position: absolute; top: 100%; left: 0; right: 0; max-height: 250px; overflow-y: auto; background: var(--bg-glass-solid); backdrop-filter: blur(10px); border: 2px solid var(--primary-green); border-radius: 12px; z-index: 1001; box-shadow: 0 15px 40px rgba(0,0,0,0.2); margin-top: 8px; }
+        .searchable-list.show { display: block; animation: dropIn 0.2s ease-out; }
+        .searchable-item { padding: 14px 18px; cursor: pointer; border-bottom: 1px dashed var(--border-glass); font-weight: 800; color: var(--text-main); transition: 0.2s; display: flex; justify-content: space-between; align-items: center; font-size: 1rem;}
+        .searchable-item:hover { background: rgba(46, 204, 113, 0.2); color: var(--primary-green); padding-left: 25px; }
         .searchable-item:last-child { border-bottom: none; }
-        .quality-badge { font-size: 0.75rem; padding: 3px 10px; border-radius: 12px; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .quality-badge { font-size: 0.8rem; padding: 4px 12px; border-radius: 12px; font-weight: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+        /* MÀU ĐẶC BIỆT CHO PHẨM HOA */
+        .q-do { background: linear-gradient(135deg, #ff5252, #e53935); color: white; border: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); box-shadow: 0 4px 10px rgba(229, 57, 53, 0.4);}
+        .q-vang { background: linear-gradient(135deg, #fbc02d, #f57f17); color: white; border: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); box-shadow: 0 4px 10px rgba(251, 192, 45, 0.4);}
+        .q-tim { background: linear-gradient(135deg, #ab47bc, #8e24aa); color: white; border: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); box-shadow: 0 4px 10px rgba(142, 36, 170, 0.4);}
+        .q-xanh { background: linear-gradient(135deg, #66bb6a, #43a047); color: white; border: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); box-shadow: 0 4px 10px rgba(67, 160, 71, 0.4);}
+        .q-lam { background: linear-gradient(135deg, #42a5f5, #1e88e5); color: white; border: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); box-shadow: 0 4px 10px rgba(30, 136, 229, 0.4);}
 
         /* GIAO DIỆN IPHONE / MOBILE APP */
         @media (max-width: 768px) {
-            .sidebar { width: 100%; height: 65px; top: auto; bottom: 0; flex-direction: row; padding: 0; align-items: center; justify-content: center; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.15); overflow-x: auto; white-space: nowrap;}
+            .sidebar { width: 100%; height: 75px; top: auto; bottom: 0; flex-direction: row; padding: 0; align-items: center; justify-content: center; border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.2); overflow-x: auto; white-space: nowrap; background: rgba(15, 30, 20, 0.95);}
             .logo-section { display: none; }
             .nav-links { width: 100%; }
-            .nav-links ul { display: flex; justify-content: flex-start; margin: 0; padding: 0 10px; }
-            .nav-links li { margin: 0; flex: 1; text-align: center; min-width: 75px;}
-            .nav-links a { flex-direction: column; gap: 4px; padding: 8px 0; font-size: 0.65rem; justify-content: center; background: transparent !important; }
-            .nav-links a i { font-size: 1.3rem; }
-            .nav-links a.active { color: var(--primary-green); border: none; transform: translateY(-2px); }
-            .main-content { margin-left: 0; padding: 15px 10px 85px 10px; overflow-x: hidden; }
-            .top-header { flex-direction: column; gap: 15px; padding: 15px; margin-bottom: 15px; align-items: stretch;}
-            .top-header .welcome-text { font-size: 1.05rem; text-align: center;}
+            .nav-links ul { display: flex; justify-content: space-around; margin: 0; padding: 0 10px; width: 100%;}
+            .nav-links li { margin: 0; flex: 1; text-align: center; }
+            .nav-links a { flex-direction: column; gap: 6px; padding: 10px 0; font-size: 0.7rem; justify-content: center; background: transparent !important; color: #95a5a6; font-weight: 800;}
+            .nav-links a i { font-size: 1.6rem; transition: 0.3s;}
+            .nav-links a.active { color: var(--primary-green); border: none; transform: translateY(-5px); }
+            .nav-links a.active i { filter: drop-shadow(0 5px 10px rgba(46, 204, 113, 0.6)); transform: scale(1.2);}
+            
+            .main-content { margin-left: 0; padding: 15px 10px 95px 10px; overflow-x: hidden; }
+            .top-header { flex-direction: column; gap: 15px; padding: 15px; margin-bottom: 15px; align-items: stretch; border-radius: 16px;}
+            .top-header .welcome-text { font-size: 1.15rem; text-align: center;}
             .header-actions { display: flex; justify-content: space-between; }
-            .stat-cards { grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
-            .card { padding: 12px 5px; border-radius: 12px; }
-            .card-icon { font-size: 1.2rem; margin-bottom: 4px; }
-            .card-value { font-size: 1.3rem; }
-            .card-label { font-size: 0.65rem; }
-            .table-controls { flex-direction: column; gap: 10px; padding: 12px; border-radius: 15px; margin-bottom: 15px;}
+            
+            .stat-cards { grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+            .card { padding: 15px 5px; border-radius: 16px; }
+            .card-icon { font-size: 1.5rem; margin-bottom: 5px; }
+            .card-value { font-size: 1.6rem; }
+            .card-label { font-size: 0.7rem; }
+            
+            .table-controls { flex-direction: column; gap: 12px; padding: 15px; border-radius: 16px; margin-bottom: 15px;}
             .search-container, .action-buttons { width: 100%; }
-            .search-container input { padding: 10px 15px 10px 35px; font-size: 0.9rem;}
-            .search-container i { left: 12px; font-size: 1rem; }
-            .btn-add { padding: 10px 20px; font-size: 0.9rem; justify-content: center; width: 100%;}
+            .search-container input { padding: 12px 15px 12px 40px; font-size: 1rem;}
+            .search-container i { left: 15px; font-size: 1.2rem; }
+            .btn-add { padding: 12px 20px; font-size: 1.05rem; justify-content: center; width: 100%; border-radius: 15px;}
             
             .data-section { overflow-x: visible; background: transparent; padding: 0; box-shadow: none; }
             table { display: block; width: 100%; border-spacing: 0; }
             thead { display: none; } 
             tbody { display: block; width: 100%; }
-            tr { display: block; background: #fff; margin-bottom: 15px; border-radius: 16px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative; border: 1px solid #f0f4f8; transition: transform 0.2s;}
-            tr:hover { transform: translateY(-2px); }
-            td { display: block; text-align: left; padding: 6px 0; border: none !important; width: 100%; white-space: normal; }
+            tr { display: block; background: var(--bg-glass-solid); margin-bottom: 15px; border-radius: 20px; padding: 20px; box-shadow: var(--shadow-glass); position: relative; border: 1px solid var(--border-glass);}
+            td { display: block; text-align: left; padding: 8px 0; border: none !important; width: 100%; white-space: normal; }
             
-            td:first-child { position: absolute; top: 15px; right: 15px; width: auto; background: #f1f2f6; color: #7f8c8d; font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; border: none; }
-            td.item-cell { font-size: 1.15rem; padding-right: 50px; border-bottom: 1px dashed #ecf0f1 !important; padding-bottom: 12px; margin-bottom: 8px; color: var(--dark-green); }
+            td:first-child { position: absolute; top: 20px; right: 20px; width: auto; background: rgba(0,0,0,0.05); color: var(--text-muted); font-size: 0.85rem; font-weight: 900; padding: 6px 12px; border-radius: 20px; border: none; }
+            .theme-night td:first-child { background: rgba(255,255,255,0.1); }
+            td.item-cell { font-size: 1.3rem; padding-right: 60px; border-bottom: 1px dashed var(--border-glass) !important; padding-bottom: 15px; margin-bottom: 10px; color: var(--text-main); text-shadow: 0 1px 2px rgba(0,0,0,0.1);}
             td.owner-cell { min-width: 100%; max-width: 100%; padding-top: 5px; }
-            td:last-child { display: flex; justify-content: flex-end; gap: 10px; border-top: 1px dashed #ecf0f1 !important; padding-top: 12px; margin-top: 8px; border-radius: 0; }
+            td:last-child { display: flex; justify-content: flex-end; gap: 12px; border-top: 1px dashed var(--border-glass) !important; padding-top: 15px; margin-top: 10px; border-radius: 0; }
             body.view-only td:last-child.admin-only { display: none !important; }
             
-            .modal-content { width: 92%; padding: 20px; border-radius: 16px; }
-            .modal-header h3 { font-size: 1.2rem; }
-            .form-group label { font-size: 0.85rem; margin-bottom: 5px;}
-            .form-group input:not([type="checkbox"]), .form-group select { padding: 10px; font-size: 0.95rem; }
-            .btn-submit { padding: 12px; font-size: 1rem; }
-            .banner-wrapper, .editable-text { min-height: 250px; }
+            .modal-content { width: 95%; padding: 25px; border-radius: 24px; }
+            .modal-header h3 { font-size: 1.4rem; }
+            .form-group label { font-size: 0.95rem; margin-bottom: 8px;}
+            .banner-wrapper, .editable-text { min-height: 250px; border-radius: 16px;}
         }
     </style>
 </head>
 <body class="view-only"> 
 
+<!-- Nơi chứa hiệu ứng lá rơi / đom đóm -->
 <div id="falling-elements"></div>
 
-<div id="ownerPopup" style="display:none; position:fixed; background:#fff; padding:15px; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.2); z-index:9999; border:1px solid #eee; font-size:0.9rem; color:#2c3e50; line-height:1.6; min-width: 150px; max-width:250px;"></div>
+<!-- Nơi chứa hiệu ứng Pháo hoa -->
+<canvas id="confetti-canvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999999;"></canvas>
+
+<div id="ownerPopup" style="display:none; position:fixed; background:var(--bg-glass-solid); backdrop-filter:blur(20px); padding:20px; border-radius:16px; box-shadow:var(--shadow-glass); z-index:9999; border:1px solid var(--border-glass); font-size:1rem; color:var(--text-main); line-height:1.8; min-width: 180px; max-width:280px; font-weight:700; animation: dropIn 0.2s ease-out;"></div>
 
 <aside class="sidebar">
-    <div class="logo-section"><i class="fas fa-fan fa-spin" style="animation-duration: 10s;"></i> FLOWER HỘI</div>
+    <div class="logo-section"><i class="fas fa-fan fa-spin" style="animation-duration: 15s;"></i> FLOWER HỘI</div>
     <nav class="nav-links">
         <ul>
             <li><a class="nav-btn active" data-target="page-home"><i class="fas fa-layer-group"></i>Bảng Tin</a></li>
@@ -197,35 +285,35 @@
 </aside>
 
 <main class="main-content">
-    <header class="top-header">
+    <header class="top-header glass-panel">
         <div class="welcome-text">👋 Chào mừng đến với <span style="color: var(--primary-green);">Hoa Viên Hội</span></div>
         <div class="header-actions" style="display: flex; gap: 15px; align-items: center;">
             <button id="authBtn"><i class="fas fa-lock"></i> Chỉ Xem</button>
-            <div style="font-weight: 600; color: #7f8c8d; background: #fff; padding: 8px 15px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-                <i class="fas fa-circle" style="color: #2ecc71; font-size: 0.6rem; vertical-align: middle; margin-right: 5px;"></i> Cloud
+            <div style="font-weight: 800; color: var(--text-muted); background: var(--bg-glass-solid); padding: 8px 18px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid var(--border-glass);">
+                <i class="fas fa-circle" style="color: #2ecc71; font-size: 0.7rem; vertical-align: middle; margin-right: 5px; text-shadow: 0 0 5px #2ecc71;"></i> Cloud
             </div>
         </div>
     </header>
 
-    <div id="lockWarning" style="margin-bottom: 30px; background: #ffebee; border: 2px solid #ffcdd2; color: #c0392b; padding: 15px 25px; border-radius: 12px; font-weight: 700; display: flex; align-items: center; gap: 15px;">
-        <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem;"></i>
+    <div id="lockWarning" class="glass-panel" style="margin-bottom: 30px; background: rgba(231, 76, 60, 0.1); border: 2px solid rgba(231, 76, 60, 0.3); color: #e74c3c; padding: 20px 25px; display: flex; align-items: center; gap: 20px;">
+        <i class="fas fa-shield-alt" style="font-size: 2.5rem; filter: drop-shadow(0 2px 5px rgba(231, 76, 60, 0.4));"></i>
         <div>
-            <div style="font-size: 1.1rem; margin-bottom: 5px;">Bạn đang ở Chế độ Chỉ Xem (Chế độ Khách)</div>
-            <div style="font-size: 0.9rem; font-weight: 600; opacity: 0.8;">Các nút Thêm Mới, Sửa, Xóa và Tải Ảnh đã bị giấu đi để bảo mật. Hãy bấm vào nút <b style="color:#e74c3c;">[<i class="fas fa-lock"></i> Chỉ Xem]</b> ở góc trên cùng bên phải và nhập mật khẩu (123456) để hiển thị lại toàn bộ các nút!</div>
+            <div style="font-size: 1.2rem; margin-bottom: 5px; font-weight: 900; text-transform: uppercase;">Chế Độ Khách Tham Quan</div>
+            <div style="font-size: 0.95rem; font-weight: 700; opacity: 0.9;">Các chức năng quản trị đã bị ẩn. Hãy bấm vào nút <b style="background:#e74c3c; color:white; padding:3px 8px; border-radius:8px; font-size:0.85rem;"><i class="fas fa-lock"></i> Chỉ Xem</b> ở góc trên và nhập mật khẩu (123456) để mở khóa phép thuật!</div>
         </div>
     </div>
 
     <div id="page-home" class="page-section active">
-        <div class="home-container">
+        <div class="home-container glass-panel">
             <div class="corner-leaves"></div>
-            <h2 style="margin-bottom: 5px; color: var(--dark-green); font-size: 2rem; font-weight: 800;"><i class="fas fa-seedling"></i> Bảng Tin Hoa Viên</h2>
-            <p style="color: #7f8c8d; margin-bottom: 25px;">Khu vực cập nhật thông tin đồng bộ toàn nhóm.</p>
+            <h2 style="margin-bottom: 5px; color: var(--primary-green); font-size: 2.2rem; font-weight: 900; text-shadow: 0 2px 5px rgba(0,0,0,0.2);"><i class="fas fa-seedling"></i> Bảng Tin Hoa Viên</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-weight: 700; font-size: 1.1rem;">Khu vực cập nhật thông tin đồng bộ toàn nhóm.</p>
             
             <div class="home-grid">
                 <div class="home-left">
                     <div class="banner-wrapper">
                         <img id="bannerImg" src="" alt="" style="display: none;">
-                        <i class="fas fa-image" id="imgPlaceholder" style="font-size: 3rem; color: #ccc;"></i>
+                        <i class="fas fa-image" id="imgPlaceholder" style="font-size: 4rem; color: var(--border-glass);"></i>
                     </div>
                     <div class="controls-row admin-only">
                         <input type="file" id="imageUpload" accept="image/*" style="display: none;">
@@ -243,7 +331,7 @@
     </div>
 
     <div id="page-list" class="page-section">
-        <div class="home-container">
+        <div class="home-container glass-panel">
             <div class="corner-leaves"></div>
             <div class="stat-cards" id="filterCards">
                 <div class="card active" data-filter="all"><div class="card-icon"><i class="fas fa-layer-group"></i></div><div class="card-value" id="count-all">0</div><div class="card-label">Tất Cả</div></div>
@@ -255,9 +343,9 @@
             </div>
 
             <div class="data-section">
-                <div class="table-controls">
+                <div class="table-controls glass-panel">
                     <div class="search-container"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Tìm kiếm tên hoa, người sở hữu..."></div>
-                    <div class="action-buttons admin-only"><button class="btn-add" id="openModalBtn"><i class="fas fa-plus"></i> Thêm Mới Hoa</button></div>
+                    <div class="action-buttons admin-only"><button class="btn-add" id="openModalBtn"><i class="fas fa-magic"></i> Trồng Hoa Mới</button></div>
                 </div>
                 <table>
                     <thead>
@@ -270,12 +358,12 @@
     </div>
 
     <div id="page-members" class="page-section">
-        <div class="home-container">
+        <div class="home-container glass-panel">
             <div class="corner-leaves"></div>
-            <h2 style="margin-bottom: 5px; color: var(--dark-green); font-size: 2rem; font-weight: 800;"><i class="fas fa-users"></i> Quản Lý Thành Viên</h2>
-            <p style="color: #7f8c8d; margin-bottom: 25px;">Danh sách các thành viên trong hội.</p>
-            <div class="table-controls admin-only">
-                <div class="action-buttons" style="width: 100%;"><button class="btn-add" id="openMemberModalBtn"><i class="fas fa-user-plus"></i> Thêm Thành Viên Mới</button></div>
+            <h2 style="margin-bottom: 5px; color: var(--primary-green); font-size: 2.2rem; font-weight: 900; text-shadow: 0 2px 5px rgba(0,0,0,0.2);"><i class="fas fa-users"></i> Quản Lý Thành Viên</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-weight: 700; font-size: 1.1rem;">Danh sách các thành viên trong hội.</p>
+            <div class="table-controls admin-only glass-panel">
+                <div class="action-buttons" style="width: 100%;"><button class="btn-add" id="openMemberModalBtn" style="justify-content:center;"><i class="fas fa-user-plus"></i> Chiêu Mộ Thành Viên</button></div>
             </div>
             <div class="data-section">
                 <table>
@@ -289,22 +377,22 @@
     </div>
 
     <div id="page-flower-types" class="page-section">
-        <div class="home-container">
+        <div class="home-container glass-panel">
             <div class="corner-leaves"></div>
-            <h2 style="margin-bottom: 5px; color: var(--dark-green); font-size: 2rem; font-weight: 800;"><i class="fas fa-list-ul"></i> Quản Lý Loại Hoa</h2>
-            <p style="color: #7f8c8d; margin-bottom: 25px;">Danh sách các loại hoa dùng để chọn nhanh.</p>
+            <h2 style="margin-bottom: 5px; color: var(--primary-green); font-size: 2.2rem; font-weight: 900; text-shadow: 0 2px 5px rgba(0,0,0,0.2);"><i class="fas fa-list-ul"></i> Quản Lý Loại Hoa</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-weight: 700; font-size: 1.1rem;">Bộ bách khoa toàn thư về các loại hoa trong game.</p>
             
-            <div style="margin-bottom: 20px; font-size: 1.15rem; font-weight: 800; color: var(--dark-green); background: #e8f5e9; padding: 15px 25px; border-radius: 12px; display: inline-block; border: 2px dashed var(--primary-green);">
-                <i class="fas fa-leaf"></i> Tổng số loại hoa trong Game: <span id="totalFlowerTypesCount" style="color: #e74c3c; font-size: 1.3rem;">0</span>
+            <div style="margin-bottom: 20px; font-size: 1.2rem; font-weight: 900; color: var(--primary-green); background: var(--bg-glass-solid); padding: 15px 25px; border-radius: 16px; display: inline-block; border: 2px dashed var(--primary-green); box-shadow: var(--shadow-glass);">
+                <i class="fas fa-book-open"></i> Thư viện đang có: <span id="totalFlowerTypesCount" style="color: #e74c3c; font-size: 1.5rem; text-shadow: 0 2px 4px rgba(231,76,60,0.3);">0</span> loại hoa
             </div>
 
-            <div class="table-controls admin-only">
+            <div class="table-controls admin-only glass-panel">
                 <div class="search-container" style="flex: 1;">
                     <i class="fas fa-search"></i>
                     <input type="text" id="searchFlowerTypeInput" placeholder="Tìm nhanh tên loại hoa, phẩm hoa...">
                 </div>
                 <div class="action-buttons">
-                    <button class="btn-add" id="openFlowerTypeModalBtn"><i class="fas fa-plus-circle"></i> Thêm Loại Hoa Mới</button>
+                    <button class="btn-add" id="openFlowerTypeModalBtn"><i class="fas fa-plus-circle"></i> Khám Phá Hoa Mới</button>
                 </div>
             </div>
             
@@ -323,40 +411,40 @@
 <div class="modal" id="addModal">
     <div class="modal-content" style="overflow: visible;">
         <div class="corner-leaves"></div>
-        <div class="modal-header"><h3 id="modalTitle">✨ Thêm Hoa Mới</h3><span class="close-btn" id="closeModalBtn">&times;</span></div>
+        <div class="modal-header"><h3 id="modalTitle">✨ Trồng Hoa Mới</h3><span class="close-btn" id="closeModalBtn">&times;</span></div>
         <form id="dataForm">
             <input type="hidden" id="editRecordId" value="">
             
             <div class="form-group">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <label style="margin-bottom: 0;">👤 Người sở hữu</label>
-                    <button type="button" id="selectAllOwnersBtn" style="background: var(--primary-green); color: white; border: none; padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 800; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">Chọn tất cả</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <label style="margin-bottom: 0;">👤 Thuộc về ai?</label>
+                    <button type="button" id="selectAllOwnersBtn" style="background: var(--primary-green); color: white; border: none; padding: 6px 15px; border-radius: 10px; font-size: 0.85rem; font-weight: 800; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);">Chọn tất cả</button>
                 </div>
                 <div id="ownerCheckboxList" class="checkbox-list">
-                    <div style="color: #95a5a6; font-size: 0.9rem; text-align: center; padding: 10px;">-- Đang tải danh sách thành viên... --</div>
+                    <div style="color: var(--text-muted); font-size: 0.95rem; text-align: center; padding: 15px; font-weight: 700;">-- Đang mở sổ nam tào... --</div>
                 </div>
             </div>
             
             <div class="form-group">
-                <label>🌿 Tên hoa / Vật phẩm</label>
+                <label>🌿 Hạt giống hoa</label>
                 <div class="searchable-select" id="flowerSelectWrapper">
-                    <input type="text" id="flowerInputDisplay" placeholder="🔍 Gõ để tìm hoa nhanh..." autocomplete="off" required>
+                    <input type="text" id="flowerInputDisplay" placeholder="🔍 Tên hoa bạn muốn trồng..." autocomplete="off" required>
                     <i class="fas fa-chevron-down"></i>
                     <input type="hidden" id="flowerInput" required>
                     <div class="searchable-list" id="flowerListContainer">
-                        <div style="padding:10px; color:#95a5a6; text-align:center;">-- Đang tải dữ liệu... --</div>
+                        <div style="padding:10px; color:var(--text-muted); text-align:center; font-weight:700;">-- Đang tìm trong kho... --</div>
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>🎨 Phẩm hoa (Tự động liên kết)</label>
+                <label>🎨 Phẩm chất</label>
                 <select id="qualityInput" required class="locked-select">
-                    <option value="">-- Tự động điền theo tên hoa --</option>
+                    <option value="">-- Hệ thống tự nhận diện --</option>
                     <option value="Đỏ">Đỏ</option><option value="Vàng">Vàng</option><option value="Tím">Tím</option><option value="Xanh">Xanh</option><option value="Lam">Lam</option>
                 </select>
             </div>
-            <button type="submit" class="btn-submit">Lưu Lên Cloud</button>
+            <button type="submit" class="btn-submit"><i class="fas fa-cloud-upload-alt"></i> Gửi Gắm Lên Mây</button>
         </form>
     </div>
 </div>
@@ -364,14 +452,14 @@
 <div class="modal" id="addMemberModal">
     <div class="modal-content">
         <div class="corner-leaves"></div>
-        <div class="modal-header"><h3>👤 Thêm Thành Viên</h3><span class="close-btn" id="closeMemberModalBtn">&times;</span></div>
+        <div class="modal-header"><h3>👤 Chiêu Mộ Thành Viên</h3><span class="close-btn" id="closeMemberModalBtn">&times;</span></div>
         <form id="memberForm">
             <div class="form-group">
-                <label>Tên thành viên mới</label>
-                <input type="text" id="newMemberName" placeholder="Nhập tên thành viên..." required>
+                <label>Danh xưng</label>
+                <input type="text" id="newMemberName" placeholder="Nhập tên người anh em..." required>
             </div>
             <div class="form-group">
-                <label>Chức vụ trong hội</label>
+                <label>Vai vế trong bang</label>
                 <select id="newMemberRole" required>
                     <option value="Thành Viên">Thành Viên</option>
                     <option value="Quản Lý">Quản Lý</option>
@@ -379,7 +467,7 @@
                     <option value="Hội Trưởng">Hội Trưởng</option>
                 </select>
             </div>
-            <button type="submit" class="btn-submit">Thêm Vào Hội</button>
+            <button type="submit" class="btn-submit"><i class="fas fa-user-check"></i> Kết Nạp</button>
         </form>
     </div>
 </div>
@@ -387,17 +475,17 @@
 <div class="modal" id="addFlowerTypeModal">
     <div class="modal-content">
         <div class="corner-leaves"></div>
-        <div class="modal-header"><h3 id="flowerTypeModalTitle">🌿 Thêm Loại Hoa</h3><span class="close-btn" id="closeFlowerTypeModalBtn">&times;</span></div>
+        <div class="modal-header"><h3 id="flowerTypeModalTitle">🌿 Khám Phá Hoa Mới</h3><span class="close-btn" id="closeFlowerTypeModalBtn">&times;</span></div>
         <form id="flowerTypeForm">
             <input type="hidden" id="editFlowerTypeId" value="">
             <input type="hidden" id="oldFlowerTypeName" value="">
             
             <div class="form-group">
-                <label>Tên loại hoa</label>
-                <input type="text" id="newFlowerTypeName" placeholder="Ví dụ: Hoa Ngân Hà..." required>
+                <label>Tên loài hoa mới phát hiện</label>
+                <input type="text" id="newFlowerTypeName" placeholder="Ví dụ: Dạ Minh Châu..." required>
             </div>
             <div class="form-group">
-                <label>🎨 Phẩm hoa</label>
+                <label>🎨 Phẩm chất rực rỡ</label>
                 <select id="newFlowerTypeQuality" required>
                     <option value="Đỏ">Đỏ</option>
                     <option value="Vàng">Vàng</option>
@@ -406,21 +494,130 @@
                     <option value="Lam">Lam</option>
                 </select>
             </div>
-            <button type="submit" class="btn-submit">Lưu Vào Danh Sách</button>
+            <button type="submit" class="btn-submit"><i class="fas fa-save"></i> Ghi Vào Bách Khoa</button>
         </form>
     </div>
 </div>
 
+<!-- ================= SCRIPT XỬ LÝ GIAO DIỆN & HIỆU ỨNG (V28) ================= -->
 <script>
     const ADMIN_PASS = "123456"; 
     let isAdmin = localStorage.getItem('hoaVienAdmin') === 'true';
+
+    // 1. NGÀY VÀ ĐÊM (DAY/NIGHT MODE)
+    function checkTimeAndTheme() {
+        const hour = new Date().getHours();
+        // Ban đêm từ 18h tối đến 5h sáng hôm sau
+        if (hour >= 18 || hour < 6) {
+            document.body.classList.add('theme-night');
+        } else {
+            document.body.classList.remove('theme-night');
+        }
+    }
+    checkTimeAndTheme(); // Chạy ngay khi tải web
+
+    // 2. HIỆU ỨNG RIPPLE KHI CLICK
+    document.addEventListener('click', function(e) {
+        // Không tạo gợn sóng nếu click vào các nút/input để tránh rối mắt
+        if (e.target.tagName.toLowerCase() === 'button' || e.target.tagName.toLowerCase() === 'input' || e.target.tagName.toLowerCase() === 'i') return;
+        
+        const ripple = document.createElement('div');
+        ripple.classList.add('click-ripple');
+        const size = 50; // Kích thước vòng tròn ban đầu
+        ripple.style.width = size + 'px';
+        ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - size/2) + 'px';
+        ripple.style.top = (e.clientY - size/2) + 'px';
+        document.body.appendChild(ripple);
+        
+        // Tự động xóa thẻ div sau 0.6s
+        setTimeout(() => { ripple.remove(); }, 600);
+    });
+
+    // 3. HIỆU ỨNG RƠI BẤT TẬN (HOA / ĐOM ĐÓM)
+    function createFallingElements() {
+        const container = document.getElementById('falling-elements');
+        container.innerHTML = ''; // Làm sạch
+        
+        const isNight = document.body.classList.contains('theme-night');
+        // Ngày: Hoa, Lá. Đêm: Ngôi sao lấp lánh, đom đóm (chấm tròn)
+        const elements = isNight ? ['✨', '🌟', '✦', '·', '•', '°'] : ['🌸', '🍃', '💮', '🍂', '🍁', '🌺']; 
+        
+        for (let i = 0; i < 30; i++) {
+            let item = document.createElement('div'); 
+            item.classList.add('falling-item'); 
+            item.innerText = elements[Math.floor(Math.random() * elements.length)];
+            item.style.left = Math.random() * 100 + 'vw'; 
+            
+            // Rơi chậm và mượt hơn
+            item.style.animationDuration = (Math.random() * 10 + 10) + 's, ' + (Math.random() * 4 + 4) + 's'; 
+            item.style.animationDelay = Math.random() * 10 + 's, ' + Math.random() * 5 + 's'; 
+            
+            if (isNight && (item.innerText === '·' || item.innerText === '•')) {
+                // Làm đom đóm
+                item.style.color = '#fffacd';
+                item.style.fontSize = (Math.random() * 8 + 4) + 'px';
+            } else {
+                item.style.fontSize = (Math.random() * 12 + 10) + 'px'; 
+            }
+            
+            item.style.opacity = Math.random() * 0.6 + 0.2; 
+            container.appendChild(item);
+        }
+    }
+    createFallingElements();
+
+    // 4. HIỆU ỨNG BẮN PHÁO HOA ĂN MỪNG (CONFETTI)
+    function fireConfetti() {
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const pieces = [];
+        const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
+        
+        for (let i = 0; i < 100; i++) {
+            pieces.push({
+                x: canvas.width / 2, // Bắn từ giữa màn hình dưới
+                y: canvas.height + 10,
+                vx: (Math.random() - 0.5) * 20, // Vận tốc x (bay tủa ra)
+                vy: (Math.random() - 1) * 20 - 5, // Vận tốc y (bay lên)
+                size: Math.random() * 10 + 5,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                rotation: Math.random() * 360,
+                rotationSpeed: (Math.random() - 0.5) * 10
+            });
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let active = false;
+            pieces.forEach(p => {
+                if (p.y < canvas.height + 20) active = true;
+                p.vy += 0.5; // Trọng lực kéo xuống
+                p.x += p.vx;
+                p.y += p.vy;
+                p.rotation += p.rotationSpeed;
+                
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation * Math.PI / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                ctx.restore();
+            });
+            if (active) requestAnimationFrame(render);
+        }
+        render();
+    }
 
     function updateAuthUI() {
         const authBtn = document.getElementById('authBtn');
         const warning = document.getElementById('lockWarning');
         if (isAdmin) {
             authBtn.innerHTML = '<i class="fas fa-unlock"></i> Quyền Quản Trị';
-            authBtn.style.borderColor = '#2ecc71'; authBtn.style.color = '#2ecc71';
+            authBtn.style.borderColor = 'var(--primary-green)'; authBtn.style.color = 'var(--primary-green)';
             document.body.classList.remove('view-only'); 
             document.getElementById('homeText').setAttribute('contenteditable', 'true');
             if(warning) warning.style.display = 'none';
@@ -436,31 +633,20 @@
 
     document.getElementById('authBtn').addEventListener('click', () => {
         if (isAdmin) {
-            if(confirm("Đăng xuất khỏi quyền Quản Trị?")) {
+            if(confirm("Thu hồi quyền Quản Trị?")) {
                 isAdmin = false; localStorage.setItem('hoaVienAdmin', 'false'); updateAuthUI();
             }
         } else {
-            const pass = prompt("Vui lòng nhập Mã bảo mật của Hội Trưởng / Hội Phó:");
+            const pass = prompt("Nhập mật mã khai ấn:");
             if (pass === ADMIN_PASS) {
                 isAdmin = true; localStorage.setItem('hoaVienAdmin', 'true'); updateAuthUI();
-                alert("MỞ KHÓA THÀNH CÔNG! Tất cả các nút Thêm/Sửa/Xóa đã hiện ra.");
+                fireConfetti(); // Bắn pháo hoa khi đăng nhập thành công
+                alert("KHAI ẤN THÀNH CÔNG! Chào mừng Quản Trị Viên.");
             } else if (pass !== null) {
-                alert("Mã bảo mật không đúng! Bạn chỉ có quyền Xem.");
+                alert("Mật mã sai. Phong ấn vẫn được giữ nguyên.");
             }
         }
     });
-
-    function createFallingElements() {
-        const container = document.getElementById('falling-elements');
-        const elements = ['🌸', '🍃', '💮', '🍂', '🍁', '✨']; 
-        for (let i = 0; i < 25; i++) {
-            let item = document.createElement('div'); item.classList.add('falling-item'); item.innerText = elements[Math.floor(Math.random() * elements.length)];
-            item.style.left = Math.random() * 100 + 'vw'; item.style.animationDuration = (Math.random() * 6 + 6) + 's, ' + (Math.random() * 3 + 3) + 's'; 
-            item.style.animationDelay = Math.random() * 8 + 's, ' + Math.random() * 5 + 's'; item.style.fontSize = (Math.random() * 12 + 10) + 'px'; item.style.opacity = Math.random() * 0.5 + 0.3; 
-            container.appendChild(item);
-        }
-    }
-    document.addEventListener("DOMContentLoaded", createFallingElements);
 
     const navBtns = document.querySelectorAll('.nav-btn');
     const pages = document.querySelectorAll('.page-section');
@@ -478,17 +664,15 @@
     document.getElementById('openModalBtn').onclick = () => {
         document.getElementById('editRecordId').value = ""; 
         document.getElementById('dataForm').reset();
-        
         document.getElementById('flowerInputDisplay').value = "";
         document.getElementById('flowerInput').value = "";
         document.getElementById('qualityInput').value = "";
         
-        document.getElementById('modalTitle').innerText = '✨ Thêm Hoa Mới';
+        document.getElementById('modalTitle').innerText = '✨ Trồng Hoa Mới';
         document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]').forEach(cb => cb.checked = false);
         
         selectAllBtn.innerText = "Chọn tất cả";
         selectAllBtn.style.background = "var(--primary-green)";
-
         modal.style.display = 'flex';
     };
     document.getElementById('closeModalBtn').onclick = () => { modal.style.display = 'none'; };
@@ -496,10 +680,8 @@
     selectAllBtn.addEventListener('click', function() {
         const checkboxes = document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]');
         if (checkboxes.length === 0) return;
-        
         const allChecked = Array.from(checkboxes).every(cb => cb.checked);
         checkboxes.forEach(cb => cb.checked = !allChecked);
-        
         if (!allChecked) {
             this.innerText = "Bỏ chọn tất cả";
             this.style.background = "#e74c3c";
@@ -518,7 +700,7 @@
         document.getElementById('editFlowerTypeId').value = "";
         document.getElementById('oldFlowerTypeName').value = "";
         document.getElementById('flowerTypeForm').reset();
-        document.getElementById('flowerTypeModalTitle').innerText = '🌿 Thêm Loại Hoa Mới';
+        document.getElementById('flowerTypeModalTitle').innerText = '🌿 Khám Phá Hoa Mới';
         flowerTypeModal.style.display = 'flex';
     };
     document.getElementById('closeFlowerTypeModalBtn').onclick = () => { flowerTypeModal.style.display = 'none'; document.getElementById('flowerTypeForm').reset(); };
@@ -530,6 +712,7 @@
     }
 </script>
 
+<!-- ================= SCRIPT FIREBASE LOGIC ================= -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getDatabase, ref, onValue, push, remove, set, update } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js";
@@ -552,25 +735,26 @@
     const membersRef = ref(db, 'hoavien_members'); 
     const flowerTypesRef = ref(db, 'hoavien_flower_types'); 
 
-    const colorMap = {
-        'Đỏ': { bg: '#ffebee', text: '#d32f2f', border: '#ffcdd2' },
-        'Vàng': { bg: '#fff8e1', text: '#f57f17', border: '#ffecb3' },
-        'Tím': { bg: '#f3e5f5', text: '#7b1fa2', border: '#e1bee7' },
-        'Xanh': { bg: '#e8f5e9', text: '#388e3c', border: '#c8e6c9' },
-        'Lam': { bg: '#e3f2fd', text: '#1976d2', border: '#bbdefb' },
-        'Chưa rõ': { bg: '#eee', text: '#333', border: '#ccc' }
-    };
+    // Mã màu CSS riêng cho từng phẩm chất
+    const getQualityClass = (q) => {
+        if(q === 'Đỏ') return 'q-do';
+        if(q === 'Vàng') return 'q-vang';
+        if(q === 'Tím') return 'q-tim';
+        if(q === 'Xanh') return 'q-xanh';
+        if(q === 'Lam') return 'q-lam';
+        return '';
+    }
 
-    let records = []; // Mảng chứa dữ liệu bảng chính
+    let records = []; 
     let currentFilter = 'all';
 
     const popup = document.getElementById('ownerPopup');
     window.showMoreOwners = function(event, names) {
         event.stopPropagation();
         popup.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #f1f2f6; padding-bottom:8px; margin-bottom:8px;">
-                <strong style="color: var(--dark-green); font-size: 1rem;"><i class="fas fa-users"></i> Danh sách:</strong>
-                <i class="fas fa-times-circle" style="color:#e74c3c; cursor:pointer; font-size:1.3rem;" onclick="document.getElementById('ownerPopup').style.display='none'"></i>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px dashed var(--border-glass); padding-bottom:10px; margin-bottom:10px;">
+                <strong style="color: var(--primary-green); font-size: 1.1rem; text-shadow: 0 1px 2px rgba(0,0,0,0.1);"><i class="fas fa-users"></i> Danh sách:</strong>
+                <i class="fas fa-times-circle close-btn" style="color:#e74c3c; cursor:pointer; font-size:1.5rem;" onclick="document.getElementById('ownerPopup').style.display='none'"></i>
             </div>
             <div style="max-height: 200px; overflow-y: auto; padding-right: 5px;">
                 ${names.split(', ').join('<br>')}
@@ -579,9 +763,9 @@
         popup.style.display = 'block';
         let x = event.clientX || (event.touches && event.touches[0].clientX) || 100;
         let y = event.clientY || (event.touches && event.touches[0].clientY) || 100;
-        if(x > window.innerWidth - 200) x = window.innerWidth - 200;
-        if(y > window.innerHeight - 280) y = window.innerHeight - 280; 
-        popup.style.left = x + 10 + 'px'; popup.style.top = y + 10 + 'px';
+        if(x > window.innerWidth - 250) x = window.innerWidth - 250;
+        if(y > window.innerHeight - 300) y = window.innerHeight - 300; 
+        popup.style.left = x + 15 + 'px'; popup.style.top = y + 15 + 'px';
     };
     popup.addEventListener('click', function(e) { e.stopPropagation(); });
     window.addEventListener('click', () => { popup.style.display = 'none'; });
@@ -610,7 +794,8 @@
 
     document.getElementById('btnSaveText').addEventListener('click', () => {
         const text = homeText.innerHTML; set(ref(db, 'hoavien_config/homeText'), text);
-        localStorage.setItem('localFastText', text); alert('✨ Đã đồng bộ thông báo lên Cloud thành công!');
+        localStorage.setItem('localFastText', text); 
+        window.fireConfetti(); // Hiệu ứng
     });
 
     document.getElementById('imageUpload').addEventListener('change', function(e) {
@@ -629,6 +814,7 @@
                     bannerImg.src = compressedBase64; bannerImg.style.display = 'block'; imgPlaceholder.style.display = 'none';
                     set(ref(db, 'hoavien_config/banner'), compressedBase64); 
                     localStorage.setItem('localFastBanner', compressedBase64);
+                    window.fireConfetti(); // Hiệu ứng
                 }
                 img.src = event.target.result;
             };
@@ -657,10 +843,10 @@
             row.innerHTML = `
                 <td style="text-align: center;">${index++}</td>
                 <td class="item-cell">
-                    <i class="fas fa-user-circle" style="color:var(--primary-green); font-size:1.2rem;"></i> ${mName} 
-                    <span style="font-size: 0.7rem; background: ${rColor}; color: white; padding: 2px 8px; border-radius: 10px; margin-left: 10px; font-weight:800;">${data.role || 'Thành Viên'}</span>
+                    <i class="fas fa-user-astronaut" style="color:var(--primary-green); font-size:1.5rem; text-shadow:0 2px 4px rgba(0,0,0,0.2);"></i> ${mName} 
+                    <span style="font-size: 0.75rem; background: ${rColor}; color: white; padding: 3px 10px; border-radius: 12px; margin-left: 12px; font-weight:900; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">${data.role || 'Thành Viên'}</span>
                 </td>
-                <td class="admin-only" style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteMemberFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button></td>
+                <td class="admin-only" style="text-align: right; padding-right: 20px;"><button class="btn-delete" onclick="deleteMemberFirebase('${id}')"><i class="fas fa-user-minus"></i> Cáo lui</button></td>
             `;
             memberTable.appendChild(row);
 
@@ -674,11 +860,12 @@
         e.preventDefault(); 
         push(membersRef, { name: document.getElementById('newMemberName').value, role: document.getElementById('newMemberRole').value }); 
         document.getElementById('addMemberModal').style.display = 'none'; this.reset();
+        window.fireConfetti();
     });
-    window.deleteMemberFirebase = function(id) { if (confirm('⚠️ Xóa thành viên này khỏi danh sách hội?')) remove(ref(db, `hoavien_members/${id}`)); }
+    window.deleteMemberFirebase = function(id) { if (confirm('⚠️ Trục xuất người này khỏi hoa viên?')) remove(ref(db, `hoavien_members/${id}`)); }
 
 
-    // === QUẢN LÝ LOẠI HOA VÀ TÌM KIẾM LOẠI HOA ===
+    // === QUẢN LÝ LOẠI HOA ===
     const displayInput = document.getElementById('flowerInputDisplay');
     const hiddenInput = document.getElementById('flowerInput');
     const qualityInput = document.getElementById('qualityInput');
@@ -692,7 +879,7 @@
         let totalFlowers = 0;
 
         if (!snapshot.exists()) { 
-            listContainer.innerHTML = '<div style="padding:10px; text-align:center; color:#95a5a6;">(Chưa có loại hoa nào)</div>';
+            listContainer.innerHTML = '<div style="padding:10px; text-align:center; color:var(--text-muted);">Kho hoa trống rỗng...</div>';
         }
 
         let index = 1;
@@ -702,18 +889,19 @@
             
             const quality = data.quality || 'Chưa rõ';
             const fName = data.name || 'Không tên';
-            const colors = colorMap[quality] || colorMap['Chưa rõ'];
+            const qClass = getQualityClass(quality);
 
             const row = document.createElement('tr');
+            row.setAttribute('data-quality', quality); // Cấp Hào quang 3D
             const searchString = (fName + " " + quality).toLowerCase();
             row.setAttribute('data-flower-search', searchString);
             
             row.innerHTML = `
                 <td style="text-align: center;">${index++}</td>
-                <td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green); font-size:1.2rem;"></i> ${fName}</td>
-                <td><span style="background-color: ${colors.bg}; color: ${colors.text}; border: 1px solid ${colors.border}; padding: 6px 14px; border-radius: 20px; font-weight:800; font-size: 0.85rem; display: inline-block;">${quality}</span></td>
+                <td class="item-cell"><i class="fab fa-pagelines" style="color:var(--primary-green); font-size:1.5rem; filter:drop-shadow(0 2px 2px rgba(46,204,113,0.5));"></i> ${fName}</td>
+                <td><span class="quality-badge ${qClass}">${quality}</span></td>
                 <td class="admin-only" style="text-align: right; padding-right: 20px; white-space: nowrap;">
-                    <button class="btn-edit" onclick="editFlowerTypeFirebase('${id}', '${fName}', '${quality}')"><i class="fas fa-edit"></i> Sửa</button>
+                    <button class="btn-edit" onclick="editFlowerTypeFirebase('${id}', '${fName}', '${quality}')"><i class="fas fa-magic"></i> Sửa</button>
                     <button class="btn-delete" onclick="deleteFlowerTypeFirebase('${id}')"><i class="fas fa-trash-alt"></i> Xóa</button>
                 </td>
             `;
@@ -723,7 +911,7 @@
             div.className = 'searchable-item';
             div.innerHTML = `
                 <span>${fName}</span>
-                <span class="quality-badge" style="background:${colors.bg}; color:${colors.text}; border:1px solid ${colors.border}">${quality}</span>
+                <span class="quality-badge ${qClass}">${quality}</span>
             `;
             
             div.onclick = function() {
@@ -745,7 +933,7 @@
         document.getElementById('newFlowerTypeName').value = name;
         document.getElementById('newFlowerTypeQuality').value = quality;
         
-        document.getElementById('flowerTypeModalTitle').innerText = '✏️ Chỉnh Sửa Loại Hoa';
+        document.getElementById('flowerTypeModalTitle').innerText = '✏️ Phép Thuật Biến Đổi Tên Hoa';
         document.getElementById('addFlowerTypeModal').style.display = 'flex';
     }
 
@@ -773,19 +961,22 @@
                 
                 if (hasUpdates) {
                     update(ref(db), multiUpdates).then(() => {
-                        alert(`Tuyệt vời! Hệ thống đã tự động tìm và cập nhật tên hoa/phẩm mới cho toàn bộ các thành viên đang sở hữu hoa "${oldName}".`);
+                        window.fireConfetti();
                     });
+                } else {
+                     window.fireConfetti();
                 }
             }
         } else {
             push(flowerTypesRef, { name: newName, quality: newQuality }); 
+            window.fireConfetti();
         }
 
         document.getElementById('addFlowerTypeModal').style.display = 'none'; 
         this.reset();
     });
 
-    window.deleteFlowerTypeFirebase = function(id) { if (confirm('⚠️ Xóa loại hoa này khỏi danh sách chọn?')) remove(ref(db, `hoavien_flower_types/${id}`)); }
+    window.deleteFlowerTypeFirebase = function(id) { if (confirm('⚠️ Hủy bỏ loài hoa này khỏi Bách Khoa Toàn Thư?')) remove(ref(db, `hoavien_flower_types/${id}`)); }
 
     const searchFlowerTypeInput = document.getElementById('searchFlowerTypeInput');
     if(searchFlowerTypeInput) {
@@ -872,37 +1063,33 @@
             selectAllBtn.style.background = "var(--primary-green)";
         }
 
-        document.getElementById('modalTitle').innerText = '✏️ Chỉnh Sửa Hoa';
+        document.getElementById('modalTitle').innerText = '✏️ Chỉnh Sửa Người Sở Hữu';
         document.getElementById('addModal').style.display = 'flex';
     }
 
-    // TÍNH NĂNG CHỐNG THÊM TRÙNG LẶP (V27)
     document.getElementById('dataForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
         const checkedBoxes = document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]:checked');
         const ownersArray = Array.from(checkedBoxes).map(cb => cb.value);
-        if(ownersArray.length === 0) { alert("⚠️ Vui lòng tích chọn ít nhất 1 Người sở hữu!"); return; }
+        if(ownersArray.length === 0) { alert("⚠️ Chưa có người sở hữu nào được chọn!"); return; }
         
         const flowerVal = document.getElementById('flowerInput').value;
-        if(flowerVal === "") { alert("⚠️ Vui lòng gõ và nhấp CHỌN tên hoa từ danh sách xổ xuống!"); return; }
+        if(flowerVal === "") { alert("⚠️ Bạn phải gõ và nhấp chọn 1 loài hoa từ trong danh sách sổ xuống!"); return; }
         
         const editId = document.getElementById('editRecordId').value;
         
-        // KIỂM TRA TRÙNG LẶP HOA TRONG BẢNG
         if (editId === "") {
-            // Khi tạo mới: Kiểm tra xem hoa này đã tồn tại trong mảng records chưa
             const isDuplicate = records.some(r => r.flowerName.toLowerCase() === flowerVal.toLowerCase());
             if (isDuplicate) {
-                alert(`🛑 CẢNH BÁO TRÙNG LẶP:\n\nHoa [ ${flowerVal} ] đã được tạo trong danh sách từ trước!\n\n👉 Cách giải quyết: Vui lòng quay lại màn hình chính, gõ tên hoa này vào thanh tìm kiếm, sau đó bấm nút "Sửa" để tích thêm người sở hữu mới nhé.`);
-                return; // Chặn lưu
+                alert(`🛑 ÚM BA LA DỪNG LẠI!\n\nHoa [ ${flowerVal} ] đã mọc trong vườn từ trước rồi!\n\n👉 Bạn hãy ra ngoài thanh tìm kiếm gõ tên hoa này, rồi bấm nút "Sửa" để bổ sung thêm người sở hữu nhé.`);
+                return; 
             }
         } else {
-            // Khi đang sửa: Tránh trường hợp sửa trùng vào tên của một hoa khác đã tồn tại
             const isDuplicate = records.some(r => r.flowerName.toLowerCase() === flowerVal.toLowerCase() && r.id !== editId);
             if (isDuplicate) {
-                alert(`🛑 CẢNH BÁO TRÙNG LẶP:\n\nHoa [ ${flowerVal} ] đã tồn tại ở một dòng khác trong danh sách.\nVui lòng không đổi tên trùng với hoa đã có sẵn!`);
-                return; // Chặn lưu
+                alert(`🛑 CẢNH BÁO TRÙNG LẶP!\n\nBông hoa mang tên [ ${flowerVal} ] đã bị trùng với một dòng khác. Vui lòng chọn tên khác!`);
+                return; 
             }
         }
 
@@ -913,10 +1100,11 @@
         else { push(recordsRef, newRecord); }
         
         document.getElementById('addModal').style.display = 'none'; this.reset();
+        window.fireConfetti(); // Bắn pháo hoa
     });
 
     window.deleteRecordFirebase = function(id) {
-        if (confirm('⚠️ Bạn có chắc chắn muốn xóa dòng này trên hệ thống chung không?')) { remove(ref(db, `hoavien_records/${id}`)); }
+        if (confirm('⚠️ Bạn có chắc chắn muốn nhổ bỏ vĩnh viễn đóa hoa này khỏi khu vườn?')) { remove(ref(db, `hoavien_records/${id}`)); }
     }
 
     const filterCards = document.querySelectorAll('#filterCards .card');
@@ -938,9 +1126,9 @@
     function renderTable() {
         const tbody = document.getElementById('tableBody'); tbody.innerHTML = '';
         records.forEach((record, index) => {
-            const colors = colorMap[record.quality] || colorMap['Chưa rõ'];
+            const qClass = getQualityClass(record.quality);
             const row = document.createElement('tr'); 
-            row.setAttribute('data-quality', record.quality);
+            row.setAttribute('data-quality', record.quality); // Để kích hoạt hiệu ứng Glow 3D
             const fullSearchText = ((record.flowerName||"") + " " + (record.quality||"") + " " + (record.owner||"")).toLowerCase();
             row.setAttribute('data-search', fullSearchText); 
             
@@ -950,20 +1138,20 @@
                 const displayedOwners = ownerArray.slice(0, 3);
                 const hiddenCount = ownerArray.length - 3;
                 const hiddenNames = ownerArray.slice(3).join(', ');
-                ownerTagsHTML = displayedOwners.map(name => `<span class="owner-tag"><i class="fas fa-user-circle"></i> ${name.trim()}</span>`).join('');
-                ownerTagsHTML += `<span class="owner-tag owner-tag-more" onclick="showMoreOwners(event, '${hiddenNames}')">+${hiddenCount} người</span>`;
+                ownerTagsHTML = displayedOwners.map(name => `<span class="owner-tag"><i class="fas fa-user-astronaut"></i> ${name.trim()}</span>`).join('');
+                ownerTagsHTML += `<span class="owner-tag owner-tag-more" onclick="showMoreOwners(event, '${hiddenNames}')">+${hiddenCount} bằng hữu</span>`;
             } else {
-                ownerTagsHTML = ownerArray.map(name => `<span class="owner-tag"><i class="fas fa-user-circle"></i> ${name.trim()}</span>`).join('');
+                ownerTagsHTML = ownerArray.map(name => `<span class="owner-tag"><i class="fas fa-user-astronaut"></i> ${name.trim()}</span>`).join('');
             }
 
             row.innerHTML = `
                 <td>${index + 1}</td>
-                <td class="item-cell"><i class="fas fa-seedling" style="color:var(--primary-green)"></i> ${record.flowerName}</td>
-                <td><span style="background-color: ${colors.bg}; color: ${colors.text}; border: 1px solid ${colors.border}; padding: 6px 14px; border-radius: 20px; font-weight:800; font-size: 0.85rem; display: inline-block;">${record.quality}</span></td>
+                <td class="item-cell"><i class="fab fa-pagelines" style="color:var(--primary-green); font-size:1.5rem; filter:drop-shadow(0 2px 2px rgba(46,204,113,0.5));"></i> ${record.flowerName}</td>
+                <td><span class="quality-badge ${qClass}">${record.quality}</span></td>
                 <td class="owner-cell">${ownerTagsHTML}</td>
                 <td class="admin-only" style="text-align: right; padding-right: 20px; white-space: nowrap;">
-                    <button class="btn-edit" onclick="editRecordFirebase('${record.id}')"><i class="fas fa-edit"></i> Sửa</button>
-                    <button class="btn-delete" onclick="deleteRecordFirebase('${record.id}')"><i class="fas fa-trash-alt"></i> Xóa</button>
+                    <button class="btn-edit" onclick="editRecordFirebase('${record.id}')"><i class="fas fa-magic"></i> Sửa</button>
+                    <button class="btn-delete" onclick="deleteRecordFirebase('${record.id}')"><i class="fas fa-times"></i> Xóa</button>
                 </td>
             `;
             tbody.appendChild(row);
