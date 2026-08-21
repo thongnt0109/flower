@@ -8,33 +8,33 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
         
-        /* BIẾN MÀU SẮC ĐỘNG (NGÀY & ĐÊM) */
+        /* BIẾN MÀU SẮC ĐỘNG (NGÀY & ĐÊM) - KHÔNG DÙNG ẢNH MẠNG NỮA */
         :root { 
             --sidebar-width: 260px; 
             --primary-green: #2ecc71; 
             --dark-green: #1a4d2e; 
             --accent-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); 
             
-            /* Mặc định là Ngày */
-            --bg-body: url('https://images.unsplash.com/photo-1508610048659-a06b669e3321?q=80&w=2000');
-            --bg-glass: rgba(255, 255, 255, 0.7);
-            --bg-glass-solid: rgba(255, 255, 255, 0.9);
+            /* NỀN HỒNG PASTEL NGỌT NGÀO (DÙNG MÀU CSS CHUẨN XÁC) */
+            --bg-body: linear-gradient(-45deg, #fff0f5, #ffb6c1, #ffe4e1, #ffc0cb);
+            --bg-glass: rgba(255, 255, 255, 0.65);
+            --bg-glass-solid: rgba(255, 255, 255, 0.95);
             --text-main: #2c3e50; 
             --text-muted: #7f8c8d;
-            --border-glass: rgba(255, 255, 255, 0.4);
-            --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.1); 
+            --border-glass: rgba(255, 255, 255, 0.7);
+            --shadow-glass: 0 8px 32px 0 rgba(255, 105, 180, 0.15);
+            --shadow-hover: 0 15px 35px rgba(255, 105, 180, 0.25); 
         }
 
-        /* CHẾ ĐỘ BAN ĐÊM (DARK MODE) */
+        /* CHẾ ĐỘ BAN ĐÊM (DARK MODE - TÍM HỒNG HUYỀN BÍ) */
         body.theme-night {
-            --bg-body: url('https://images.unsplash.com/photo-1532767153582-b1a0e5145009?q=80&w=2000');
-            --bg-glass: rgba(15, 23, 42, 0.75);
-            --bg-glass-solid: rgba(15, 23, 42, 0.95);
+            --bg-body: linear-gradient(-45deg, #1a0b2e, #3d1c4a, #2a123f, #1a0b2e);
+            --bg-glass: rgba(15, 23, 42, 0.6);
+            --bg-glass-solid: rgba(20, 25, 45, 0.95);
             --text-main: #f1f5f9;
             --text-muted: #94a3b8;
             --border-glass: rgba(255, 255, 255, 0.1);
-            --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
             --primary-green: #4ade80;
             --dark-green: #86efac;
         }
@@ -47,22 +47,35 @@
         ::-webkit-scrollbar-thumb { background: var(--primary-green); border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
         ::-webkit-scrollbar-thumb:hover { background-color: var(--dark-green); }
 
-        body { display: flex; min-height: 100vh; background-image: var(--bg-body); background-size: cover; background-position: center; background-attachment: fixed; color: var(--text-main); transition: background-image 1s ease-in-out; }
+        /* HIỆU ỨNG NỀN CHUYỂN ĐỘNG (ANIMATED GRADIENT) */
+        body { 
+            display: flex; min-height: 100vh; 
+            background: var(--bg-body); 
+            background-size: 400% 400%; 
+            animation: gradientBG 15s ease infinite; 
+            color: var(--text-main); 
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         body.view-only .admin-only { display: none !important; }
 
         /* HIỆU ỨNG GỢN SÓNG CLICK (RIPPLE) */
-        .click-ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-anim 0.6s linear; background-color: rgba(255, 255, 255, 0.4); pointer-events: none; z-index: 999999; }
+        .click-ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-anim 0.6s linear; background-color: rgba(255, 255, 255, 0.5); pointer-events: none; z-index: 999999; }
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
 
         /* HIỆU ỨNG RƠI ĐỘNG (HOA/ĐOM ĐÓM) */
         #falling-elements { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
-        .falling-item { position: absolute; top: -10%; user-select: none; animation-name: fall, sway; animation-iteration-count: infinite; animation-timing-function: linear, ease-in-out; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));}
-        .theme-night .falling-item { filter: drop-shadow(0 0 8px rgba(255, 255, 100, 0.8)); } /* Hào quang đom đóm */
+        .falling-item { position: absolute; top: -10%; user-select: none; animation-name: fall, sway; animation-iteration-count: infinite; animation-timing-function: linear, ease-in-out; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));}
+        .theme-night .falling-item { filter: drop-shadow(0 0 8px rgba(255, 200, 255, 0.8)); } 
         @keyframes fall { 0% { top: -10%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 0.8; } 100% { top: 110%; opacity: 0; } }
         @keyframes sway { 0% { transform: translateX(0px) rotate(0deg); } 50% { transform: translateX(60px) rotate(45deg); } 100% { transform: translateX(0px) rotate(90deg); } }
 
         /* KHUNG KÍNH (GLASSMORPHISM) */
-        .glass-panel { background: var(--bg-glass); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--border-glass); box-shadow: var(--shadow-glass); border-radius: 24px; }
+        .glass-panel { background: var(--bg-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border-glass); box-shadow: var(--shadow-glass); border-radius: 24px; }
         
         /* KHUNG DÂY LEO */
         .home-container, .modal-content { position: relative; margin-top: 15px; margin-bottom: 15px; border: 2px dashed rgba(46, 204, 113, 0.4) !important; }
@@ -84,7 +97,7 @@
         .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 40px; overflow-x: hidden; }
         
         .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 15px 30px; }
-        .top-header .welcome-text { font-size: 1.3rem; font-weight: 800; color: var(--text-main); text-shadow: 0 2px 5px rgba(255,255,255,0.3); }
+        .top-header .welcome-text { font-size: 1.3rem; font-weight: 800; color: var(--text-main); text-shadow: 0 2px 5px rgba(255,255,255,0.5); }
         .theme-night .top-header .welcome-text { text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
         
         #authBtn { background: var(--bg-glass-solid); border: 2px solid #e74c3c; color: #e74c3c; padding: 8px 18px; border-radius: 20px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; }
@@ -97,7 +110,7 @@
         .home-container { padding: 40px; }
         .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: stretch; margin-top: 20px;}
         .home-left, .home-right { display: flex; flex-direction: column; }
-        .banner-wrapper { flex: 1; width: 100%; min-height: 400px; border-radius: 20px; overflow: hidden; position: relative; border: 2px solid var(--border-glass); transition: all 0.3s; background: rgba(0,0,0,0.1); display: flex; justify-content: center; align-items: center;}
+        .banner-wrapper { flex: 1; width: 100%; min-height: 400px; border-radius: 20px; overflow: hidden; position: relative; border: 2px solid var(--border-glass); transition: all 0.3s; background: rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center;}
         .banner-wrapper img { width: 100%; height: 100%; object-fit: cover; }
         .editable-text { flex: 1; width: 100%; min-height: 400px; padding: 30px; border: 2px solid var(--border-glass); border-radius: 20px; background: var(--bg-glass-solid); font-size: 1.15rem; line-height: 1.8; outline: none; transition: all 0.3s; color: var(--text-main); overflow-y: auto;}
         .editable-text:focus { border-color: var(--primary-green); box-shadow: 0 0 20px rgba(46, 204, 113, 0.3); }
@@ -499,7 +512,7 @@
     </div>
 </div>
 
-<!-- ================= SCRIPT XỬ LÝ GIAO DIỆN & HIỆU ỨNG (V28) ================= -->
+<!-- ================= SCRIPT XỬ LÝ GIAO DIỆN & HIỆU ỨNG ================= -->
 <script>
     const ADMIN_PASS = "123456"; 
     let isAdmin = localStorage.getItem('hoaVienAdmin') === 'true';
@@ -507,40 +520,36 @@
     // 1. NGÀY VÀ ĐÊM (DAY/NIGHT MODE)
     function checkTimeAndTheme() {
         const hour = new Date().getHours();
-        // Ban đêm từ 18h tối đến 5h sáng hôm sau
         if (hour >= 18 || hour < 6) {
             document.body.classList.add('theme-night');
         } else {
             document.body.classList.remove('theme-night');
         }
     }
-    checkTimeAndTheme(); // Chạy ngay khi tải web
+    checkTimeAndTheme(); 
 
     // 2. HIỆU ỨNG RIPPLE KHI CLICK
     document.addEventListener('click', function(e) {
-        // Không tạo gợn sóng nếu click vào các nút/input để tránh rối mắt
         if (e.target.tagName.toLowerCase() === 'button' || e.target.tagName.toLowerCase() === 'input' || e.target.tagName.toLowerCase() === 'i') return;
         
         const ripple = document.createElement('div');
         ripple.classList.add('click-ripple');
-        const size = 50; // Kích thước vòng tròn ban đầu
+        const size = 50; 
         ripple.style.width = size + 'px';
         ripple.style.height = size + 'px';
         ripple.style.left = (e.clientX - size/2) + 'px';
         ripple.style.top = (e.clientY - size/2) + 'px';
         document.body.appendChild(ripple);
         
-        // Tự động xóa thẻ div sau 0.6s
         setTimeout(() => { ripple.remove(); }, 600);
     });
 
-    // 3. HIỆU ỨNG RƠI BẤT TẬN (HOA / ĐOM ĐÓM)
+    // 3. HIỆU ỨNG RƠI BẤT TẬN
     function createFallingElements() {
         const container = document.getElementById('falling-elements');
-        container.innerHTML = ''; // Làm sạch
+        container.innerHTML = ''; 
         
         const isNight = document.body.classList.contains('theme-night');
-        // Ngày: Hoa, Lá. Đêm: Ngôi sao lấp lánh, đom đóm (chấm tròn)
         const elements = isNight ? ['✨', '🌟', '✦', '·', '•', '°'] : ['🌸', '🍃', '💮', '🍂', '🍁', '🌺']; 
         
         for (let i = 0; i < 30; i++) {
@@ -549,12 +558,10 @@
             item.innerText = elements[Math.floor(Math.random() * elements.length)];
             item.style.left = Math.random() * 100 + 'vw'; 
             
-            // Rơi chậm và mượt hơn
             item.style.animationDuration = (Math.random() * 10 + 10) + 's, ' + (Math.random() * 4 + 4) + 's'; 
             item.style.animationDelay = Math.random() * 10 + 's, ' + Math.random() * 5 + 's'; 
             
             if (isNight && (item.innerText === '·' || item.innerText === '•')) {
-                // Làm đom đóm
                 item.style.color = '#fffacd';
                 item.style.fontSize = (Math.random() * 8 + 4) + 'px';
             } else {
@@ -567,8 +574,8 @@
     }
     createFallingElements();
 
-    // 4. HIỆU ỨNG BẮN PHÁO HOA ĂN MỪNG (CONFETTI)
-    function fireConfetti() {
+    // 4. HIỆU ỨNG BẮN PHÁO HOA ĂN MỪNG
+    window.fireConfetti = function() {
         const canvas = document.getElementById('confetti-canvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
@@ -579,10 +586,10 @@
         
         for (let i = 0; i < 100; i++) {
             pieces.push({
-                x: canvas.width / 2, // Bắn từ giữa màn hình dưới
+                x: canvas.width / 2, 
                 y: canvas.height + 10,
-                vx: (Math.random() - 0.5) * 20, // Vận tốc x (bay tủa ra)
-                vy: (Math.random() - 1) * 20 - 5, // Vận tốc y (bay lên)
+                vx: (Math.random() - 0.5) * 20, 
+                vy: (Math.random() - 1) * 20 - 5, 
                 size: Math.random() * 10 + 5,
                 color: colors[Math.floor(Math.random() * colors.length)],
                 rotation: Math.random() * 360,
@@ -595,7 +602,7 @@
             let active = false;
             pieces.forEach(p => {
                 if (p.y < canvas.height + 20) active = true;
-                p.vy += 0.5; // Trọng lực kéo xuống
+                p.vy += 0.5; 
                 p.x += p.vx;
                 p.y += p.vy;
                 p.rotation += p.rotationSpeed;
@@ -640,7 +647,7 @@
             const pass = prompt("Nhập mật mã khai ấn:");
             if (pass === ADMIN_PASS) {
                 isAdmin = true; localStorage.setItem('hoaVienAdmin', 'true'); updateAuthUI();
-                fireConfetti(); // Bắn pháo hoa khi đăng nhập thành công
+                window.fireConfetti(); 
                 alert("KHAI ẤN THÀNH CÔNG! Chào mừng Quản Trị Viên.");
             } else if (pass !== null) {
                 alert("Mật mã sai. Phong ấn vẫn được giữ nguyên.");
@@ -735,7 +742,6 @@
     const membersRef = ref(db, 'hoavien_members'); 
     const flowerTypesRef = ref(db, 'hoavien_flower_types'); 
 
-    // Mã màu CSS riêng cho từng phẩm chất
     const getQualityClass = (q) => {
         if(q === 'Đỏ') return 'q-do';
         if(q === 'Vàng') return 'q-vang';
@@ -795,7 +801,7 @@
     document.getElementById('btnSaveText').addEventListener('click', () => {
         const text = homeText.innerHTML; set(ref(db, 'hoavien_config/homeText'), text);
         localStorage.setItem('localFastText', text); 
-        window.fireConfetti(); // Hiệu ứng
+        window.fireConfetti(); 
     });
 
     document.getElementById('imageUpload').addEventListener('change', function(e) {
@@ -814,7 +820,7 @@
                     bannerImg.src = compressedBase64; bannerImg.style.display = 'block'; imgPlaceholder.style.display = 'none';
                     set(ref(db, 'hoavien_config/banner'), compressedBase64); 
                     localStorage.setItem('localFastBanner', compressedBase64);
-                    window.fireConfetti(); // Hiệu ứng
+                    window.fireConfetti(); 
                 }
                 img.src = event.target.result;
             };
@@ -892,7 +898,7 @@
             const qClass = getQualityClass(quality);
 
             const row = document.createElement('tr');
-            row.setAttribute('data-quality', quality); // Cấp Hào quang 3D
+            row.setAttribute('data-quality', quality); 
             const searchString = (fName + " " + quality).toLowerCase();
             row.setAttribute('data-flower-search', searchString);
             
@@ -1072,10 +1078,10 @@
         
         const checkedBoxes = document.querySelectorAll('#ownerCheckboxList input[type="checkbox"]:checked');
         const ownersArray = Array.from(checkedBoxes).map(cb => cb.value);
-        if(ownersArray.length === 0) { alert("⚠️ Chưa có người sở hữu nào được chọn!"); return; }
+        if(ownersArray.length === 0) { alert("⚠️ Vui lòng tích chọn ít nhất 1 Người sở hữu!"); return; }
         
         const flowerVal = document.getElementById('flowerInput').value;
-        if(flowerVal === "") { alert("⚠️ Bạn phải gõ và nhấp chọn 1 loài hoa từ trong danh sách sổ xuống!"); return; }
+        if(flowerVal === "") { alert("⚠️ Vui lòng gõ và nhấp CHỌN tên hoa từ danh sách xổ xuống!"); return; }
         
         const editId = document.getElementById('editRecordId').value;
         
@@ -1100,7 +1106,7 @@
         else { push(recordsRef, newRecord); }
         
         document.getElementById('addModal').style.display = 'none'; this.reset();
-        window.fireConfetti(); // Bắn pháo hoa
+        window.fireConfetti(); 
     });
 
     window.deleteRecordFirebase = function(id) {
@@ -1128,7 +1134,7 @@
         records.forEach((record, index) => {
             const qClass = getQualityClass(record.quality);
             const row = document.createElement('tr'); 
-            row.setAttribute('data-quality', record.quality); // Để kích hoạt hiệu ứng Glow 3D
+            row.setAttribute('data-quality', record.quality); 
             const fullSearchText = ((record.flowerName||"") + " " + (record.quality||"") + " " + (record.owner||"")).toLowerCase();
             row.setAttribute('data-search', fullSearchText); 
             
